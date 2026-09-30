@@ -21,12 +21,12 @@ class DrayveApp
   ) {
     return MaterialApp(
       title: 'DRAYVE - F1 Drivers Hub',
-      debugShowCheckedModeBanner: false, // Menghilangkan pita "debug" di pojok kanan atas
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.backgroundDark,
         useMaterial3: true,
       ),
-      home: const LandingPage(), // Mengarah ke Landing Page saat web dibuka
+      home: const LandingPage(),
     );
   }
 }

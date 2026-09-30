@@ -1,5 +1,8 @@
 {
   "dart.lineLength": 0,
   "editor.rulers": [],
-  "dart.closingLabels": false
+  "dart.closingLabels": false,
+  "editor.quickSuggestionsDelay": 30,
+  "editor.inlineSuggest.edits.allowCodeShifting": "never",
+  "editor.inlineSuggest.edits.renderSideBySide": "never"
 }
