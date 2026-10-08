@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:drayve/data/auth_state.dart'; // Sesuaikan path dengan lokasi file barumu
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthPage
     extends
@@ -22,6 +23,13 @@ class _AuthPageState
     with
         SingleTickerProviderStateMixin {
   bool isSignIn = true;
+  bool _isSubmitting = false;
+
+  final _signInEmailController = TextEditingController();
+  final _signInPasswordController = TextEditingController();
+  final _signUpNameController = TextEditingController();
+  final _signUpEmailController = TextEditingController();
+  final _signUpPasswordController = TextEditingController();
 
   // Kunci form untuk validasi
   final _signInFormKey =
@@ -39,7 +47,73 @@ class _AuthPageState
     });
   }
 
-  void _handleForgotPassword() {
+  @override
+  void dispose() {
+    _signInEmailController.dispose();
+    _signInPasswordController.dispose();
+    _signUpNameController.dispose();
+    _signUpEmailController.dispose();
+    _signUpPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<
+    void
+  >
+  _handleForgotPassword() async {
+    final email = _signInEmailController.text.trim();
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Masukkan email terlebih dahulu.',
+          ),
+        ),
+      );
+      return;
+    }
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: email,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Tautan reset password dikirim ke email.',
+          ),
+        ),
+      );
+    } on FirebaseAuthException catch (
+      error
+    ) {
+      _showAuthError(
+        error,
+      );
+    }
+  }
+
+  void _showAuthError(
+    FirebaseAuthException error,
+  ) {
+    final message = switch (error.code) {
+      'invalid-email' => 'Format email tidak valid.',
+      'user-not-found' ||
+      'invalid-credential' => 'Email atau password salah.',
+      'wrong-password' => 'Email atau password salah.',
+      'email-already-in-use' => 'Email ini sudah terdaftar.',
+      'weak-password' => 'Password terlalu lemah. Gunakan minimal 6 karakter.',
+      'operation-not-allowed' => 'Metode Email/Password belum diaktifkan di Firebase.',
+      'network-request-failed' => 'Koneksi internet bermasalah. Coba lagi.',
+      _ =>
+        error.message ??
+            'Terjadi kesalahan. Silakan coba lagi.',
+    };
+    if (!mounted) return;
     ScaffoldMessenger.of(
       context,
     ).clearSnackBars();
@@ -48,24 +122,35 @@ class _AuthPageState
     ).showSnackBar(
       SnackBar(
         content: Text(
-          "Password reset link sent to your email!",
+          message,
           style: GoogleFonts.montserrat(),
         ),
         backgroundColor: const Color(
           0xFFE8002D,
         ),
         duration: const Duration(
-          seconds: 2,
+          seconds: 4,
         ),
       ),
     );
   }
 
-  void _submitSignIn() {
-    if (_signInFormKey.currentState!.validate()) {
-      // SET GLOBAL STATE MENJADI TRUE
-      globalIsLoggedIn = true;
-
+  Future<
+    void
+  >
+  _submitSignIn() async {
+    if (!_signInFormKey.currentState!.validate() ||
+        _isSubmitting)
+      return;
+    setState(
+      () => _isSubmitting = true,
+    );
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _signInEmailController.text.trim(),
+        password: _signInPasswordController.text,
+      );
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(
@@ -82,11 +167,60 @@ class _AuthPageState
         context,
         true,
       );
+    } on FirebaseAuthException catch (
+      error
+    ) {
+      _showAuthError(
+        error,
+      );
+    } finally {
+      if (mounted)
+        setState(
+          () => _isSubmitting = false,
+        );
     }
   }
+  
 
-  void _submitSignUp() {
-    if (_signUpFormKey.currentState!.validate()) {
+  Future<
+    void
+  >
+  _submitSignUp() async {
+    if (!_signUpFormKey.currentState!.validate() ||
+        _isSubmitting)
+      return;
+    setState(
+      () => _isSubmitting = true,
+    );
+    try {
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _signUpEmailController.text.trim(),
+        password: _signUpPasswordController.text,
+      );
+      final user = credential.user;
+      final name = _signUpNameController.text.trim();
+      await user?.updateDisplayName(
+        name,
+      );
+      if (user !=
+          null) {
+        await FirebaseFirestore.instance
+            .collection(
+              'users',
+            )
+            .doc(
+              user.uid,
+            )
+            .set({
+              'uid': user.uid,
+              'name': name,
+              'email': user.email,
+              'createdAt': FieldValue.serverTimestamp(),
+            });
+      }
+      // Keep the existing sign-up flow: create the account, then return to login.
+      await FirebaseAuth.instance.signOut();
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(
@@ -100,6 +234,35 @@ class _AuthPageState
         ),
       );
       toggleView(); // Kembali ke panel login
+    } on FirebaseAuthException catch (
+      error
+    ) {
+      _showAuthError(
+        error,
+      );
+    } catch (
+      error
+    ) {
+      if (mounted) {
+        try {
+          await FirebaseAuth.instance.signOut();
+        } catch (
+          _
+        ) {
+          // Preserve the original profile-write error for the user.
+        }
+        _showAuthError(
+          FirebaseAuthException(
+            code: 'unknown',
+            message: 'Akun mungkin sudah dibuat, tetapi profil gagal disimpan. Periksa Firestore Rules dan coba login.',
+          ),
+        );
+      }
+    } finally {
+      if (mounted)
+        setState(
+          () => _isSubmitting = false,
+        );
     }
   }
 
@@ -383,6 +546,7 @@ class _AuthPageState
             _buildTextField(
               Icons.email_outlined,
               "Email",
+              controller: _signInEmailController,
               validator:
                   (
                     value,
@@ -404,6 +568,7 @@ class _AuthPageState
             _buildTextField(
               Icons.lock_outline,
               "Password",
+              controller: _signInPasswordController,
               isObscure: true,
               validator:
                   (
@@ -510,6 +675,7 @@ class _AuthPageState
             _buildTextField(
               Icons.person_outline,
               "Name",
+              controller: _signUpNameController,
               validator:
                   (
                     value,
@@ -527,6 +693,7 @@ class _AuthPageState
             _buildTextField(
               Icons.email_outlined,
               "Email",
+              controller: _signUpEmailController,
               validator:
                   (
                     value,
@@ -548,6 +715,7 @@ class _AuthPageState
             _buildTextField(
               Icons.lock_outline,
               "Password",
+              controller: _signUpPasswordController,
               isObscure: true,
               validator:
                   (
@@ -781,6 +949,7 @@ class _AuthPageState
   Widget _buildTextField(
     IconData icon,
     String hint, {
+    TextEditingController? controller,
     bool isObscure = false,
     String? Function(
       String?,
@@ -788,6 +957,7 @@ class _AuthPageState
     validator,
   }) {
     return TextFormField(
+      controller: controller,
       obscureText: isObscure,
       style: GoogleFonts.montserrat(
         color: Colors.white,

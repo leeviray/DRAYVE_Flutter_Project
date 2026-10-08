@@ -1,15 +1,4 @@
-bool
-_isLoggedIn = false;
+import 'package:firebase_auth/firebase_auth.dart';
 
-// 2. GETTER: Mengambil nilai variabel private dengan aman dari file lain
-bool
-get globalIsLoggedIn {
-  return _isLoggedIn;
-}
-
-// 3. SETTER: Mengubah nilai variabel private dengan aman dari file lain
-set globalIsLoggedIn(
-  bool status,
-) {
-  _isLoggedIn = status;
-}
+/// Whether Firebase Authentication currently has a signed-in user.
+bool get globalIsLoggedIn => FirebaseAuth.instance.currentUser != null;

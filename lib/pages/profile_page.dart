@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:drayve/data/auth_state.dart'; // Import status login global
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drayve/pages/landing_page.dart'; // Import landing page untuk navigasi
 
 class ProfilePage
@@ -33,12 +34,41 @@ class _ProfilePageState
   @override
   void initState() {
     super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    currentName = user?.displayName?.isNotEmpty == true
+        ? user!.displayName!
+        : 'F1 Enthusiast';
+    currentEmail = user?.email ?? '';
     _nameController = TextEditingController(
       text: currentName,
     );
     _emailController = TextEditingController(
       text: currentEmail,
     );
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      if (!mounted || !snapshot.exists) return;
+      final savedName = snapshot.data()?['name'] as String?;
+      setState(() {
+        if (savedName != null && savedName.isNotEmpty) {
+          currentName = savedName;
+          _nameController.text = savedName;
+        }
+        currentEmail = user.email ?? '';
+        _emailController.text = currentEmail;
+      });
+    } catch (_) {
+      // Firebase Auth profile remains available if Firestore is not set up yet.
+    }
   }
 
   @override
@@ -48,18 +78,37 @@ class _ProfilePageState
     super.dispose();
   }
 
-  void _saveProfile() {
-    if (_formKey.currentState!.validate()) {
+  Future<void> _saveProfile() async {
+    if (!_formKey.currentState!.validate()) return;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    try {
+      final newName = _nameController.text.trim();
+      final newEmail = _emailController.text.trim();
+      await user.updateDisplayName(newName);
+      if (newEmail != (user.email ?? '')) {
+        await user.verifyBeforeUpdateEmail(newEmail);
+      }
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'uid': user.uid,
+        'name': newName,
+        'email': user.email,
+        if (newEmail != (user.email ?? '')) 'pendingEmail': newEmail,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+      if (!mounted) return;
       setState(() {
-        currentName = _nameController.text;
-        currentEmail = _emailController.text;
+        currentName = newName;
+        currentEmail = user.email ?? '';
       });
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(
         SnackBar(
           content: Text(
-            "Profile updated successfully!",
+          newEmail != (user.email ?? '')
+              ? "Profile updated. Check your inbox to confirm the email change."
+              : "Profile updated successfully!",
             style: GoogleFonts.montserrat(),
           ),
           backgroundColor: const Color(
@@ -70,15 +119,26 @@ class _ProfilePageState
           ),
         ),
       );
+    } on FirebaseAuthException catch (error) {
+      if (!mounted) return;
+      final message = error.code == 'requires-recent-login'
+          ? 'Login ulang sebelum mengganti email.'
+          : error.message ?? 'Profil gagal diperbarui.';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profil gagal disimpan. Periksa pengaturan Firestore.')),
+      );
     }
   }
 
   // ==========================================
   // FUNGSI LOGOUT BARU
   // ==========================================
-  void _logout() {
-    // 1. Ubah status global menjadi false
-    globalIsLoggedIn = false;
+  Future<void> _logout() async {
+    await FirebaseAuth.instance.signOut();
+    if (!mounted) return;
 
     // 2. Tampilkan pesan berhasil keluar
     ScaffoldMessenger.of(
