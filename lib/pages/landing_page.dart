@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:drayve/data/data.dart';
 import 'package:drayve/widgets/driver_card.dart';
+import 'package:drayve/widgets/animated_background.dart';
 import 'package:drayve/models/statistik.dart';
 import 'package:drayve/pages/aboutme_page.dart';
 import 'package:drayve/pages/login_signup_page.dart';
@@ -117,22 +118,9 @@ class _LandingPageState
       endDrawer: _buildMobileDrawer(),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/bgdong.png',
-              fit: BoxFit.cover,
-            ),
-          ),
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.15,
-              child: Image.asset(
-                'assets/images/bgnice.png',
-                fit: BoxFit.cover,
-                color: Colors.black26,
-                colorBlendMode: BlendMode.darken,
-              ),
-            ),
+          // Background animasi: gradasi bergerak + speed streaks + kolase F1
+          const Positioned.fill(
+            child: AnimatedBackground(),
           ),
 
           SafeArea(
