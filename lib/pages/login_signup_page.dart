@@ -26,13 +26,16 @@ class _AuthPageState
   bool isSignIn = true;
   bool _isSubmitting = false;
 
+  // State untuk visibilitas password
+  bool _obscureSignInPassword = true;
+  bool _obscureSignUpPassword = true;
+
   final _signInEmailController = TextEditingController();
   final _signInPasswordController = TextEditingController();
   final _signUpNameController = TextEditingController();
   final _signUpEmailController = TextEditingController();
   final _signUpPasswordController = TextEditingController();
 
-  // Kunci form untuk validasi
   final _signInFormKey =
       GlobalKey<
         FormState
@@ -45,6 +48,9 @@ class _AuthPageState
   void toggleView() {
     setState(() {
       isSignIn = !isSignIn;
+      // Reset visibilitas saat pindah tab
+      _obscureSignInPassword = true;
+      _obscureSignUpPassword = true;
     });
   }
 
@@ -265,7 +271,6 @@ class _AuthPageState
     }
   }
 
-  // --- FUNGSI SOCIAL LOGIN (WEB POPUP) ---
   Future<
     void
   >
@@ -276,17 +281,13 @@ class _AuthPageState
     setState(
       () => _isSubmitting = true,
     );
-
     try {
-      // signInWithPopup sangat dianjurkan untuk Flutter Web
       final credential = await FirebaseAuth.instance.signInWithPopup(
         provider,
       );
       final user = credential.user;
-
       if (user !=
           null) {
-        // Cek apakah user baru pertama kali login, jika ya, simpan ke Firestore
         final userDoc = FirebaseFirestore.instance
             .collection(
               'users',
@@ -295,7 +296,6 @@ class _AuthPageState
               user.uid,
             );
         final docSnapshot = await userDoc.get();
-
         if (!docSnapshot.exists) {
           await userDoc.set({
             'uid': user.uid,
@@ -308,7 +308,6 @@ class _AuthPageState
             'createdAt': FieldValue.serverTimestamp(),
           });
         }
-
         if (!mounted) return;
         ScaffoldMessenger.of(
           context,
@@ -361,7 +360,6 @@ class _AuthPageState
     bool isMobile =
         screenWidth <
         800;
-
     double formWidth = isMobile
         ? screenWidth *
               0.9
@@ -374,13 +372,9 @@ class _AuthPageState
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // ==========================================
-          // BACKGROUND ANIMASI INTERAKTIF (BARU)
-          // ==========================================
           const Positioned.fill(
             child: AnimatedBackground(),
           ),
-
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(
@@ -398,7 +392,6 @@ class _AuthPageState
               ),
             ),
           ),
-
           Center(
             child: Container(
               width: formWidth,
@@ -581,7 +574,7 @@ class _AuthPageState
           children: [
             Text(
               "Login to DRAYVE",
-              textAlign: TextAlign.center, // <--- TAMBAHKAN INI
+              textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontSize: 32,
@@ -631,7 +624,11 @@ class _AuthPageState
               Icons.lock_outline,
               "Password",
               controller: _signInPasswordController,
-              isObscure: true,
+              isPassword: true,
+              isObscure: _obscureSignInPassword,
+              onTogglePassword: () => setState(
+                () => _obscureSignInPassword = !_obscureSignInPassword,
+              ),
               validator:
                   (
                     value,
@@ -711,7 +708,7 @@ class _AuthPageState
           children: [
             Text(
               "Create Account",
-              textAlign: TextAlign.center, // <--- TAMBAHKAN INI
+              textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontSize: 32,
@@ -779,7 +776,11 @@ class _AuthPageState
               Icons.lock_outline,
               "Password",
               controller: _signUpPasswordController,
-              isObscure: true,
+              isPassword: true,
+              isObscure: _obscureSignUpPassword,
+              onTogglePassword: () => setState(
+                () => _obscureSignUpPassword = !_obscureSignUpPassword,
+              ),
               validator:
                   (
                     value,
@@ -1023,6 +1024,8 @@ class _AuthPageState
     String hint, {
     TextEditingController? controller,
     bool isObscure = false,
+    bool isPassword = false,
+    VoidCallback? onTogglePassword,
     String? Function(
       String?,
     )?
@@ -1046,6 +1049,20 @@ class _AuthPageState
           color: Colors.white54,
           size: 22,
         ),
+        // Tambahkan Ikon Mata jika ini adalah form password
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  isObscure
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                  color: Colors.white54,
+                  size: 20,
+                ),
+                onPressed: onTogglePassword,
+                splashRadius: 20,
+              )
+            : null,
         hintText: hint,
         hintStyle: GoogleFonts.montserrat(
           color: Colors.white38,
