@@ -1,19 +1,21 @@
 import 'dart:ui';
+import 'dart:math'
+    as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:drayve/widgets/interactive.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // ==========================================
-// DATA & LAYOUT PROFIL (DARI REFERENSI BARU)
+// DATA & LAYOUT PROFIL
 // ==========================================
 class ProfileContent {
   static const name = 'LEEVI QUSHAI\nRAY IFTIKHAR';
   static const email = '25051204390@mhs.unesa.ac.id';
-  static const quote = '“Orang Biasa Masih Butuh Banyak Belajar”';
 
   static const background = 'assets/images/background.webp';
   static const portrait = 'assets/images/profile_cutout.webp';
-  static const musicWave = 'assets/icons/arcticons_music-party.webp';
   static const previous = 'assets/icons/arcticons_music-speed-changer-1.webp';
   static const play = 'assets/icons/arcticons_booming-music.webp';
   static const next = 'assets/icons/arcticons_music-speed-changer.webp';
@@ -49,9 +51,6 @@ class AboutMePage
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // ==========================================
-        // 1. BAGIAN: TENTANG APLIKASI
-        // ==========================================
         const SizedBox(
           height: 40,
         ),
@@ -158,25 +157,21 @@ class AboutMePage
               const SizedBox(
                 height: 12,
               ),
-
               _buildFeatureItem(
                 Icons.language,
                 "1. Responsive Landing Page",
                 "Saat aplikasi dibuka, user baik dari layar HP maupun layar lebar Laptop akan langsung disambut oleh deretan kartu pembalap F1 musim 2026. Tampilannya otomatis menyesuaikan ukuran layar agar selalu terlihat proporsional dan rapi.",
               ),
-
               _buildFeatureItem(
                 Icons.dashboard_customize,
                 "2. Detail Page Pembalap",
                 "Ketika pengguna mengklik salah satu pembalap, mereka akan masuk ke halaman profil khusus. Di sini terdapat empat bagian utama:\n\n• Statistics & Biography: Menyajikan rekam jejak, poin, posisi klasemen, hingga kisah perjalanan karier sang pembalap.\n• Latest Post & Fan Discussion: DRAYVE bukan sekadar aplikasi penyedia data, melainkan platform sosial. Pengguna bisa melihat update postingan terbaru pembalap dan masuk ke ruang obrolan langsung untuk berdiskusi dengan sesama penggemar.",
               ),
-
               _buildFeatureItem(
                 Icons.security,
                 "3. Interaksi Cerdas & Animasi Login",
                 "Aplikasi ini menggunakan konsep \"Try before you buy\". Siapa pun bisa masuk dan membaca informasi di dalamnya. Namun, ketika pengguna ingin mulai berinteraksi seperti memberi Like pada postingan, mengirim Comment, atau menambahkan pembalap ke daftar Favorite mereka sistem akan dengan cerdas menyela dan mengarahkan mereka untuk masuk/daftar (Login/SignUp).",
               ),
-
               _buildFeatureItem(
                 Icons.manage_accounts,
                 "4. Manajemen Profil Pribadi",
@@ -197,9 +192,6 @@ class AboutMePage
           height: 40,
         ),
 
-        // ==========================================
-        // 2. BAGIAN: TENTANG PEMBUAT (CREATED BY)
-        // ==========================================
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -217,70 +209,7 @@ class AboutMePage
           height: 24,
         ),
 
-        // KARTU GLASSMORPHISM PROFIL
-        LayoutBuilder(
-          builder:
-              (
-                context,
-                constraints,
-              ) {
-                final isWide =
-                    constraints.maxWidth >=
-                    760;
-                return SizedBox(
-                  height: isWide
-                      ? 500
-                      : 700,
-                  width: double.infinity,
-                  child: Stack(
-                    clipBehavior: Clip.hardEdge,
-                    fit: StackFit.expand,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                          48,
-                        ),
-                        child: Image.asset(
-                          ProfileContent.background,
-                          fit: BoxFit.cover,
-                          errorBuilder:
-                              (
-                                context,
-                                error,
-                                stackTrace,
-                              ) => Container(
-                                color: const Color(
-                                  0xFF2A2D34,
-                                ),
-                              ),
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            48,
-                          ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(
-                              sigmaX: 2,
-                              sigmaY: 2,
-                            ),
-                            child: ColoredBox(
-                              color: Colors.black.withValues(
-                                alpha: .12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      isWide
-                          ? const _DesktopCard()
-                          : const _MobileCard(),
-                    ],
-                  ),
-                );
-              },
-        ),
+        const InteractiveProfileCard(),
 
         const SizedBox(
           height: 60,
@@ -345,13 +274,153 @@ class AboutMePage
 }
 
 // ==========================================
-// WIDGET-WIDGET PENDUKUNG (KLONING DARI SUMBER)
+// KARTU PROFIL INTERAKTIF DENGAN STATE
 // ==========================================
+class InteractiveProfileCard
+    extends
+        StatefulWidget {
+  const InteractiveProfileCard({super.key});
+
+  @override
+  State<
+    InteractiveProfileCard
+  >
+  createState() => _InteractiveProfileCardState();
+}
+
+class _InteractiveProfileCardState
+    extends
+        State<
+          InteractiveProfileCard
+        > {
+  int _currentTrack = 0;
+  bool _isPlaying = false;
+
+  final List<
+    String
+  >
+  _quotes = [
+    '“Orang Biasa Masih Butuh Banyak Belajar”',
+    '“Just work with it”',
+    '“Life is a choice”',
+  ];
+
+  void _togglePlay() {
+    setState(() {
+      _isPlaying = !_isPlaying;
+    });
+  }
+
+  void _nextTrack() {
+    setState(() {
+      _currentTrack =
+          (_currentTrack +
+              1) %
+          _quotes.length;
+    });
+  }
+
+  void _prevTrack() {
+    setState(() {
+      _currentTrack =
+          (_currentTrack -
+              1 +
+              _quotes.length) %
+          _quotes.length;
+    });
+  }
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    return LayoutBuilder(
+      builder:
+          (
+            context,
+            constraints,
+          ) {
+            final isWide =
+                constraints.maxWidth >=
+                760;
+            return SizedBox(
+              height: isWide
+                  ? 500
+                  : 560, // Diperpendek sedikit untuk mobile
+              width: double.infinity,
+              child: Stack(
+                clipBehavior: Clip.hardEdge,
+                fit: StackFit.expand,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      48,
+                    ),
+                    child: Image.asset(
+                      ProfileContent.background,
+                      fit: BoxFit.cover,
+                      errorBuilder:
+                          (
+                            context,
+                            error,
+                            stackTrace,
+                          ) => Container(
+                            color: const Color(
+                              0xFF2A2D34,
+                            ),
+                          ),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                        48,
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 2,
+                          sigmaY: 2,
+                        ),
+                        child: ColoredBox(
+                          color: Colors.black.withOpacity(
+                            _isPlaying
+                                ? 0.3
+                                : 0.12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  isWide
+                      ? _DesktopCard(
+                          quote: _quotes[_currentTrack],
+                          isPlaying: _isPlaying,
+                          onPrev: _prevTrack,
+                          onPlay: _togglePlay,
+                          onNext: _nextTrack,
+                        )
+                      : _MobileCard(
+                          quote: _quotes[_currentTrack],
+                          isPlaying: _isPlaying,
+                          onPrev: _prevTrack,
+                          onPlay: _togglePlay,
+                          onNext: _nextTrack,
+                        ),
+                ],
+              ),
+            );
+          },
+    );
+  }
+}
+
 class _GlassCard
     extends
         StatelessWidget {
-  const _GlassCard({required this.child});
   final Widget child;
+  final bool isPlaying;
+
+  const _GlassCard({required this.child, required this.isPlaying});
 
   @override
   Widget
@@ -370,17 +439,26 @@ class _GlassCard
               sigmaX: 18,
               sigmaY: 18,
             ),
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(
+                milliseconds: 400,
+              ),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(
-                  alpha: .39,
-                ),
+                color: isPlaying
+                    ? const Color(
+                        0xFFE8002D,
+                      ).withOpacity(
+                        0.15,
+                      )
+                    : Colors.white.withOpacity(
+                        0.39,
+                      ),
                 borderRadius: BorderRadius.circular(
                   48,
                 ),
                 border: Border.all(
-                  color: Colors.white.withValues(
-                    alpha: .72,
+                  color: Colors.white.withOpacity(
+                    0.72,
                   ),
                   width: 1,
                 ),
@@ -397,13 +475,18 @@ class _GlassCard
 class _DesktopCard
     extends
         StatelessWidget {
-  const _DesktopCard();
+  final String quote;
+  final bool isPlaying;
+  final VoidCallback onPrev, onPlay, onNext;
+
+  const _DesktopCard({required this.quote, required this.isPlaying, required this.onPrev, required this.onPlay, required this.onNext});
 
   @override
   Widget
   build(
     BuildContext context,
   ) => _GlassCard(
+    isPlaying: isPlaying,
     child: LayoutBuilder(
       builder:
           (
@@ -426,6 +509,7 @@ class _DesktopCard
                       .46,
                   child: _ProfileDetails(
                     height: h,
+                    quote: quote,
                   ),
                 ),
                 Positioned(
@@ -453,10 +537,9 @@ class _DesktopCard
                   top:
                       h *
                       ProfileLayout.waveTop,
-                  child: _buildAssetImage(
-                    ProfileContent.musicWave,
-                    width: 76,
-                    height: 54,
+                  child: _AudioVisualizer(
+                    isPlaying: isPlaying,
+                    barHeight: 54,
                   ),
                 ),
                 Positioned(
@@ -469,7 +552,13 @@ class _DesktopCard
                   width:
                       box.maxWidth *
                       .22,
-                  child: const _MusicControls(),
+                  child: _MusicControls(
+                    isPlaying: isPlaying,
+                    onPrev: onPrev,
+                    onPlay: onPlay,
+                    onNext: onNext,
+                    size: 66,
+                  ),
                 ),
                 Positioned(
                   left:
@@ -478,7 +567,9 @@ class _DesktopCard
                   bottom:
                       h *
                       ProfileLayout.socialsBottom,
-                  child: const _SocialLinks(),
+                  child: const _SocialLinks(
+                    size: 78,
+                  ),
                 ),
                 Positioned(
                   right:
@@ -503,13 +594,18 @@ class _DesktopCard
 class _MobileCard
     extends
         StatelessWidget {
-  const _MobileCard();
+  final String quote;
+  final bool isPlaying;
+  final VoidCallback onPrev, onPlay, onNext;
+
+  const _MobileCard({required this.quote, required this.isPlaying, required this.onPrev, required this.onPlay, required this.onNext});
 
   @override
   Widget
   build(
     BuildContext context,
   ) => _GlassCard(
+    isPlaying: isPlaying,
     child: LayoutBuilder(
       builder:
           (
@@ -517,24 +613,21 @@ class _MobileCard
             box,
           ) {
             final height = box.maxHeight;
+            final width = box.maxWidth;
             return Stack(
               clipBehavior: Clip.none,
               children: [
+                // FOTO PROFIL (Digeser lebih ke kanan dan lebih transparan agar tidak menutupi teks)
                 Positioned(
                   right:
-                      -box.maxWidth *
-                      .18,
-                  top:
+                      -width *
+                      0.35,
+                  bottom: -20,
+                  height:
                       height *
-                      .16,
-                  bottom:
-                      height *
-                      .18,
-                  width:
-                      box.maxWidth *
-                      .83,
+                      0.85,
                   child: Opacity(
-                    opacity: .95,
+                    opacity: 0.65,
                     child: _buildAssetImage(
                       ProfileContent.portrait,
                       alignment: Alignment.bottomRight,
@@ -543,88 +636,108 @@ class _MobileCard
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
+                    20,
                     24,
-                    28,
-                    24,
-                    24,
+                    20,
+                    20,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Spacer(
-                        flex: 4,
+                        flex: 1,
                       ),
                       Text(
                         ProfileContent.name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize:
-                              (box.maxWidth *
-                                      .11)
+                              (width *
+                                      0.1)
                                   .clamp(
-                                    32,
-                                    64,
+                                    24.0,
+                                    36.0,
                                   ),
                           height: 1.15,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                       const SizedBox(
-                        height: 7,
+                        height: 6,
                       ),
-                      Text(
+                      const Text(
                         ProfileContent.email,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      Text(
-                        ProfileContent.quote,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                        ),
-                      ),
-                      const Spacer(
-                        flex: 2,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: _buildAssetImage(
-                          ProfileContent.musicWave,
-                          width: 62,
-                          height: 44,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 13,
                         ),
                       ),
                       const SizedBox(
                         height: 16,
                       ),
-                      const SizedBox(
-                        width: 205,
-                        child: _MusicControls(),
+                      AnimatedSwitcher(
+                        duration: const Duration(
+                          milliseconds: 300,
+                        ),
+                        child: Text(
+                          quote,
+                          key: ValueKey(
+                            quote,
+                          ),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            height: 1.4,
+                          ),
+                        ),
                       ),
                       const Spacer(
-                        flex: 3,
+                        flex: 2,
                       ),
-                      const _SocialLinks(),
+                      // AUDIO VISUALIZER
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: _AudioVisualizer(
+                          isPlaying: isPlaying,
+                          barHeight: 32,
+                        ),
+                      ),
                       const SizedBox(
-                        height: 4,
+                        height: 12,
+                      ),
+                      // MUSIC CONTROLS (Ukurannya dikecilkan khusus Mobile)
+                      SizedBox(
+                        width: 150,
+                        child: _MusicControls(
+                          isPlaying: isPlaying,
+                          onPrev: onPrev,
+                          onPlay: onPlay,
+                          onNext: onNext,
+                          size: 44,
+                        ),
+                      ),
+                      const Spacer(
+                        flex: 1,
+                      ),
+                      // SOCIAL LINKS (Ukurannya dikecilkan khusus Mobile)
+                      const _SocialLinks(
+                        size: 46,
                       ),
                     ],
                   ),
                 ),
+                // HEADPHONE ICON
                 Positioned(
-                  right: 14,
-                  bottom: 14,
-                  child: _buildAssetImage(
-                    ProfileContent.headphones,
-                    width: 44,
-                    height: 44,
+                  right: 16,
+                  bottom: 16,
+                  child: Opacity(
+                    opacity: 0.3,
+                    child: _buildAssetImage(
+                      ProfileContent.headphones,
+                      width: 32,
+                      height: 32,
+                    ),
                   ),
                 ),
               ],
@@ -637,8 +750,10 @@ class _MobileCard
 class _ProfileDetails
     extends
         StatelessWidget {
-  const _ProfileDetails({required this.height});
   final double height;
+  final String quote;
+
+  const _ProfileDetails({required this.height, required this.quote});
 
   @override
   Widget
@@ -673,22 +788,60 @@ class _ProfileDetails
             height *
             .035,
       ),
-      const Text(
-        ProfileContent.quote,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+      AnimatedSwitcher(
+        duration: const Duration(
+          milliseconds: 300,
+        ),
+        transitionBuilder:
+            (
+              child,
+              animation,
+            ) => FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position:
+                    Tween<
+                          Offset
+                        >(
+                          begin: const Offset(
+                            0,
+                            0.2,
+                          ),
+                          end: Offset.zero,
+                        )
+                        .animate(
+                          animation,
+                        ),
+                child: child,
+              ),
+            ),
+        child: Text(
+          quote,
+          key: ValueKey(
+            quote,
+          ),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     ],
   );
 }
 
+// ==========================================
+// MUSIC CONTROLS (DENGAN PARAMETER SIZE)
+// ==========================================
 class _MusicControls
     extends
         StatelessWidget {
-  const _MusicControls();
+  final bool isPlaying;
+  final VoidCallback onPrev, onPlay, onNext;
+  final double size;
+
+  const _MusicControls({required this.isPlaying, required this.onPrev, required this.onPlay, required this.onNext, required this.size});
 
   @override
   Widget
@@ -697,29 +850,89 @@ class _MusicControls
   ) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      _buildAssetImage(
-        ProfileContent.previous,
-        width: 72,
-        height: 64,
+      HoverScale(
+        onTap: onPrev,
+        child: _buildAssetImage(
+          ProfileContent.previous,
+          width:
+              size *
+              1.1,
+          height: size,
+        ),
       ),
-      _buildAssetImage(
-        ProfileContent.play,
-        width: 66,
-        height: 66,
+      HoverScale(
+        onTap: onPlay,
+        child: AnimatedContainer(
+          duration: const Duration(
+            milliseconds: 300,
+          ),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: isPlaying
+                ? [
+                    const BoxShadow(
+                      color: Color(
+                        0x66E8002D,
+                      ),
+                      blurRadius: 20,
+                      spreadRadius: 5,
+                    ),
+                  ]
+                : [],
+          ),
+          child: Image.asset(
+            ProfileContent.play,
+            width: size,
+            height: size,
+            color: isPlaying
+                ? const Color(
+                    0xFFE8002D,
+                  )
+                : null,
+          ),
+        ),
       ),
-      _buildAssetImage(
-        ProfileContent.next,
-        width: 72,
-        height: 64,
+      HoverScale(
+        onTap: onNext,
+        child: _buildAssetImage(
+          ProfileContent.next,
+          width:
+              size *
+              1.1,
+          height: size,
+        ),
       ),
     ],
   );
 }
 
+// ==========================================
+// TAUTAN SOSIAL MEDIA (DENGAN PARAMETER SIZE)
+// ==========================================
 class _SocialLinks
     extends
         StatelessWidget {
-  const _SocialLinks();
+  final double size;
+
+  const _SocialLinks({required this.size});
+
+  Future<
+    void
+  >
+  _launchUrl(
+    String urlString,
+  ) async {
+    final Uri url = Uri.parse(
+      urlString,
+    );
+    if (!await launchUrl(
+      url,
+    )) {
+      debugPrint(
+        'Could not launch $url',
+      );
+    }
+  }
 
   @override
   Widget
@@ -729,21 +942,38 @@ class _SocialLinks
     children: [
       _SocialIcon(
         asset: ProfileContent.instagram,
-        size: 82,
+        size: size,
+        onTap: () => _launchUrl(
+          'https://www.instagram.com/l.qushai_/',
+        ),
       ),
-      const SizedBox(
-        width: 30,
+      SizedBox(
+        width:
+            size *
+            0.35,
       ),
       _SocialIcon(
         asset: ProfileContent.tiktok,
-        size: 78,
+        size:
+            size *
+            0.95, // Sedikit lebih kecil menyesuaikan proporsi aslinya
+        onTap: () => _launchUrl(
+          'https://www.tiktok.com/@ray_mond_ay',
+        ),
       ),
-      const SizedBox(
-        width: 30,
+      SizedBox(
+        width:
+            size *
+            0.35,
       ),
       _SocialIcon(
         asset: ProfileContent.github,
-        size: 78,
+        size:
+            size *
+            0.95, // Sedikit lebih kecil menyesuaikan proporsi aslinya
+        onTap: () => _launchUrl(
+          'https://github.com/leeviray',
+        ),
       ),
     ],
   );
@@ -752,22 +982,26 @@ class _SocialLinks
 class _SocialIcon
     extends
         StatelessWidget {
-  const _SocialIcon({required this.asset, required this.size});
   final String asset;
   final double size;
+  final VoidCallback? onTap;
+
+  const _SocialIcon({required this.asset, required this.size, this.onTap});
 
   @override
   Widget
   build(
     BuildContext context,
-  ) => _buildAssetImage(
-    asset,
-    width: size,
-    height: size,
+  ) => HoverScale(
+    onTap: onTap,
+    child: _buildAssetImage(
+      asset,
+      width: size,
+      height: size,
+    ),
   );
 }
 
-// Fungsi pembantu agar aplikasi tidak crash jika aset belum di-copy ke folder
 Widget
 _buildAssetImage(
   String assetPath, {
@@ -800,4 +1034,194 @@ _buildAssetImage(
           ),
         ),
   );
+}
+
+// ==========================================
+// WIDGET AUDIO VISUALIZER
+// ==========================================
+class _AudioVisualizer
+    extends
+        StatefulWidget {
+  final bool isPlaying;
+  final double barHeight;
+
+  const _AudioVisualizer({required this.isPlaying, required this.barHeight});
+
+  @override
+  State<
+    _AudioVisualizer
+  >
+  createState() => _AudioVisualizerState();
+}
+
+class _AudioVisualizerState
+    extends
+        State<
+          _AudioVisualizer
+        >
+    with
+        TickerProviderStateMixin {
+  late List<
+    AnimationController
+  >
+  _controllers;
+  late List<
+    Animation<
+      double
+    >
+  >
+  _animations;
+
+  @override
+  void initState() {
+    super.initState();
+    final random = math.Random();
+    _controllers = List.generate(
+      5,
+      (
+        index,
+      ) {
+        return AnimationController(
+          vsync: this,
+          duration: Duration(
+            milliseconds:
+                250 +
+                random.nextInt(
+                  250,
+                ),
+          ),
+        );
+      },
+    );
+
+    _animations = _controllers
+        .map(
+          (
+            c,
+          ) =>
+              Tween<
+                    double
+                  >(
+                    begin: 0.2,
+                    end: 1.0,
+                  )
+                  .animate(
+                    CurvedAnimation(
+                      parent: c,
+                      curve: Curves.easeInOut,
+                    ),
+                  ),
+        )
+        .toList();
+
+    if (widget.isPlaying) {
+      _startAnimating();
+    }
+  }
+
+  void _startAnimating() {
+    for (var c in _controllers) {
+      c.repeat(
+        reverse: true,
+      );
+    }
+  }
+
+  void _stopAnimating() {
+    for (var c in _controllers) {
+      c.animateTo(
+        0.2,
+        duration: const Duration(
+          milliseconds: 400,
+        ),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  @override
+  void didUpdateWidget(
+    _AudioVisualizer oldWidget,
+  ) {
+    super.didUpdateWidget(
+      oldWidget,
+    );
+    if (widget.isPlaying !=
+        oldWidget.isPlaying) {
+      if (widget.isPlaying) {
+        _startAnimating();
+      } else {
+        _stopAnimating();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    for (var c in _controllers) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    return SizedBox(
+      height: widget.barHeight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: List.generate(
+          5,
+          (
+            index,
+          ) {
+            return AnimatedBuilder(
+              animation: _animations[index],
+              builder:
+                  (
+                    context,
+                    child,
+                  ) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 2.5,
+                      ),
+                      width: 6,
+                      height:
+                          widget.barHeight *
+                          _animations[index].value,
+                      decoration: BoxDecoration(
+                        color: widget.isPlaying
+                            ? const Color(
+                                0xFFE8002D,
+                              )
+                            : Colors.white.withOpacity(
+                                0.5,
+                              ),
+                        borderRadius: BorderRadius.circular(
+                          3,
+                        ),
+                        boxShadow: widget.isPlaying
+                            ? [
+                                const BoxShadow(
+                                  color: Color(
+                                    0x66E8002D,
+                                  ),
+                                  blurRadius: 4,
+                                  spreadRadius: 1,
+                                ),
+                              ]
+                            : [],
+                      ),
+                    );
+                  },
+            );
+          },
+        ),
+      ),
+    );
+  }
 }

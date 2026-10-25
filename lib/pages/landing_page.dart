@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drayve/data/data.dart';
 import 'package:drayve/widgets/driver_card.dart';
 import 'package:drayve/widgets/animated_background.dart';
@@ -10,7 +14,7 @@ import 'package:drayve/models/statistik.dart';
 import 'package:drayve/pages/aboutme_page.dart';
 import 'package:drayve/pages/login_signup_page.dart';
 import 'package:drayve/pages/profile_page.dart';
-import 'package:drayve/data/auth_state.dart'; // IMPORT GLOBAL STATE
+import 'package:drayve/data/auth_state.dart';
 
 class LandingPage
     extends
@@ -33,6 +37,9 @@ class _LandingPageState
   String _selectedTeam = 'All';
   String _searchQuery = '';
   String? _hoveredMenu;
+
+  // STATE BARU UNTUK DROPDOWN MOBILE
+  bool _isMobileMenuOpen = false;
 
   final Set<
     String
@@ -86,6 +93,7 @@ class _LandingPageState
       _selectedTeam = 'All';
       _searchQuery = '';
       _searchController.clear();
+      _isMobileMenuOpen = false; // Tutup menu saat reload
     });
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
@@ -111,7 +119,6 @@ class _LandingPageState
       ),
     );
 
-    // Perbarui tampilan menggunakan Global State
     if (result ==
             true &&
         mounted) {
@@ -210,125 +217,223 @@ class _LandingPageState
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.black,
-      endDrawer: _buildMobileDrawer(),
+      // endDrawer dihapus sepenuhnya
       body: Stack(
         children: [
-          // Background animasi interaktif: gradasi bergerak + glow kursor + parallax
-          Positioned.fill(
-            child: const AnimatedBackground(),
+          const Positioned.fill(
+            child: AnimatedBackground(),
           ),
-
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- NAVBAR ---
                 _buildTopNavbar(
                   isMobile,
                   hPadding,
                   vPadding,
                 ),
 
-                // --- CONTENT AREA ---
+                // AREA KONTEN & DROPDOWN
                 Expanded(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(
-                      milliseconds: 320,
-                    ),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
-                    child:
-                        _activeMenu ==
-                            'About'
-                        ? SingleChildScrollView(
-                            key: const ValueKey(
-                              'about_view',
-                            ),
-                            controller: _scrollController,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: hPadding,
-                              vertical: 12.0,
-                            ),
-                            child: const AboutMePage(),
-                          )
-                        : CustomScrollView(
-                            key: ValueKey(
-                              'drivers_view_$_activeMenu',
-                            ),
-                            controller: _scrollController,
-                            slivers: [
-                              SliverPadding(
-                                padding: EdgeInsets.fromLTRB(
-                                  hPadding,
-                                  16.0,
-                                  hPadding,
-                                  8.0,
+                  child: Stack(
+                    children: [
+                      // 1. KONTEN HALAMAN
+                      AnimatedSwitcher(
+                        duration: const Duration(
+                          milliseconds: 320,
+                        ),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        child:
+                            _activeMenu ==
+                                'About'
+                            ? SingleChildScrollView(
+                                key: const ValueKey(
+                                  'about_view',
                                 ),
-                                sliver: SliverToBoxAdapter(
-                                  child: _buildHeroAndFilters(
-                                    isMobile,
-                                    displayedDrivers.length,
+                                controller: _scrollController,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: hPadding,
+                                  vertical: 12.0,
+                                ),
+                                child: const AboutMePage(),
+                              )
+                            : CustomScrollView(
+                                key: ValueKey(
+                                  'drivers_view_$_activeMenu',
+                                ),
+                                controller: _scrollController,
+                                slivers: [
+                                  SliverPadding(
+                                    padding: EdgeInsets.fromLTRB(
+                                      hPadding,
+                                      16.0,
+                                      hPadding,
+                                      8.0,
+                                    ),
+                                    sliver: SliverToBoxAdapter(
+                                      child: _buildHeroAndFilters(
+                                        isMobile,
+                                        displayedDrivers.length,
+                                      ),
+                                    ),
+                                  ),
+                                  if (displayedDrivers.isEmpty)
+                                    SliverFillRemaining(
+                                      hasScrollBody: false,
+                                      child: _buildEmptyState(),
+                                    )
+                                  else
+                                    SliverPadding(
+                                      padding: EdgeInsets.fromLTRB(
+                                        hPadding,
+                                        8.0,
+                                        hPadding,
+                                        48.0,
+                                      ),
+                                      sliver: SliverGrid(
+                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: crossAxisCount,
+                                          crossAxisSpacing: isMobile
+                                              ? 16
+                                              : 24,
+                                          mainAxisSpacing: isMobile
+                                              ? 16
+                                              : 24,
+                                          childAspectRatio: cardAspectRatio,
+                                        ),
+                                        delegate: SliverChildBuilderDelegate(
+                                          (
+                                            context,
+                                            index,
+                                          ) {
+                                            final currentDriver = displayedDrivers[index];
+                                            return RevealOnce(
+                                              key: ValueKey(
+                                                currentDriver.id,
+                                              ),
+                                              id: 'card_${currentDriver.id}',
+                                              delay: Duration(
+                                                milliseconds:
+                                                    (index %
+                                                        6) *
+                                                    55,
+                                              ),
+                                              child: DriverCard(
+                                                driver: currentDriver,
+                                                isFavorite: _favoriteDrivers.contains(
+                                                  currentDriver.nama,
+                                                ),
+                                                onFavoriteToggle: () => _toggleFavorite(
+                                                  currentDriver,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          childCount: displayedDrivers.length,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                      ),
+
+                      // 2. OVERLAY GELAP (KLIK UNTUK TUTUP MENU)
+                      if (isMobile)
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            ignoring: !_isMobileMenuOpen,
+                            child: GestureDetector(
+                              onTap: () => setState(
+                                () => _isMobileMenuOpen = false,
+                              ),
+                              child: AnimatedOpacity(
+                                duration: const Duration(
+                                  milliseconds: 300,
+                                ),
+                                opacity: _isMobileMenuOpen
+                                    ? 1.0
+                                    : 0.0,
+                                child: Container(
+                                  color: Colors.black.withOpacity(
+                                    0.6,
                                   ),
                                 ),
                               ),
-                              if (displayedDrivers.isEmpty)
-                                SliverFillRemaining(
-                                  hasScrollBody: false,
-                                  child: _buildEmptyState(),
-                                )
-                              else
-                                SliverPadding(
-                                  padding: EdgeInsets.fromLTRB(
-                                    hPadding,
-                                    8.0,
-                                    hPadding,
-                                    48.0,
-                                  ),
-                                  sliver: SliverGrid(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: crossAxisCount,
-                                      crossAxisSpacing: isMobile
-                                          ? 16
-                                          : 24,
-                                      mainAxisSpacing: isMobile
-                                          ? 16
-                                          : 24,
-                                      childAspectRatio: cardAspectRatio,
+                            ),
+                          ),
+                        ),
+
+                      // 3. ANIMATED DROPDOWN MENU
+                      if (isMobile)
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: ClipRect(
+                            child: AnimatedContainer(
+                              duration: const Duration(
+                                milliseconds: 350,
+                              ),
+                              curve: Curves.easeOutCubic,
+                              height: _isMobileMenuOpen
+                                  ? 210.0
+                                  : 0.0,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color:
+                                    const Color(
+                                      0xFF15151E,
+                                    ).withOpacity(
+                                      0.98,
                                     ),
-                                    delegate: SliverChildBuilderDelegate(
-                                      (
-                                        context,
-                                        index,
-                                      ) {
-                                        final currentDriver = displayedDrivers[index];
-                                        return RevealOnce(
-                                          key: ValueKey(
-                                            currentDriver.id,
-                                          ),
-                                          id: 'card_${currentDriver.id}',
-                                          delay: Duration(
-                                            milliseconds:
-                                                (index %
-                                                    6) *
-                                                55,
-                                          ),
-                                          child: DriverCard(
-                                            driver: currentDriver,
-                                            isFavorite: _favoriteDrivers.contains(
-                                              currentDriver.nama,
-                                            ),
-                                            onFavoriteToggle: () => _toggleFavorite(
-                                              currentDriver,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      childCount: displayedDrivers.length,
-                                    ),
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color:
+                                        const Color(
+                                          0xFFE10600,
+                                        ).withOpacity(
+                                          0.8,
+                                        ),
+                                    width: 2,
                                   ),
                                 ),
-                            ],
+                                boxShadow: [
+                                  if (_isMobileMenuOpen)
+                                    const BoxShadow(
+                                      color: Colors.black54,
+                                      blurRadius: 15,
+                                      offset: Offset(
+                                        0,
+                                        5,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              child: SingleChildScrollView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                child: Column(
+                                  children: [
+                                    _buildDropdownItem(
+                                      'Drivers',
+                                      '',
+                                      Icons.sports_motorsports_outlined,
+                                    ),
+                                    _buildDropdownItem(
+                                      'Favorite',
+                                      'Favorite',
+                                      Icons.star_border,
+                                    ),
+                                    _buildDropdownItem(
+                                      'About',
+                                      'About',
+                                      Icons.info_outline,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
+                        ),
+                    ],
                   ),
                 ),
               ],
@@ -368,13 +473,13 @@ class _LandingPageState
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black.withValues(
-          alpha: 0.55,
+        color: Colors.black.withOpacity(
+          0.55,
         ),
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withValues(
-              alpha: 0.08,
+            color: Colors.white.withOpacity(
+              0.08,
             ),
             width: 1,
           ),
@@ -403,13 +508,63 @@ class _LandingPageState
                 ),
                 Row(
                   children: [
+                    // TOMBOL HAMBURGER DENGAN ANIMASI ROTASI
                     IconButton(
-                      icon: const Icon(
-                        Icons.menu,
-                        color: Colors.white,
-                        size: 28,
+                      icon: AnimatedSwitcher(
+                        duration: const Duration(
+                          milliseconds: 300,
+                        ),
+                        transitionBuilder:
+                            (
+                              child,
+                              anim,
+                            ) => RotationTransition(
+                              turns:
+                                  child.key ==
+                                      const ValueKey(
+                                        'close',
+                                      )
+                                  ? Tween<
+                                          double
+                                        >(
+                                          begin: 0.5,
+                                          end: 1,
+                                        )
+                                        .animate(
+                                          anim,
+                                        )
+                                  : Tween<
+                                          double
+                                        >(
+                                          begin: 0.5,
+                                          end: 1,
+                                        )
+                                        .animate(
+                                          anim,
+                                        ),
+                              child: FadeTransition(
+                                opacity: anim,
+                                child: child,
+                              ),
+                            ),
+                        child: Icon(
+                          _isMobileMenuOpen
+                              ? Icons.close
+                              : Icons.menu,
+                          key: ValueKey(
+                            _isMobileMenuOpen
+                                ? 'close'
+                                : 'menu',
+                          ),
+                          color: Colors.white,
+                          size: 28,
+                        ),
                       ),
-                      onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
+                      onPressed: () {
+                        setState(() {
+                          _isMobileMenuOpen = !_isMobileMenuOpen;
+                        });
+                      },
                     ),
                     const SizedBox(
                       width: 8,
@@ -492,6 +647,92 @@ class _LandingPageState
     );
   }
 
+  // WIDGET ITEM DROPDOWN MENU
+  Widget _buildDropdownItem(
+    String label,
+    String menuKey,
+    IconData icon,
+  ) {
+    final bool isSelected =
+        _activeMenu ==
+        menuKey;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _isMobileMenuOpen = false;
+          });
+          if (menuKey ==
+                  'Favorite' &&
+              !globalIsLoggedIn) {
+            _requireLogin();
+            return;
+          }
+          Future.delayed(
+            const Duration(
+              milliseconds: 150,
+            ),
+            () {
+              setState(() {
+                _activeMenu = menuKey;
+              });
+            },
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 20,
+          ),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.white.withOpacity(
+                  0.05,
+                ),
+              ),
+            ),
+            color: isSelected
+                ? Colors.white.withOpacity(
+                    0.05,
+                  )
+                : Colors.transparent,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isSelected
+                    ? const Color(
+                        0xFFE10600,
+                      )
+                    : Colors.white70,
+                size: 24,
+              ),
+              const SizedBox(
+                width: 16,
+              ),
+              Text(
+                label,
+                style: GoogleFonts.montserrat(
+                  color: isSelected
+                      ? Colors.white
+                      : Colors.white70,
+                  fontSize: 16,
+                  fontWeight: isSelected
+                      ? FontWeight.bold
+                      : FontWeight.w500,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildHeroAndFilters(
     bool isMobile,
     int totalShown,
@@ -543,8 +784,8 @@ class _LandingPageState
                 )
               : null,
           filled: true,
-          fillColor: Colors.white.withValues(
-            alpha: 0.08,
+          fillColor: Colors.white.withOpacity(
+            0.08,
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 14,
@@ -554,8 +795,8 @@ class _LandingPageState
               30,
             ),
             borderSide: BorderSide(
-              color: Colors.white.withValues(
-                alpha: 0.16,
+              color: Colors.white.withOpacity(
+                0.16,
               ),
             ),
           ),
@@ -582,7 +823,7 @@ class _LandingPageState
         separatorBuilder:
             (
               _,
-              _,
+              __,
             ) => const SizedBox(
               width: 8,
             ),
@@ -614,19 +855,19 @@ class _LandingPageState
                         ? const Color(
                             0xFFE10600,
                           )
-                        : Colors.white.withValues(
-                            alpha: 0.08,
+                        : Colors.white.withOpacity(
+                            0.08,
                           ),
                     borderRadius: BorderRadius.circular(
                       20,
                     ),
                     border: Border.all(
                       color: isSelected
-                          ? Colors.white.withValues(
-                              alpha: 0.65,
+                          ? Colors.white.withOpacity(
+                              0.65,
                             )
-                          : Colors.white.withValues(
-                              alpha: 0.14,
+                          : Colors.white.withOpacity(
+                              0.14,
                             ),
                       width: 1,
                     ),
@@ -667,7 +908,6 @@ class _LandingPageState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Judul & Subjudul di atas
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -726,12 +966,9 @@ class _LandingPageState
             fontWeight: FontWeight.w600,
           ),
         ),
-
         const SizedBox(
           height: 18,
         ),
-
-        // Search Bar sejajar (1 baris) dengan Filter Team di Desktop
         if (isMobile) ...[
           searchBox,
           const SizedBox(
@@ -751,7 +988,6 @@ class _LandingPageState
               ),
             ],
           ),
-
         SizedBox(
           height: isMobile
               ? 12
@@ -838,117 +1074,6 @@ class _LandingPageState
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildMobileDrawer() {
-    return Drawer(
-      backgroundColor: const Color(
-        0xFF1E2124,
-      ),
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Colors.black,
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.white24,
-                  width: 1,
-                ),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'DRAYVE',
-                  style: TextStyle(
-                    fontFamily: 'Ethnocentric',
-                    fontStyle: FontStyle.italic,
-                    fontSize: 28,
-                    color: Colors.white,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'F1 Drivers Hub Community',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          _buildDrawerItem(
-            'Drivers',
-            '',
-            Icons.sports_motorsports_outlined,
-          ),
-          _buildDrawerItem(
-            'Favorite',
-            'Favorite',
-            Icons.star_border,
-          ),
-          _buildDrawerItem(
-            'About',
-            'About',
-            Icons.info_outline,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDrawerItem(
-    String label,
-    String menuKey,
-    IconData icon,
-  ) {
-    final bool isSelected =
-        _activeMenu ==
-        menuKey;
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: isSelected
-            ? const Color(
-                0xFFE10600,
-              )
-            : Colors.white70,
-      ),
-      title: Text(
-        label,
-        style: GoogleFonts.montserrat(
-          color: isSelected
-              ? Colors.white
-              : Colors.white70,
-          fontSize: 16,
-          fontWeight: isSelected
-              ? FontWeight.bold
-              : FontWeight.w500,
-        ),
-      ),
-      onTap: () {
-        Navigator.pop(
-          context,
-        );
-        if (menuKey ==
-                'Favorite' &&
-            !globalIsLoggedIn) {
-          _requireLogin();
-          return;
-        }
-        setState(() {
-          _activeMenu = menuKey;
-        });
-      },
     );
   }
 
@@ -1043,55 +1168,108 @@ class _LandingPageState
     bool isMobile,
   ) {
     if (globalIsLoggedIn) {
-      return HoverScale(
-        onTap: () {
-          Navigator.push(
-            context,
-            DrayvePageRoute(
-              builder: (
-                context,
-              ) => const ProfilePage(),
-            ),
-          );
-        },
-        child: Container(
-          width: isMobile
-              ? 40
-              : 48,
-          height: isMobile
-              ? 40
-              : 48,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: const Color(
-                0xFFE8002D,
-              ),
-              width: 2,
-            ),
-          ),
-          child: ClipOval(
-            child: Image.asset(
-              'assets/images/default_profile.webp',
-              fit: BoxFit.cover,
-              errorBuilder:
-                  (
+      final user = FirebaseAuth.instance.currentUser;
+      return StreamBuilder<
+        DocumentSnapshot
+      >(
+        stream: FirebaseFirestore.instance
+            .collection(
+              'users',
+            )
+            .doc(
+              user?.uid,
+            )
+            .snapshots(),
+        builder:
+            (
+              context,
+              snapshot,
+            ) {
+              String? photoBase64;
+              if (snapshot.hasData &&
+                  snapshot.data!.exists) {
+                final data =
+                    snapshot.data!.data()
+                        as Map<
+                          String,
+                          dynamic
+                        >?;
+                photoBase64 = data?['photoBase64'];
+              }
+
+              return HoverScale(
+                onTap: () async {
+                  await Navigator.push(
                     context,
-                    error,
-                    stackTrace,
-                  ) => Container(
-                    color: Colors.white12,
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: isMobile
-                          ? 24
-                          : 30,
+                    DrayvePageRoute(
+                      builder: (
+                        context,
+                      ) => const ProfilePage(),
+                    ),
+                  );
+                  setState(
+                    () {},
+                  );
+                },
+                child: Container(
+                  width: isMobile
+                      ? 40
+                      : 48,
+                  height: isMobile
+                      ? 40
+                      : 48,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(
+                        0xFFE8002D,
+                      ),
+                      width: 2,
                     ),
                   ),
-            ),
-          ),
-        ),
+                  child: ClipOval(
+                    child:
+                        photoBase64 !=
+                                null &&
+                            photoBase64.isNotEmpty
+                        ? Image.memory(
+                            base64Decode(
+                              photoBase64,
+                            ),
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (
+                                  context,
+                                  error,
+                                  stackTrace,
+                                ) => Image.asset(
+                                  'assets/images/default_profile.webp',
+                                  fit: BoxFit.cover,
+                                ),
+                          )
+                        : Image.asset(
+                            'assets/images/default_profile.webp',
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (
+                                  context,
+                                  error,
+                                  stackTrace,
+                                ) => Container(
+                                  color: Colors.white12,
+                                  child: Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                    size: isMobile
+                                        ? 24
+                                        : 30,
+                                  ),
+                                ),
+                          ),
+                  ),
+                ),
+              );
+            },
       );
     } else {
       return HoverScale(

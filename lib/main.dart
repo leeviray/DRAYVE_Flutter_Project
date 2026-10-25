@@ -5,7 +5,10 @@ import 'styles/colors.dart';
 import 'pages/splash_screen.dart';
 import 'firebase_options.dart';
 
-Future<void> main() async {
+Future<
+  void
+>
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -15,11 +18,15 @@ Future<void> main() async {
   );
 }
 
-class DrayveApp extends StatelessWidget {
+class DrayveApp
+    extends
+        StatelessWidget {
   const DrayveApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return MaterialApp(
       title: 'DRAYVE - F1 Drivers Hub',
       debugShowCheckedModeBanner: false,

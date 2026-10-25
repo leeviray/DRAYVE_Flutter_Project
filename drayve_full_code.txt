@@ -18,6 +18,9 @@ dependencies:
   firebase_core: ^4.15.0
   firebase_auth: ^6.7.0
   cloud_firestore: ^6.10.0
+  image_picker: ^1.2.4
+  firebase_storage: ^13.6.1
+  url_launcher: ^6.3.3
 
 dev_dependencies:
   flutter_test:
@@ -1986,21 +1989,23 @@ class Statistik
 }
 ====== FILE: C:\Users\leevi\flutter_lab\DRAYVE\lib\pages\aboutme_page.dart ======
 import 'dart:ui';
+import 'dart:math'
+    as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:drayve/widgets/interactive.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // ==========================================
-// DATA & LAYOUT PROFIL (DARI REFERENSI BARU)
+// DATA & LAYOUT PROFIL
 // ==========================================
 class ProfileContent {
   static const name = 'LEEVI QUSHAI\nRAY IFTIKHAR';
   static const email = '25051204390@mhs.unesa.ac.id';
-  static const quote = 'â€œOrang Biasa Masih Butuh Banyak Belajarâ€';
 
   static const background = 'assets/images/background.webp';
   static const portrait = 'assets/images/profile_cutout.webp';
-  static const musicWave = 'assets/icons/arcticons_music-party.webp';
   static const previous = 'assets/icons/arcticons_music-speed-changer-1.webp';
   static const play = 'assets/icons/arcticons_booming-music.webp';
   static const next = 'assets/icons/arcticons_music-speed-changer.webp';
@@ -2036,9 +2041,6 @@ class AboutMePage
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // ==========================================
-        // 1. BAGIAN: TENTANG APLIKASI
-        // ==========================================
         const SizedBox(
           height: 40,
         ),
@@ -2145,25 +2147,21 @@ class AboutMePage
               const SizedBox(
                 height: 12,
               ),
-
               _buildFeatureItem(
                 Icons.language,
                 "1. Responsive Landing Page",
                 "Saat aplikasi dibuka, user baik dari layar HP maupun layar lebar Laptop akan langsung disambut oleh deretan kartu pembalap F1 musim 2026. Tampilannya otomatis menyesuaikan ukuran layar agar selalu terlihat proporsional dan rapi.",
               ),
-
               _buildFeatureItem(
                 Icons.dashboard_customize,
                 "2. Detail Page Pembalap",
                 "Ketika pengguna mengklik salah satu pembalap, mereka akan masuk ke halaman profil khusus. Di sini terdapat empat bagian utama:\n\nâ€¢ Statistics & Biography: Menyajikan rekam jejak, poin, posisi klasemen, hingga kisah perjalanan karier sang pembalap.\nâ€¢ Latest Post & Fan Discussion: DRAYVE bukan sekadar aplikasi penyedia data, melainkan platform sosial. Pengguna bisa melihat update postingan terbaru pembalap dan masuk ke ruang obrolan langsung untuk berdiskusi dengan sesama penggemar.",
               ),
-
               _buildFeatureItem(
                 Icons.security,
                 "3. Interaksi Cerdas & Animasi Login",
                 "Aplikasi ini menggunakan konsep \"Try before you buy\". Siapa pun bisa masuk dan membaca informasi di dalamnya. Namun, ketika pengguna ingin mulai berinteraksi seperti memberi Like pada postingan, mengirim Comment, atau menambahkan pembalap ke daftar Favorite mereka sistem akan dengan cerdas menyela dan mengarahkan mereka untuk masuk/daftar (Login/SignUp).",
               ),
-
               _buildFeatureItem(
                 Icons.manage_accounts,
                 "4. Manajemen Profil Pribadi",
@@ -2184,9 +2182,6 @@ class AboutMePage
           height: 40,
         ),
 
-        // ==========================================
-        // 2. BAGIAN: TENTANG PEMBUAT (CREATED BY)
-        // ==========================================
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -2204,70 +2199,7 @@ class AboutMePage
           height: 24,
         ),
 
-        // KARTU GLASSMORPHISM PROFIL
-        LayoutBuilder(
-          builder:
-              (
-                context,
-                constraints,
-              ) {
-                final isWide =
-                    constraints.maxWidth >=
-                    760;
-                return SizedBox(
-                  height: isWide
-                      ? 500
-                      : 700,
-                  width: double.infinity,
-                  child: Stack(
-                    clipBehavior: Clip.hardEdge,
-                    fit: StackFit.expand,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                          48,
-                        ),
-                        child: Image.asset(
-                          ProfileContent.background,
-                          fit: BoxFit.cover,
-                          errorBuilder:
-                              (
-                                context,
-                                error,
-                                stackTrace,
-                              ) => Container(
-                                color: const Color(
-                                  0xFF2A2D34,
-                                ),
-                              ),
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            48,
-                          ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(
-                              sigmaX: 2,
-                              sigmaY: 2,
-                            ),
-                            child: ColoredBox(
-                              color: Colors.black.withValues(
-                                alpha: .12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      isWide
-                          ? const _DesktopCard()
-                          : const _MobileCard(),
-                    ],
-                  ),
-                );
-              },
-        ),
+        const InteractiveProfileCard(),
 
         const SizedBox(
           height: 60,
@@ -2332,13 +2264,153 @@ class AboutMePage
 }
 
 // ==========================================
-// WIDGET-WIDGET PENDUKUNG (KLONING DARI SUMBER)
+// KARTU PROFIL INTERAKTIF DENGAN STATE
 // ==========================================
+class InteractiveProfileCard
+    extends
+        StatefulWidget {
+  const InteractiveProfileCard({super.key});
+
+  @override
+  State<
+    InteractiveProfileCard
+  >
+  createState() => _InteractiveProfileCardState();
+}
+
+class _InteractiveProfileCardState
+    extends
+        State<
+          InteractiveProfileCard
+        > {
+  int _currentTrack = 0;
+  bool _isPlaying = false;
+
+  final List<
+    String
+  >
+  _quotes = [
+    'â€œOrang Biasa Masih Butuh Banyak Belajarâ€',
+    'â€œJust work with itâ€',
+    'â€œLife is a choiceâ€',
+  ];
+
+  void _togglePlay() {
+    setState(() {
+      _isPlaying = !_isPlaying;
+    });
+  }
+
+  void _nextTrack() {
+    setState(() {
+      _currentTrack =
+          (_currentTrack +
+              1) %
+          _quotes.length;
+    });
+  }
+
+  void _prevTrack() {
+    setState(() {
+      _currentTrack =
+          (_currentTrack -
+              1 +
+              _quotes.length) %
+          _quotes.length;
+    });
+  }
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    return LayoutBuilder(
+      builder:
+          (
+            context,
+            constraints,
+          ) {
+            final isWide =
+                constraints.maxWidth >=
+                760;
+            return SizedBox(
+              height: isWide
+                  ? 500
+                  : 560, // Diperpendek sedikit untuk mobile
+              width: double.infinity,
+              child: Stack(
+                clipBehavior: Clip.hardEdge,
+                fit: StackFit.expand,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      48,
+                    ),
+                    child: Image.asset(
+                      ProfileContent.background,
+                      fit: BoxFit.cover,
+                      errorBuilder:
+                          (
+                            context,
+                            error,
+                            stackTrace,
+                          ) => Container(
+                            color: const Color(
+                              0xFF2A2D34,
+                            ),
+                          ),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                        48,
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 2,
+                          sigmaY: 2,
+                        ),
+                        child: ColoredBox(
+                          color: Colors.black.withOpacity(
+                            _isPlaying
+                                ? 0.3
+                                : 0.12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  isWide
+                      ? _DesktopCard(
+                          quote: _quotes[_currentTrack],
+                          isPlaying: _isPlaying,
+                          onPrev: _prevTrack,
+                          onPlay: _togglePlay,
+                          onNext: _nextTrack,
+                        )
+                      : _MobileCard(
+                          quote: _quotes[_currentTrack],
+                          isPlaying: _isPlaying,
+                          onPrev: _prevTrack,
+                          onPlay: _togglePlay,
+                          onNext: _nextTrack,
+                        ),
+                ],
+              ),
+            );
+          },
+    );
+  }
+}
+
 class _GlassCard
     extends
         StatelessWidget {
-  const _GlassCard({required this.child});
   final Widget child;
+  final bool isPlaying;
+
+  const _GlassCard({required this.child, required this.isPlaying});
 
   @override
   Widget
@@ -2357,17 +2429,26 @@ class _GlassCard
               sigmaX: 18,
               sigmaY: 18,
             ),
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(
+                milliseconds: 400,
+              ),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(
-                  alpha: .39,
-                ),
+                color: isPlaying
+                    ? const Color(
+                        0xFFE8002D,
+                      ).withOpacity(
+                        0.15,
+                      )
+                    : Colors.white.withOpacity(
+                        0.39,
+                      ),
                 borderRadius: BorderRadius.circular(
                   48,
                 ),
                 border: Border.all(
-                  color: Colors.white.withValues(
-                    alpha: .72,
+                  color: Colors.white.withOpacity(
+                    0.72,
                   ),
                   width: 1,
                 ),
@@ -2384,13 +2465,18 @@ class _GlassCard
 class _DesktopCard
     extends
         StatelessWidget {
-  const _DesktopCard();
+  final String quote;
+  final bool isPlaying;
+  final VoidCallback onPrev, onPlay, onNext;
+
+  const _DesktopCard({required this.quote, required this.isPlaying, required this.onPrev, required this.onPlay, required this.onNext});
 
   @override
   Widget
   build(
     BuildContext context,
   ) => _GlassCard(
+    isPlaying: isPlaying,
     child: LayoutBuilder(
       builder:
           (
@@ -2413,6 +2499,7 @@ class _DesktopCard
                       .46,
                   child: _ProfileDetails(
                     height: h,
+                    quote: quote,
                   ),
                 ),
                 Positioned(
@@ -2440,10 +2527,9 @@ class _DesktopCard
                   top:
                       h *
                       ProfileLayout.waveTop,
-                  child: _buildAssetImage(
-                    ProfileContent.musicWave,
-                    width: 76,
-                    height: 54,
+                  child: _AudioVisualizer(
+                    isPlaying: isPlaying,
+                    barHeight: 54,
                   ),
                 ),
                 Positioned(
@@ -2456,7 +2542,13 @@ class _DesktopCard
                   width:
                       box.maxWidth *
                       .22,
-                  child: const _MusicControls(),
+                  child: _MusicControls(
+                    isPlaying: isPlaying,
+                    onPrev: onPrev,
+                    onPlay: onPlay,
+                    onNext: onNext,
+                    size: 66,
+                  ),
                 ),
                 Positioned(
                   left:
@@ -2465,7 +2557,9 @@ class _DesktopCard
                   bottom:
                       h *
                       ProfileLayout.socialsBottom,
-                  child: const _SocialLinks(),
+                  child: const _SocialLinks(
+                    size: 78,
+                  ),
                 ),
                 Positioned(
                   right:
@@ -2490,13 +2584,18 @@ class _DesktopCard
 class _MobileCard
     extends
         StatelessWidget {
-  const _MobileCard();
+  final String quote;
+  final bool isPlaying;
+  final VoidCallback onPrev, onPlay, onNext;
+
+  const _MobileCard({required this.quote, required this.isPlaying, required this.onPrev, required this.onPlay, required this.onNext});
 
   @override
   Widget
   build(
     BuildContext context,
   ) => _GlassCard(
+    isPlaying: isPlaying,
     child: LayoutBuilder(
       builder:
           (
@@ -2504,24 +2603,21 @@ class _MobileCard
             box,
           ) {
             final height = box.maxHeight;
+            final width = box.maxWidth;
             return Stack(
               clipBehavior: Clip.none,
               children: [
+                // FOTO PROFIL (Digeser lebih ke kanan dan lebih transparan agar tidak menutupi teks)
                 Positioned(
                   right:
-                      -box.maxWidth *
-                      .18,
-                  top:
+                      -width *
+                      0.35,
+                  bottom: -20,
+                  height:
                       height *
-                      .16,
-                  bottom:
-                      height *
-                      .18,
-                  width:
-                      box.maxWidth *
-                      .83,
+                      0.85,
                   child: Opacity(
-                    opacity: .95,
+                    opacity: 0.65,
                     child: _buildAssetImage(
                       ProfileContent.portrait,
                       alignment: Alignment.bottomRight,
@@ -2530,88 +2626,108 @@ class _MobileCard
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
+                    20,
                     24,
-                    28,
-                    24,
-                    24,
+                    20,
+                    20,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Spacer(
-                        flex: 4,
+                        flex: 1,
                       ),
                       Text(
                         ProfileContent.name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize:
-                              (box.maxWidth *
-                                      .11)
+                              (width *
+                                      0.1)
                                   .clamp(
-                                    32,
-                                    64,
+                                    24.0,
+                                    36.0,
                                   ),
                           height: 1.15,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                       const SizedBox(
-                        height: 7,
+                        height: 6,
                       ),
-                      Text(
+                      const Text(
                         ProfileContent.email,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      Text(
-                        ProfileContent.quote,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                        ),
-                      ),
-                      const Spacer(
-                        flex: 2,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: _buildAssetImage(
-                          ProfileContent.musicWave,
-                          width: 62,
-                          height: 44,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 13,
                         ),
                       ),
                       const SizedBox(
                         height: 16,
                       ),
-                      const SizedBox(
-                        width: 205,
-                        child: _MusicControls(),
+                      AnimatedSwitcher(
+                        duration: const Duration(
+                          milliseconds: 300,
+                        ),
+                        child: Text(
+                          quote,
+                          key: ValueKey(
+                            quote,
+                          ),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            height: 1.4,
+                          ),
+                        ),
                       ),
                       const Spacer(
-                        flex: 3,
+                        flex: 2,
                       ),
-                      const _SocialLinks(),
+                      // AUDIO VISUALIZER
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: _AudioVisualizer(
+                          isPlaying: isPlaying,
+                          barHeight: 32,
+                        ),
+                      ),
                       const SizedBox(
-                        height: 4,
+                        height: 12,
+                      ),
+                      // MUSIC CONTROLS (Ukurannya dikecilkan khusus Mobile)
+                      SizedBox(
+                        width: 150,
+                        child: _MusicControls(
+                          isPlaying: isPlaying,
+                          onPrev: onPrev,
+                          onPlay: onPlay,
+                          onNext: onNext,
+                          size: 44,
+                        ),
+                      ),
+                      const Spacer(
+                        flex: 1,
+                      ),
+                      // SOCIAL LINKS (Ukurannya dikecilkan khusus Mobile)
+                      const _SocialLinks(
+                        size: 46,
                       ),
                     ],
                   ),
                 ),
+                // HEADPHONE ICON
                 Positioned(
-                  right: 14,
-                  bottom: 14,
-                  child: _buildAssetImage(
-                    ProfileContent.headphones,
-                    width: 44,
-                    height: 44,
+                  right: 16,
+                  bottom: 16,
+                  child: Opacity(
+                    opacity: 0.3,
+                    child: _buildAssetImage(
+                      ProfileContent.headphones,
+                      width: 32,
+                      height: 32,
+                    ),
                   ),
                 ),
               ],
@@ -2624,8 +2740,10 @@ class _MobileCard
 class _ProfileDetails
     extends
         StatelessWidget {
-  const _ProfileDetails({required this.height});
   final double height;
+  final String quote;
+
+  const _ProfileDetails({required this.height, required this.quote});
 
   @override
   Widget
@@ -2660,22 +2778,60 @@ class _ProfileDetails
             height *
             .035,
       ),
-      const Text(
-        ProfileContent.quote,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+      AnimatedSwitcher(
+        duration: const Duration(
+          milliseconds: 300,
+        ),
+        transitionBuilder:
+            (
+              child,
+              animation,
+            ) => FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position:
+                    Tween<
+                          Offset
+                        >(
+                          begin: const Offset(
+                            0,
+                            0.2,
+                          ),
+                          end: Offset.zero,
+                        )
+                        .animate(
+                          animation,
+                        ),
+                child: child,
+              ),
+            ),
+        child: Text(
+          quote,
+          key: ValueKey(
+            quote,
+          ),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     ],
   );
 }
 
+// ==========================================
+// MUSIC CONTROLS (DENGAN PARAMETER SIZE)
+// ==========================================
 class _MusicControls
     extends
         StatelessWidget {
-  const _MusicControls();
+  final bool isPlaying;
+  final VoidCallback onPrev, onPlay, onNext;
+  final double size;
+
+  const _MusicControls({required this.isPlaying, required this.onPrev, required this.onPlay, required this.onNext, required this.size});
 
   @override
   Widget
@@ -2684,29 +2840,89 @@ class _MusicControls
   ) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      _buildAssetImage(
-        ProfileContent.previous,
-        width: 72,
-        height: 64,
+      HoverScale(
+        onTap: onPrev,
+        child: _buildAssetImage(
+          ProfileContent.previous,
+          width:
+              size *
+              1.1,
+          height: size,
+        ),
       ),
-      _buildAssetImage(
-        ProfileContent.play,
-        width: 66,
-        height: 66,
+      HoverScale(
+        onTap: onPlay,
+        child: AnimatedContainer(
+          duration: const Duration(
+            milliseconds: 300,
+          ),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: isPlaying
+                ? [
+                    const BoxShadow(
+                      color: Color(
+                        0x66E8002D,
+                      ),
+                      blurRadius: 20,
+                      spreadRadius: 5,
+                    ),
+                  ]
+                : [],
+          ),
+          child: Image.asset(
+            ProfileContent.play,
+            width: size,
+            height: size,
+            color: isPlaying
+                ? const Color(
+                    0xFFE8002D,
+                  )
+                : null,
+          ),
+        ),
       ),
-      _buildAssetImage(
-        ProfileContent.next,
-        width: 72,
-        height: 64,
+      HoverScale(
+        onTap: onNext,
+        child: _buildAssetImage(
+          ProfileContent.next,
+          width:
+              size *
+              1.1,
+          height: size,
+        ),
       ),
     ],
   );
 }
 
+// ==========================================
+// TAUTAN SOSIAL MEDIA (DENGAN PARAMETER SIZE)
+// ==========================================
 class _SocialLinks
     extends
         StatelessWidget {
-  const _SocialLinks();
+  final double size;
+
+  const _SocialLinks({required this.size});
+
+  Future<
+    void
+  >
+  _launchUrl(
+    String urlString,
+  ) async {
+    final Uri url = Uri.parse(
+      urlString,
+    );
+    if (!await launchUrl(
+      url,
+    )) {
+      debugPrint(
+        'Could not launch $url',
+      );
+    }
+  }
 
   @override
   Widget
@@ -2716,21 +2932,38 @@ class _SocialLinks
     children: [
       _SocialIcon(
         asset: ProfileContent.instagram,
-        size: 82,
+        size: size,
+        onTap: () => _launchUrl(
+          'https://www.instagram.com/l.qushai_/',
+        ),
       ),
-      const SizedBox(
-        width: 30,
+      SizedBox(
+        width:
+            size *
+            0.35,
       ),
       _SocialIcon(
         asset: ProfileContent.tiktok,
-        size: 78,
+        size:
+            size *
+            0.95, // Sedikit lebih kecil menyesuaikan proporsi aslinya
+        onTap: () => _launchUrl(
+          'https://www.tiktok.com/@ray_mond_ay',
+        ),
       ),
-      const SizedBox(
-        width: 30,
+      SizedBox(
+        width:
+            size *
+            0.35,
       ),
       _SocialIcon(
         asset: ProfileContent.github,
-        size: 78,
+        size:
+            size *
+            0.95, // Sedikit lebih kecil menyesuaikan proporsi aslinya
+        onTap: () => _launchUrl(
+          'https://github.com/leeviray',
+        ),
       ),
     ],
   );
@@ -2739,22 +2972,26 @@ class _SocialLinks
 class _SocialIcon
     extends
         StatelessWidget {
-  const _SocialIcon({required this.asset, required this.size});
   final String asset;
   final double size;
+  final VoidCallback? onTap;
+
+  const _SocialIcon({required this.asset, required this.size, this.onTap});
 
   @override
   Widget
   build(
     BuildContext context,
-  ) => _buildAssetImage(
-    asset,
-    width: size,
-    height: size,
+  ) => HoverScale(
+    onTap: onTap,
+    child: _buildAssetImage(
+      asset,
+      width: size,
+      height: size,
+    ),
   );
 }
 
-// Fungsi pembantu agar aplikasi tidak crash jika aset belum di-copy ke folder
 Widget
 _buildAssetImage(
   String assetPath, {
@@ -2787,6 +3024,196 @@ _buildAssetImage(
           ),
         ),
   );
+}
+
+// ==========================================
+// WIDGET AUDIO VISUALIZER
+// ==========================================
+class _AudioVisualizer
+    extends
+        StatefulWidget {
+  final bool isPlaying;
+  final double barHeight;
+
+  const _AudioVisualizer({required this.isPlaying, required this.barHeight});
+
+  @override
+  State<
+    _AudioVisualizer
+  >
+  createState() => _AudioVisualizerState();
+}
+
+class _AudioVisualizerState
+    extends
+        State<
+          _AudioVisualizer
+        >
+    with
+        TickerProviderStateMixin {
+  late List<
+    AnimationController
+  >
+  _controllers;
+  late List<
+    Animation<
+      double
+    >
+  >
+  _animations;
+
+  @override
+  void initState() {
+    super.initState();
+    final random = math.Random();
+    _controllers = List.generate(
+      5,
+      (
+        index,
+      ) {
+        return AnimationController(
+          vsync: this,
+          duration: Duration(
+            milliseconds:
+                250 +
+                random.nextInt(
+                  250,
+                ),
+          ),
+        );
+      },
+    );
+
+    _animations = _controllers
+        .map(
+          (
+            c,
+          ) =>
+              Tween<
+                    double
+                  >(
+                    begin: 0.2,
+                    end: 1.0,
+                  )
+                  .animate(
+                    CurvedAnimation(
+                      parent: c,
+                      curve: Curves.easeInOut,
+                    ),
+                  ),
+        )
+        .toList();
+
+    if (widget.isPlaying) {
+      _startAnimating();
+    }
+  }
+
+  void _startAnimating() {
+    for (var c in _controllers) {
+      c.repeat(
+        reverse: true,
+      );
+    }
+  }
+
+  void _stopAnimating() {
+    for (var c in _controllers) {
+      c.animateTo(
+        0.2,
+        duration: const Duration(
+          milliseconds: 400,
+        ),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  @override
+  void didUpdateWidget(
+    _AudioVisualizer oldWidget,
+  ) {
+    super.didUpdateWidget(
+      oldWidget,
+    );
+    if (widget.isPlaying !=
+        oldWidget.isPlaying) {
+      if (widget.isPlaying) {
+        _startAnimating();
+      } else {
+        _stopAnimating();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    for (var c in _controllers) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    return SizedBox(
+      height: widget.barHeight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: List.generate(
+          5,
+          (
+            index,
+          ) {
+            return AnimatedBuilder(
+              animation: _animations[index],
+              builder:
+                  (
+                    context,
+                    child,
+                  ) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 2.5,
+                      ),
+                      width: 6,
+                      height:
+                          widget.barHeight *
+                          _animations[index].value,
+                      decoration: BoxDecoration(
+                        color: widget.isPlaying
+                            ? const Color(
+                                0xFFE8002D,
+                              )
+                            : Colors.white.withOpacity(
+                                0.5,
+                              ),
+                        borderRadius: BorderRadius.circular(
+                          3,
+                        ),
+                        boxShadow: widget.isPlaying
+                            ? [
+                                const BoxShadow(
+                                  color: Color(
+                                    0x66E8002D,
+                                  ),
+                                  blurRadius: 4,
+                                  spreadRadius: 1,
+                                ),
+                              ]
+                            : [],
+                      ),
+                    );
+                  },
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 ====== FILE: C:\Users\leevi\flutter_lab\DRAYVE\lib\pages\bio.dart ======
 import 'package:flutter/material.dart';
@@ -4689,8 +5116,12 @@ class _DriverDetailPageState
   }
 }
 ====== FILE: C:\Users\leevi\flutter_lab\DRAYVE\lib\pages\landing_page.dart ======
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drayve/data/data.dart';
 import 'package:drayve/widgets/driver_card.dart';
 import 'package:drayve/widgets/animated_background.dart';
@@ -4701,7 +5132,7 @@ import 'package:drayve/models/statistik.dart';
 import 'package:drayve/pages/aboutme_page.dart';
 import 'package:drayve/pages/login_signup_page.dart';
 import 'package:drayve/pages/profile_page.dart';
-import 'package:drayve/data/auth_state.dart'; // IMPORT GLOBAL STATE
+import 'package:drayve/data/auth_state.dart';
 
 class LandingPage
     extends
@@ -4724,6 +5155,9 @@ class _LandingPageState
   String _selectedTeam = 'All';
   String _searchQuery = '';
   String? _hoveredMenu;
+
+  // STATE BARU UNTUK DROPDOWN MOBILE
+  bool _isMobileMenuOpen = false;
 
   final Set<
     String
@@ -4777,6 +5211,7 @@ class _LandingPageState
       _selectedTeam = 'All';
       _searchQuery = '';
       _searchController.clear();
+      _isMobileMenuOpen = false; // Tutup menu saat reload
     });
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
@@ -4802,7 +5237,6 @@ class _LandingPageState
       ),
     );
 
-    // Perbarui tampilan menggunakan Global State
     if (result ==
             true &&
         mounted) {
@@ -4901,125 +5335,223 @@ class _LandingPageState
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.black,
-      endDrawer: _buildMobileDrawer(),
+      // endDrawer dihapus sepenuhnya
       body: Stack(
         children: [
-          // Background animasi interaktif: gradasi bergerak + glow kursor + parallax
-          Positioned.fill(
-            child: const AnimatedBackground(),
+          const Positioned.fill(
+            child: AnimatedBackground(),
           ),
-
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- NAVBAR ---
                 _buildTopNavbar(
                   isMobile,
                   hPadding,
                   vPadding,
                 ),
 
-                // --- CONTENT AREA ---
+                // AREA KONTEN & DROPDOWN
                 Expanded(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(
-                      milliseconds: 320,
-                    ),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
-                    child:
-                        _activeMenu ==
-                            'About'
-                        ? SingleChildScrollView(
-                            key: const ValueKey(
-                              'about_view',
-                            ),
-                            controller: _scrollController,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: hPadding,
-                              vertical: 12.0,
-                            ),
-                            child: const AboutMePage(),
-                          )
-                        : CustomScrollView(
-                            key: ValueKey(
-                              'drivers_view_$_activeMenu',
-                            ),
-                            controller: _scrollController,
-                            slivers: [
-                              SliverPadding(
-                                padding: EdgeInsets.fromLTRB(
-                                  hPadding,
-                                  16.0,
-                                  hPadding,
-                                  8.0,
+                  child: Stack(
+                    children: [
+                      // 1. KONTEN HALAMAN
+                      AnimatedSwitcher(
+                        duration: const Duration(
+                          milliseconds: 320,
+                        ),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        child:
+                            _activeMenu ==
+                                'About'
+                            ? SingleChildScrollView(
+                                key: const ValueKey(
+                                  'about_view',
                                 ),
-                                sliver: SliverToBoxAdapter(
-                                  child: _buildHeroAndFilters(
-                                    isMobile,
-                                    displayedDrivers.length,
+                                controller: _scrollController,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: hPadding,
+                                  vertical: 12.0,
+                                ),
+                                child: const AboutMePage(),
+                              )
+                            : CustomScrollView(
+                                key: ValueKey(
+                                  'drivers_view_$_activeMenu',
+                                ),
+                                controller: _scrollController,
+                                slivers: [
+                                  SliverPadding(
+                                    padding: EdgeInsets.fromLTRB(
+                                      hPadding,
+                                      16.0,
+                                      hPadding,
+                                      8.0,
+                                    ),
+                                    sliver: SliverToBoxAdapter(
+                                      child: _buildHeroAndFilters(
+                                        isMobile,
+                                        displayedDrivers.length,
+                                      ),
+                                    ),
+                                  ),
+                                  if (displayedDrivers.isEmpty)
+                                    SliverFillRemaining(
+                                      hasScrollBody: false,
+                                      child: _buildEmptyState(),
+                                    )
+                                  else
+                                    SliverPadding(
+                                      padding: EdgeInsets.fromLTRB(
+                                        hPadding,
+                                        8.0,
+                                        hPadding,
+                                        48.0,
+                                      ),
+                                      sliver: SliverGrid(
+                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: crossAxisCount,
+                                          crossAxisSpacing: isMobile
+                                              ? 16
+                                              : 24,
+                                          mainAxisSpacing: isMobile
+                                              ? 16
+                                              : 24,
+                                          childAspectRatio: cardAspectRatio,
+                                        ),
+                                        delegate: SliverChildBuilderDelegate(
+                                          (
+                                            context,
+                                            index,
+                                          ) {
+                                            final currentDriver = displayedDrivers[index];
+                                            return RevealOnce(
+                                              key: ValueKey(
+                                                currentDriver.id,
+                                              ),
+                                              id: 'card_${currentDriver.id}',
+                                              delay: Duration(
+                                                milliseconds:
+                                                    (index %
+                                                        6) *
+                                                    55,
+                                              ),
+                                              child: DriverCard(
+                                                driver: currentDriver,
+                                                isFavorite: _favoriteDrivers.contains(
+                                                  currentDriver.nama,
+                                                ),
+                                                onFavoriteToggle: () => _toggleFavorite(
+                                                  currentDriver,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          childCount: displayedDrivers.length,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                      ),
+
+                      // 2. OVERLAY GELAP (KLIK UNTUK TUTUP MENU)
+                      if (isMobile)
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            ignoring: !_isMobileMenuOpen,
+                            child: GestureDetector(
+                              onTap: () => setState(
+                                () => _isMobileMenuOpen = false,
+                              ),
+                              child: AnimatedOpacity(
+                                duration: const Duration(
+                                  milliseconds: 300,
+                                ),
+                                opacity: _isMobileMenuOpen
+                                    ? 1.0
+                                    : 0.0,
+                                child: Container(
+                                  color: Colors.black.withOpacity(
+                                    0.6,
                                   ),
                                 ),
                               ),
-                              if (displayedDrivers.isEmpty)
-                                SliverFillRemaining(
-                                  hasScrollBody: false,
-                                  child: _buildEmptyState(),
-                                )
-                              else
-                                SliverPadding(
-                                  padding: EdgeInsets.fromLTRB(
-                                    hPadding,
-                                    8.0,
-                                    hPadding,
-                                    48.0,
-                                  ),
-                                  sliver: SliverGrid(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: crossAxisCount,
-                                      crossAxisSpacing: isMobile
-                                          ? 16
-                                          : 24,
-                                      mainAxisSpacing: isMobile
-                                          ? 16
-                                          : 24,
-                                      childAspectRatio: cardAspectRatio,
+                            ),
+                          ),
+                        ),
+
+                      // 3. ANIMATED DROPDOWN MENU
+                      if (isMobile)
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: ClipRect(
+                            child: AnimatedContainer(
+                              duration: const Duration(
+                                milliseconds: 350,
+                              ),
+                              curve: Curves.easeOutCubic,
+                              height: _isMobileMenuOpen
+                                  ? 210.0
+                                  : 0.0,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color:
+                                    const Color(
+                                      0xFF15151E,
+                                    ).withOpacity(
+                                      0.98,
                                     ),
-                                    delegate: SliverChildBuilderDelegate(
-                                      (
-                                        context,
-                                        index,
-                                      ) {
-                                        final currentDriver = displayedDrivers[index];
-                                        return RevealOnce(
-                                          key: ValueKey(
-                                            currentDriver.id,
-                                          ),
-                                          id: 'card_${currentDriver.id}',
-                                          delay: Duration(
-                                            milliseconds:
-                                                (index %
-                                                    6) *
-                                                55,
-                                          ),
-                                          child: DriverCard(
-                                            driver: currentDriver,
-                                            isFavorite: _favoriteDrivers.contains(
-                                              currentDriver.nama,
-                                            ),
-                                            onFavoriteToggle: () => _toggleFavorite(
-                                              currentDriver,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      childCount: displayedDrivers.length,
-                                    ),
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color:
+                                        const Color(
+                                          0xFFE10600,
+                                        ).withOpacity(
+                                          0.8,
+                                        ),
+                                    width: 2,
                                   ),
                                 ),
-                            ],
+                                boxShadow: [
+                                  if (_isMobileMenuOpen)
+                                    const BoxShadow(
+                                      color: Colors.black54,
+                                      blurRadius: 15,
+                                      offset: Offset(
+                                        0,
+                                        5,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              child: SingleChildScrollView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                child: Column(
+                                  children: [
+                                    _buildDropdownItem(
+                                      'Drivers',
+                                      '',
+                                      Icons.sports_motorsports_outlined,
+                                    ),
+                                    _buildDropdownItem(
+                                      'Favorite',
+                                      'Favorite',
+                                      Icons.star_border,
+                                    ),
+                                    _buildDropdownItem(
+                                      'About',
+                                      'About',
+                                      Icons.info_outline,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
+                        ),
+                    ],
                   ),
                 ),
               ],
@@ -5059,13 +5591,13 @@ class _LandingPageState
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black.withValues(
-          alpha: 0.55,
+        color: Colors.black.withOpacity(
+          0.55,
         ),
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withValues(
-              alpha: 0.08,
+            color: Colors.white.withOpacity(
+              0.08,
             ),
             width: 1,
           ),
@@ -5094,13 +5626,63 @@ class _LandingPageState
                 ),
                 Row(
                   children: [
+                    // TOMBOL HAMBURGER DENGAN ANIMASI ROTASI
                     IconButton(
-                      icon: const Icon(
-                        Icons.menu,
-                        color: Colors.white,
-                        size: 28,
+                      icon: AnimatedSwitcher(
+                        duration: const Duration(
+                          milliseconds: 300,
+                        ),
+                        transitionBuilder:
+                            (
+                              child,
+                              anim,
+                            ) => RotationTransition(
+                              turns:
+                                  child.key ==
+                                      const ValueKey(
+                                        'close',
+                                      )
+                                  ? Tween<
+                                          double
+                                        >(
+                                          begin: 0.5,
+                                          end: 1,
+                                        )
+                                        .animate(
+                                          anim,
+                                        )
+                                  : Tween<
+                                          double
+                                        >(
+                                          begin: 0.5,
+                                          end: 1,
+                                        )
+                                        .animate(
+                                          anim,
+                                        ),
+                              child: FadeTransition(
+                                opacity: anim,
+                                child: child,
+                              ),
+                            ),
+                        child: Icon(
+                          _isMobileMenuOpen
+                              ? Icons.close
+                              : Icons.menu,
+                          key: ValueKey(
+                            _isMobileMenuOpen
+                                ? 'close'
+                                : 'menu',
+                          ),
+                          color: Colors.white,
+                          size: 28,
+                        ),
                       ),
-                      onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
+                      onPressed: () {
+                        setState(() {
+                          _isMobileMenuOpen = !_isMobileMenuOpen;
+                        });
+                      },
                     ),
                     const SizedBox(
                       width: 8,
@@ -5183,6 +5765,92 @@ class _LandingPageState
     );
   }
 
+  // WIDGET ITEM DROPDOWN MENU
+  Widget _buildDropdownItem(
+    String label,
+    String menuKey,
+    IconData icon,
+  ) {
+    final bool isSelected =
+        _activeMenu ==
+        menuKey;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _isMobileMenuOpen = false;
+          });
+          if (menuKey ==
+                  'Favorite' &&
+              !globalIsLoggedIn) {
+            _requireLogin();
+            return;
+          }
+          Future.delayed(
+            const Duration(
+              milliseconds: 150,
+            ),
+            () {
+              setState(() {
+                _activeMenu = menuKey;
+              });
+            },
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 20,
+          ),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.white.withOpacity(
+                  0.05,
+                ),
+              ),
+            ),
+            color: isSelected
+                ? Colors.white.withOpacity(
+                    0.05,
+                  )
+                : Colors.transparent,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isSelected
+                    ? const Color(
+                        0xFFE10600,
+                      )
+                    : Colors.white70,
+                size: 24,
+              ),
+              const SizedBox(
+                width: 16,
+              ),
+              Text(
+                label,
+                style: GoogleFonts.montserrat(
+                  color: isSelected
+                      ? Colors.white
+                      : Colors.white70,
+                  fontSize: 16,
+                  fontWeight: isSelected
+                      ? FontWeight.bold
+                      : FontWeight.w500,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildHeroAndFilters(
     bool isMobile,
     int totalShown,
@@ -5234,8 +5902,8 @@ class _LandingPageState
                 )
               : null,
           filled: true,
-          fillColor: Colors.white.withValues(
-            alpha: 0.08,
+          fillColor: Colors.white.withOpacity(
+            0.08,
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 14,
@@ -5245,8 +5913,8 @@ class _LandingPageState
               30,
             ),
             borderSide: BorderSide(
-              color: Colors.white.withValues(
-                alpha: 0.16,
+              color: Colors.white.withOpacity(
+                0.16,
               ),
             ),
           ),
@@ -5273,7 +5941,7 @@ class _LandingPageState
         separatorBuilder:
             (
               _,
-              _,
+              __,
             ) => const SizedBox(
               width: 8,
             ),
@@ -5305,19 +5973,19 @@ class _LandingPageState
                         ? const Color(
                             0xFFE10600,
                           )
-                        : Colors.white.withValues(
-                            alpha: 0.08,
+                        : Colors.white.withOpacity(
+                            0.08,
                           ),
                     borderRadius: BorderRadius.circular(
                       20,
                     ),
                     border: Border.all(
                       color: isSelected
-                          ? Colors.white.withValues(
-                              alpha: 0.65,
+                          ? Colors.white.withOpacity(
+                              0.65,
                             )
-                          : Colors.white.withValues(
-                              alpha: 0.14,
+                          : Colors.white.withOpacity(
+                              0.14,
                             ),
                       width: 1,
                     ),
@@ -5358,7 +6026,6 @@ class _LandingPageState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Judul & Subjudul di atas
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -5417,12 +6084,9 @@ class _LandingPageState
             fontWeight: FontWeight.w600,
           ),
         ),
-
         const SizedBox(
           height: 18,
         ),
-
-        // Search Bar sejajar (1 baris) dengan Filter Team di Desktop
         if (isMobile) ...[
           searchBox,
           const SizedBox(
@@ -5442,7 +6106,6 @@ class _LandingPageState
               ),
             ],
           ),
-
         SizedBox(
           height: isMobile
               ? 12
@@ -5529,117 +6192,6 @@ class _LandingPageState
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildMobileDrawer() {
-    return Drawer(
-      backgroundColor: const Color(
-        0xFF1E2124,
-      ),
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Colors.black,
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.white24,
-                  width: 1,
-                ),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'DRAYVE',
-                  style: TextStyle(
-                    fontFamily: 'Ethnocentric',
-                    fontStyle: FontStyle.italic,
-                    fontSize: 28,
-                    color: Colors.white,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'F1 Drivers Hub Community',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          _buildDrawerItem(
-            'Drivers',
-            '',
-            Icons.sports_motorsports_outlined,
-          ),
-          _buildDrawerItem(
-            'Favorite',
-            'Favorite',
-            Icons.star_border,
-          ),
-          _buildDrawerItem(
-            'About',
-            'About',
-            Icons.info_outline,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDrawerItem(
-    String label,
-    String menuKey,
-    IconData icon,
-  ) {
-    final bool isSelected =
-        _activeMenu ==
-        menuKey;
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: isSelected
-            ? const Color(
-                0xFFE10600,
-              )
-            : Colors.white70,
-      ),
-      title: Text(
-        label,
-        style: GoogleFonts.montserrat(
-          color: isSelected
-              ? Colors.white
-              : Colors.white70,
-          fontSize: 16,
-          fontWeight: isSelected
-              ? FontWeight.bold
-              : FontWeight.w500,
-        ),
-      ),
-      onTap: () {
-        Navigator.pop(
-          context,
-        );
-        if (menuKey ==
-                'Favorite' &&
-            !globalIsLoggedIn) {
-          _requireLogin();
-          return;
-        }
-        setState(() {
-          _activeMenu = menuKey;
-        });
-      },
     );
   }
 
@@ -5734,55 +6286,108 @@ class _LandingPageState
     bool isMobile,
   ) {
     if (globalIsLoggedIn) {
-      return HoverScale(
-        onTap: () {
-          Navigator.push(
-            context,
-            DrayvePageRoute(
-              builder: (
-                context,
-              ) => const ProfilePage(),
-            ),
-          );
-        },
-        child: Container(
-          width: isMobile
-              ? 40
-              : 48,
-          height: isMobile
-              ? 40
-              : 48,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: const Color(
-                0xFFE8002D,
-              ),
-              width: 2,
-            ),
-          ),
-          child: ClipOval(
-            child: Image.asset(
-              'assets/images/default_profile.webp',
-              fit: BoxFit.cover,
-              errorBuilder:
-                  (
+      final user = FirebaseAuth.instance.currentUser;
+      return StreamBuilder<
+        DocumentSnapshot
+      >(
+        stream: FirebaseFirestore.instance
+            .collection(
+              'users',
+            )
+            .doc(
+              user?.uid,
+            )
+            .snapshots(),
+        builder:
+            (
+              context,
+              snapshot,
+            ) {
+              String? photoBase64;
+              if (snapshot.hasData &&
+                  snapshot.data!.exists) {
+                final data =
+                    snapshot.data!.data()
+                        as Map<
+                          String,
+                          dynamic
+                        >?;
+                photoBase64 = data?['photoBase64'];
+              }
+
+              return HoverScale(
+                onTap: () async {
+                  await Navigator.push(
                     context,
-                    error,
-                    stackTrace,
-                  ) => Container(
-                    color: Colors.white12,
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: isMobile
-                          ? 24
-                          : 30,
+                    DrayvePageRoute(
+                      builder: (
+                        context,
+                      ) => const ProfilePage(),
+                    ),
+                  );
+                  setState(
+                    () {},
+                  );
+                },
+                child: Container(
+                  width: isMobile
+                      ? 40
+                      : 48,
+                  height: isMobile
+                      ? 40
+                      : 48,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(
+                        0xFFE8002D,
+                      ),
+                      width: 2,
                     ),
                   ),
-            ),
-          ),
-        ),
+                  child: ClipOval(
+                    child:
+                        photoBase64 !=
+                                null &&
+                            photoBase64.isNotEmpty
+                        ? Image.memory(
+                            base64Decode(
+                              photoBase64,
+                            ),
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (
+                                  context,
+                                  error,
+                                  stackTrace,
+                                ) => Image.asset(
+                                  'assets/images/default_profile.webp',
+                                  fit: BoxFit.cover,
+                                ),
+                          )
+                        : Image.asset(
+                            'assets/images/default_profile.webp',
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (
+                                  context,
+                                  error,
+                                  stackTrace,
+                                ) => Container(
+                                  color: Colors.white12,
+                                  child: Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                    size: isMobile
+                                        ? 24
+                                        : 30,
+                                  ),
+                                ),
+                          ),
+                  ),
+                ),
+              );
+            },
       );
     } else {
       return HoverScale(
@@ -6236,6 +6841,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:drayve/widgets/animated_background.dart';
 
 class AuthPage
     extends
@@ -6341,7 +6947,7 @@ class _AuthPageState
       'wrong-password' => 'Email atau password salah.',
       'email-already-in-use' => 'Email ini sudah terdaftar.',
       'weak-password' => 'Password terlalu lemah. Gunakan minimal 6 karakter.',
-      'operation-not-allowed' => 'Metode Email/Password belum diaktifkan di Firebase.',
+      'operation-not-allowed' => 'Metode otentikasi belum diaktifkan di Firebase.',
       'network-request-failed' => 'Koneksi internet bermasalah. Coba lagi.',
       _ =>
         error.message ??
@@ -6414,7 +7020,6 @@ class _AuthPageState
         );
     }
   }
-  
 
   Future<
     void
@@ -6436,6 +7041,7 @@ class _AuthPageState
       await user?.updateDisplayName(
         name,
       );
+
       if (user !=
           null) {
         await FirebaseFirestore.instance
@@ -6452,7 +7058,7 @@ class _AuthPageState
               'createdAt': FieldValue.serverTimestamp(),
             });
       }
-      // Keep the existing sign-up flow: create the account, then return to login.
+
       await FirebaseAuth.instance.signOut();
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -6467,7 +7073,7 @@ class _AuthPageState
           ),
         ),
       );
-      toggleView(); // Kembali ke panel login
+      toggleView();
     } on FirebaseAuthException catch (
       error
     ) {
@@ -6482,9 +7088,7 @@ class _AuthPageState
           await FirebaseAuth.instance.signOut();
         } catch (
           _
-        ) {
-          // Preserve the original profile-write error for the user.
-        }
+        ) {}
         _showAuthError(
           FirebaseAuthException(
             code: 'unknown',
@@ -6499,6 +7103,92 @@ class _AuthPageState
         );
     }
   }
+
+  // --- FUNGSI SOCIAL LOGIN (WEB POPUP) ---
+  Future<
+    void
+  >
+  _handleSocialLogin(
+    AuthProvider provider,
+  ) async {
+    if (_isSubmitting) return;
+    setState(
+      () => _isSubmitting = true,
+    );
+
+    try {
+      // signInWithPopup sangat dianjurkan untuk Flutter Web
+      final credential = await FirebaseAuth.instance.signInWithPopup(
+        provider,
+      );
+      final user = credential.user;
+
+      if (user !=
+          null) {
+        // Cek apakah user baru pertama kali login, jika ya, simpan ke Firestore
+        final userDoc = FirebaseFirestore.instance
+            .collection(
+              'users',
+            )
+            .doc(
+              user.uid,
+            );
+        final docSnapshot = await userDoc.get();
+
+        if (!docSnapshot.exists) {
+          await userDoc.set({
+            'uid': user.uid,
+            'name':
+                user.displayName ??
+                'F1 Enthusiast',
+            'email':
+                user.email ??
+                '',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Welcome, ${user.displayName ?? 'F1 Enthusiast'}!",
+            ),
+            backgroundColor: const Color(
+              0xFFE8002D,
+            ),
+          ),
+        );
+        Navigator.pop(
+          context,
+          true,
+        );
+      }
+    } on FirebaseAuthException catch (
+      error
+    ) {
+      _showAuthError(
+        error,
+      );
+    } finally {
+      if (mounted)
+        setState(
+          () => _isSubmitting = false,
+        );
+    }
+  }
+
+  void _signInWithGoogle() => _handleSocialLogin(
+    GoogleAuthProvider(),
+  );
+  void _signInWithFacebook() => _handleSocialLogin(
+    FacebookAuthProvider(),
+  );
+  void _signInWithTwitter() => _handleSocialLogin(
+    TwitterAuthProvider(),
+  );
 
   @override
   Widget build(
@@ -6524,34 +7214,10 @@ class _AuthPageState
       body: Stack(
         children: [
           // ==========================================
-          // 1. BACKGROUND SETEMA DENGAN LANDING PAGE
+          // BACKGROUND ANIMASI INTERAKTIF (BARU)
           // ==========================================
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/bgdong.webp',
-              fit: BoxFit.cover,
-              errorBuilder: (
-                context,
-                error,
-                stackTrace,
-              ) => const SizedBox(),
-            ),
-          ),
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.15,
-              child: Image.asset(
-                'assets/images/bgnice.webp',
-                fit: BoxFit.cover,
-                color: Colors.black26,
-                colorBlendMode: BlendMode.darken,
-                errorBuilder: (
-                  context,
-                  error,
-                  stackTrace,
-                ) => const SizedBox(),
-              ),
-            ),
+          const Positioned.fill(
+            child: AnimatedBackground(),
           ),
 
           SafeArea(
@@ -6754,6 +7420,7 @@ class _AuthPageState
           children: [
             Text(
               "Login to DRAYVE",
+              textAlign: TextAlign.center, // <--- TAMBAHKAN INI
               style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontSize: 32,
@@ -6883,6 +7550,7 @@ class _AuthPageState
           children: [
             Text(
               "Create Account",
+              textAlign: TextAlign.center, // <--- TAMBAHKAN INI
               style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontSize: 32,
@@ -7129,57 +7797,66 @@ class _AuthPageState
       children: [
         _buildAssetIcon(
           'assets/icons/gikon.webp',
+          onTap: _signInWithGoogle,
         ),
         const SizedBox(
           width: 16,
         ),
         _buildAssetIcon(
           'assets/icons/mikon.webp',
+          onTap: _signInWithFacebook,
         ),
         const SizedBox(
           width: 16,
         ),
         _buildAssetIcon(
           'assets/icons/xikon.webp',
+          onTap: _signInWithTwitter,
         ),
       ],
     );
   }
 
   Widget _buildAssetIcon(
-    String assetPath,
-  ) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.white24,
-        ),
-      ),
-      child: Center(
-        child: Image.asset(
-          assetPath,
-          width: 18,
-          height: 18,
-          color: Colors.white,
-          errorBuilder:
-              (
-                context,
-                error,
-                stackTrace,
-              ) => const Icon(
-                Icons.broken_image,
-                color: Colors.white54,
-                size: 18,
-              ),
+    String assetPath, {
+    VoidCallback? onTap,
+  }) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.white24,
+            ),
+          ),
+          child: Center(
+            child: Image.asset(
+              assetPath,
+              width: 18,
+              height: 18,
+              color: Colors.white,
+              errorBuilder:
+                  (
+                    context,
+                    error,
+                    stackTrace,
+                  ) => const Icon(
+                    Icons.broken_image,
+                    color: Colors.white54,
+                    size: 18,
+                  ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  // PENYESUAIAN PADA _buildTextField UNTUK TEXTBOX YANG LEBIH BESAR
   Widget _buildTextField(
     IconData icon,
     String hint, {
@@ -7196,7 +7873,7 @@ class _AuthPageState
       style: GoogleFonts.montserrat(
         color: Colors.white,
         fontSize: 15,
-      ), // Ukuran font isian dinaikkan sedikit
+      ),
       validator: validator,
       decoration: InputDecoration(
         filled: true,
@@ -7207,13 +7884,12 @@ class _AuthPageState
           icon,
           color: Colors.white54,
           size: 22,
-        ), // Ikon sedikit dibesarkan agar proporsional
+        ),
         hintText: hint,
         hintStyle: GoogleFonts.montserrat(
           color: Colors.white38,
           fontSize: 15,
         ),
-        // Padding vertikal dinaikkan dari 16 ke 20 agar textbox makin lega/besar
         contentPadding: const EdgeInsets.symmetric(
           vertical: 20,
           horizontal: 16,
@@ -7264,11 +7940,15 @@ class _AuthPageState
   }
 }
 ====== FILE: C:\Users\leevi\flutter_lab\DRAYVE\lib\pages\profile_page.dart ======
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:drayve/pages/landing_page.dart'; // Import landing page untuk navigasi
+import 'package:image_picker/image_picker.dart';
+import 'package:drayve/pages/landing_page.dart';
+import 'package:drayve/widgets/animated_background.dart';
 
 class ProfilePage
     extends
@@ -7289,6 +7969,8 @@ class _ProfilePageState
         > {
   String currentName = "F1 Enthusiast";
   String currentEmail = "user@drayve.com";
+  String? _photoBase64;
+  bool _isUploading = false;
 
   final _formKey =
       GlobalKey<
@@ -7301,10 +7983,15 @@ class _ProfilePageState
   void initState() {
     super.initState();
     final user = FirebaseAuth.instance.currentUser;
-    currentName = user?.displayName?.isNotEmpty == true
+    currentName =
+        user?.displayName?.isNotEmpty ==
+            true
         ? user!.displayName!
         : 'F1 Enthusiast';
-    currentEmail = user?.email ?? '';
+    currentEmail =
+        user?.email ??
+        '';
+
     _nameController = TextEditingController(
       text: currentName,
     );
@@ -7314,27 +8001,42 @@ class _ProfilePageState
     _loadProfile();
   }
 
-  Future<void> _loadProfile() async {
+  Future<
+    void
+  >
+  _loadProfile() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    if (user ==
+        null)
+      return;
     try {
       final snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
+          .collection(
+            'users',
+          )
+          .doc(
+            user.uid,
+          )
           .get();
-      if (!mounted || !snapshot.exists) return;
-      final savedName = snapshot.data()?['name'] as String?;
+      if (!mounted ||
+          !snapshot.exists)
+        return;
+
+      final data = snapshot.data();
       setState(() {
-        if (savedName != null && savedName.isNotEmpty) {
-          currentName = savedName;
-          _nameController.text = savedName;
+        if (data?['name'] !=
+            null) {
+          currentName = data!['name'];
+          _nameController.text = currentName;
         }
-        currentEmail = user.email ?? '';
-        _emailController.text = currentEmail;
+        if (data?['photoBase64'] !=
+            null) {
+          _photoBase64 = data!['photoBase64'];
+        }
       });
-    } catch (_) {
-      // Firebase Auth profile remains available if Firestore is not set up yet.
-    }
+    } catch (
+      _
+    ) {}
   }
 
   @override
@@ -7344,69 +8046,218 @@ class _ProfilePageState
     super.dispose();
   }
 
-  Future<void> _saveProfile() async {
+  // ==========================================
+  // UPLOAD FOTO KE FIRESTORE (BASE64 - 100% GRATIS)
+  // ==========================================
+  Future<
+    void
+  >
+  _pickAndUploadImage() async {
+    final picker = ImagePicker();
+    // Kompres kualitas agar ukurannya kecil dan muat di Firestore
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 40,
+      maxWidth: 300,
+      maxHeight: 300,
+    );
+
+    if (image ==
+        null)
+      return;
+
+    setState(
+      () => _isUploading = true,
+    );
+
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      final bytes = await image.readAsBytes();
+
+      // Ubah gambar jadi string Base64
+      final base64String = base64Encode(
+        bytes,
+      );
+
+      // Simpan langsung ke Firestore dokumen pengguna
+      await FirebaseFirestore.instance
+          .collection(
+            'users',
+          )
+          .doc(
+            user.uid,
+          )
+          .set(
+            {
+              'photoBase64': base64String,
+            },
+            SetOptions(
+              merge: true,
+            ),
+          );
+
+      setState(() {
+        _photoBase64 = base64String;
+      });
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Profile picture updated successfully!",
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (
+      e
+    ) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Image size too large or failed to save.",
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted)
+        setState(
+          () => _isUploading = false,
+        );
+    }
+  }
+
+  Future<
+    void
+  >
+  _sendPasswordReset() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) return;
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: email,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Password reset link sent to $email",
+            style: GoogleFonts.montserrat(),
+          ),
+          backgroundColor: Colors.blueAccent,
+        ),
+      );
+    } catch (
+      error
+    ) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Error sending password reset link.",
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<
+    void
+  >
+  _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    if (user ==
+        null)
+      return;
     try {
       final newName = _nameController.text.trim();
       final newEmail = _emailController.text.trim();
-      await user.updateDisplayName(newName);
-      if (newEmail != (user.email ?? '')) {
-        await user.verifyBeforeUpdateEmail(newEmail);
+      await user.updateDisplayName(
+        newName,
+      );
+      if (newEmail !=
+          (user.email ??
+              '')) {
+        await user.verifyBeforeUpdateEmail(
+          newEmail,
+        );
       }
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        'uid': user.uid,
-        'name': newName,
-        'email': user.email,
-        if (newEmail != (user.email ?? '')) 'pendingEmail': newEmail,
-        'updatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+      await FirebaseFirestore.instance
+          .collection(
+            'users',
+          )
+          .doc(
+            user.uid,
+          )
+          .set(
+            {
+              'uid': user.uid,
+              'name': newName,
+              'email': user.email,
+              if (newEmail !=
+                  (user.email ??
+                      ''))
+                'pendingEmail': newEmail,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(
+              merge: true,
+            ),
+          );
       if (!mounted) return;
       setState(() {
         currentName = newName;
-        currentEmail = user.email ?? '';
+        currentEmail =
+            user.email ??
+            '';
       });
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(
         SnackBar(
           content: Text(
-          newEmail != (user.email ?? '')
-              ? "Profile updated. Check your inbox to confirm the email change."
-              : "Profile updated successfully!",
+            "Profile updated successfully!",
             style: GoogleFonts.montserrat(),
           ),
           backgroundColor: const Color(
             0xFFE8002D,
           ),
-          duration: const Duration(
-            seconds: 2,
-          ),
         ),
       );
-    } on FirebaseAuthException catch (error) {
+    } catch (
+      error
+    ) {
       if (!mounted) return;
-      final message = error.code == 'requires-recent-login'
-          ? 'Login ulang sebelum mengganti email.'
-          : error.message ?? 'Profil gagal diperbarui.';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profil gagal disimpan. Periksa pengaturan Firestore.')),
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Failed to update profile.',
+          ),
+        ),
       );
     }
   }
 
-  // ==========================================
-  // FUNGSI LOGOUT BARU
-  // ==========================================
-  Future<void> _logout() async {
+  Future<
+    void
+  >
+  _logout() async {
     await FirebaseAuth.instance.signOut();
     if (!mounted) return;
-
-    // 2. Tampilkan pesan berhasil keluar
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(
@@ -7415,14 +8266,9 @@ class _ProfilePageState
           "You have successfully logged out.",
           style: GoogleFonts.montserrat(),
         ),
-        backgroundColor: Colors.orange, // Warna oranye agar beda dari error/success
-        duration: const Duration(
-          seconds: 2,
-        ),
+        backgroundColor: Colors.orange,
       ),
     );
-
-    // 3. Kembali ke Landing Page dan bersihkan seluruh tumpukan halaman sebelumnya
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
@@ -7431,9 +8277,6 @@ class _ProfilePageState
         ) => const LandingPage(),
       ),
       (
-        Route<
-          dynamic
-        >
         route,
       ) => false,
     );
@@ -7456,46 +8299,28 @@ class _ProfilePageState
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-            size: 20,
-          ),
-          onPressed: () => Navigator.pop(
-            context,
-          ),
-        ),
-        title: Text(
-          "MY PROFILE",
-          style: GoogleFonts.montserrat(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.15,
-              child: Image.asset(
-                'assets/images/pattern.webp',
-                fit: BoxFit.cover,
-                errorBuilder: (
+          const Positioned.fill(
+            child: AnimatedBackground(),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(
+                24.0,
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                onPressed: () => Navigator.pop(
                   context,
-                  error,
-                  stackTrace,
-                ) => const SizedBox(),
+                ),
               ),
             ),
           ),
-
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(
@@ -7541,23 +8366,24 @@ class _ProfilePageState
                               ),
                             ),
                             child: ClipOval(
-                              child: Image.asset(
-                                'assets/images/default_profile.webp',
-                                fit: BoxFit.cover,
-                                errorBuilder:
-                                    (
-                                      context,
-                                      error,
-                                      stackTrace,
-                                    ) => Container(
-                                      color: Colors.white12,
-                                      child: const Icon(
-                                        Icons.person,
-                                        color: Colors.white54,
-                                        size: 60,
+                              child:
+                                  _photoBase64 !=
+                                          null &&
+                                      _photoBase64!.isNotEmpty
+                                  ? Image.memory(
+                                      base64Decode(
+                                        _photoBase64!,
                                       ),
+                                      fit: BoxFit.cover,
+                                      width: 120,
+                                      height: 120,
+                                    )
+                                  : Image.asset(
+                                      'assets/images/default_profile.webp',
+                                      fit: BoxFit.cover,
+                                      width: 120,
+                                      height: 120,
                                     ),
-                              ),
                             ),
                           ),
                           Container(
@@ -7567,24 +8393,28 @@ class _ProfilePageState
                               ),
                               shape: BoxShape.circle,
                             ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              onPressed: () {
-                                ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      "Feature to upload image coming soon!",
+                            child: _isUploading
+                                ? const Padding(
+                                    padding: EdgeInsets.all(
+                                      12.0,
                                     ),
+                                    child: SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  )
+                                : IconButton(
+                                    icon: const Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    onPressed: _pickAndUploadImage,
                                   ),
-                                );
-                              },
-                            ),
                           ),
                         ],
                       ),
@@ -7599,13 +8429,12 @@ class _ProfilePageState
                         validator:
                             (
                               value,
-                            ) {
-                              if (value ==
-                                      null ||
-                                  value.isEmpty)
-                                return 'Username cannot be empty';
-                              return null;
-                            },
+                            ) =>
+                                value ==
+                                        null ||
+                                    value.isEmpty
+                                ? 'Username cannot be empty'
+                                : null,
                       ),
                       const SizedBox(
                         height: 20,
@@ -7630,11 +8459,25 @@ class _ProfilePageState
                               return null;
                             },
                       ),
+
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: _sendPasswordReset,
+                          child: Text(
+                            "Reset Password?",
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white54,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(
-                        height: 40,
+                        height: 24,
                       ),
 
-                      // TOMBOL SAVE
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -7666,13 +8509,10 @@ class _ProfilePageState
                         height: 16,
                       ),
 
-                      // ==========================================
-                      // TOMBOL LOGOUT BARU
-                      // ==========================================
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton(
-                          onPressed: _logout, // Memanggil fungsi logout di atas
+                          onPressed: _logout,
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(
                               color: Colors.white38,
@@ -10042,7 +10882,10 @@ import 'styles/colors.dart';
 import 'pages/splash_screen.dart';
 import 'firebase_options.dart';
 
-Future<void> main() async {
+Future<
+  void
+>
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -10052,11 +10895,15 @@ Future<void> main() async {
   );
 }
 
-class DrayveApp extends StatelessWidget {
+class DrayveApp
+    extends
+        StatelessWidget {
   const DrayveApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return MaterialApp(
       title: 'DRAYVE - F1 Drivers Hub',
       debugShowCheckedModeBanner: false,
