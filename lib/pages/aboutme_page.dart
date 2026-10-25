@@ -11,16 +11,16 @@ class ProfileContent {
   static const email = '25051204390@mhs.unesa.ac.id';
   static const quote = '“Orang Biasa Masih Butuh Banyak Belajar”';
 
-  static const background = 'assets/images/background.png';
-  static const portrait = 'assets/images/profile_cutout.png';
-  static const musicWave = 'assets/icons/arcticons_music-party.png';
-  static const previous = 'assets/icons/arcticons_music-speed-changer-1.png';
-  static const play = 'assets/icons/arcticons_booming-music.png';
-  static const next = 'assets/icons/arcticons_music-speed-changer.png';
-  static const instagram = 'assets/icons/cib_instagram.png';
-  static const tiktok = 'assets/icons/streamline-flex_tiktok-solid.png';
-  static const github = 'assets/icons/fa-brands_github-square.png';
-  static const headphones = 'assets/icons/arcticons_google-music.png';
+  static const background = 'assets/images/background.webp';
+  static const portrait = 'assets/images/profile_cutout.webp';
+  static const musicWave = 'assets/icons/arcticons_music-party.webp';
+  static const previous = 'assets/icons/arcticons_music-speed-changer-1.webp';
+  static const play = 'assets/icons/arcticons_booming-music.webp';
+  static const next = 'assets/icons/arcticons_music-speed-changer.webp';
+  static const instagram = 'assets/icons/cib_instagram.webp';
+  static const tiktok = 'assets/icons/streamline-flex_tiktok-solid.webp';
+  static const github = 'assets/icons/fa-brands_github-square.webp';
+  static const headphones = 'assets/icons/arcticons_google-music.webp';
 }
 
 class ProfileLayout {
@@ -58,7 +58,8 @@ class AboutMePage
         const Text(
           "DRAYVE",
           style: TextStyle(
-            fontFamily: 'MagnetoBold',
+            fontFamily: 'Ethnocentric',
+            fontStyle: FontStyle.italic,
             fontSize: 40,
             color: Colors.white,
             letterSpacing: 2.0,

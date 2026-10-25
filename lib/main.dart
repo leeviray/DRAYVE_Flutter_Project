@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'styles/colors.dart';
-import 'pages/landing_page.dart';
+import 'pages/splash_screen.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -15,15 +15,11 @@ Future<void> main() async {
   );
 }
 
-class DrayveApp
-    extends
-        StatelessWidget {
+class DrayveApp extends StatelessWidget {
   const DrayveApp({super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DRAYVE - F1 Drivers Hub',
       debugShowCheckedModeBanner: false,
@@ -31,7 +27,7 @@ class DrayveApp
         scaffoldBackgroundColor: AppColors.backgroundDark,
         useMaterial3: true,
       ),
-      home: const LandingPage(),
+      home: const SplashScreen(),
     );
   }
 }

@@ -219,7 +219,7 @@ class _ProfilePageState
             child: Opacity(
               opacity: 0.15,
               child: Image.asset(
-                'assets/images/pattern.png',
+                'assets/images/pattern.webp',
                 fit: BoxFit.cover,
                 errorBuilder: (
                   context,
@@ -276,7 +276,7 @@ class _ProfilePageState
                             ),
                             child: ClipOval(
                               child: Image.asset(
-                                'assets/images/default_profile.png',
+                                'assets/images/default_profile.webp',
                                 fit: BoxFit.cover,
                                 errorBuilder:
                                     (

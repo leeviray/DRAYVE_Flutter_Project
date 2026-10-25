@@ -294,7 +294,7 @@ class _AuthPageState
           // ==========================================
           Positioned.fill(
             child: Image.asset(
-              'assets/images/bgdong.png',
+              'assets/images/bgdong.webp',
               fit: BoxFit.cover,
               errorBuilder: (
                 context,
@@ -307,7 +307,7 @@ class _AuthPageState
             child: Opacity(
               opacity: 0.15,
               child: Image.asset(
-                'assets/images/bgnice.png',
+                'assets/images/bgnice.webp',
                 fit: BoxFit.cover,
                 color: Colors.black26,
                 colorBlendMode: BlendMode.darken,
@@ -894,19 +894,19 @@ class _AuthPageState
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildAssetIcon(
-          'assets/icons/gikon.png',
+          'assets/icons/gikon.webp',
         ),
         const SizedBox(
           width: 16,
         ),
         _buildAssetIcon(
-          'assets/icons/mikon.png',
+          'assets/icons/mikon.webp',
         ),
         const SizedBox(
           width: 16,
         ),
         _buildAssetIcon(
-          'assets/icons/xikon.png',
+          'assets/icons/xikon.webp',
         ),
       ],
     );

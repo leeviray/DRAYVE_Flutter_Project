@@ -193,7 +193,7 @@ class _DriverDetailPageState
           // ==========================================
           Positioned.fill(
             child: Image.asset(
-              'assets/images/bgdong.png',
+              'assets/images/bgdong.webp',
               fit: BoxFit.cover,
               errorBuilder: (
                 context,
@@ -206,7 +206,7 @@ class _DriverDetailPageState
             child: Opacity(
               opacity: 0.15,
               child: Image.asset(
-                'assets/images/bgnice.png',
+                'assets/images/bgnice.webp',
                 fit: BoxFit.cover,
                 color: Colors.black26,
                 colorBlendMode: BlendMode.darken,
@@ -328,7 +328,7 @@ class _DriverDetailPageState
                               child: Opacity(
                                 opacity: 0.1,
                                 child: Image.asset(
-                                  'assets/images/pattern.png',
+                                  'assets/images/pattern.webp',
                                   fit: BoxFit.cover,
                                   errorBuilder: (
                                     context,
@@ -1103,7 +1103,7 @@ class _DriverDetailPageState
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: Image.asset(
-                        'assets/images/flags/${widget.driver.negara}.png',
+                        'assets/images/flags/${widget.driver.negara}.webp',
                         fit: BoxFit.cover,
                         errorBuilder:
                             (
@@ -1310,7 +1310,7 @@ class _DriverDetailPageState
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: Image.asset(
-                    'assets/images/flags/${widget.driver.negara}.png',
+                    'assets/images/flags/${widget.driver.negara}.webp',
                     fit: BoxFit.cover,
                     errorBuilder: (
                       context,

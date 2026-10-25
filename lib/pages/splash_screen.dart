@@ -229,17 +229,23 @@ class _SplashScreenState
                             opacity: _textOpacity.value,
                             child: Column(
                               children: [
-                                const Text(
-                                  'DRAYVE',
-                                  style: TextStyle(
-                                    fontFamily: 'Ethnocentric',
-                                    fontStyle: FontStyle.italic,
-                                    color: Color(
-                                      0xFFE10600,
+                                Transform(
+                                  transform: Matrix4.skewX(
+                                    -0.22,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Text(
+                                    'DRAYVE',
+                                    style: TextStyle(
+                                      fontFamily: 'Ethnocentric',
+                                      fontStyle: FontStyle.italic,
+                                      color: Color(
+                                        0xFFE10600,
+                                      ),
+                                      fontSize: 30, // Disesuaikan karena Ethnocentric sangat lebar
+                                      letterSpacing: 2.5, // Jarak antar huruf pas seperti logo asli
+                                      height: 1.0,
                                     ),
-                                    fontSize: 30,
-                                    letterSpacing: 2.0,
-                                    height: 1.0,
                                   ),
                                 ),
                                 const SizedBox(
