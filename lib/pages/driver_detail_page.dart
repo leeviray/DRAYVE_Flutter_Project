@@ -4,6 +4,7 @@ import 'package:drayve/models/statistik.dart';
 import 'package:drayve/data/statistikv2.dart';
 import 'package:drayve/data/bio_karir.dart';
 import 'package:drayve/pages/bio.dart';
+import 'package:drayve/widgets/animated_background.dart';
 
 import 'latest_post.dart';
 import 'discussion.dart';
@@ -26,11 +27,203 @@ class _DriverDetailPageState
     extends
         State<
           DriverDetailPage
-        > {
-  // State untuk menyimpan tab yang sedang aktif
+        >
+    with
+        SingleTickerProviderStateMixin {
   String _activeTab = 'Statistics';
+  String? _hoveredTab;
 
-  // Fungsi gradasi warna tim
+  bool _isMobileMenuOpen = false;
+
+  // ==========================================
+  // KONTROL ANIMASI MOTION MASUK
+  // ==========================================
+  late AnimationController _enterController;
+  late Animation<
+    Offset
+  >
+  _carSlide;
+  late Animation<
+    Offset
+  >
+  _driverSlide;
+  late Animation<
+    Offset
+  >
+  _textSlide;
+
+  late Animation<
+    double
+  >
+  _carFade;
+  late Animation<
+    double
+  >
+  _driverFade;
+  late Animation<
+    double
+  >
+  _textFade;
+  late Animation<
+    double
+  >
+  _globalFade;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _enterController = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 1500,
+      ),
+    );
+
+    // 1. ORANG MUNCUL DULUAN
+    _driverSlide =
+        Tween<
+              Offset
+            >(
+              begin: const Offset(
+                0,
+                0.4,
+              ),
+              end: Offset.zero,
+            )
+            .animate(
+              CurvedAnimation(
+                parent: _enterController,
+                curve: const Interval(
+                  0.0,
+                  0.6,
+                  curve: Curves.easeOutBack,
+                ),
+              ),
+            );
+    _driverFade =
+        Tween<
+              double
+            >(
+              begin: 0.0,
+              end: 1.0,
+            )
+            .animate(
+              CurvedAnimation(
+                parent: _enterController,
+                curve: const Interval(
+                  0.0,
+                  0.4,
+                  curve: Curves.easeOut,
+                ),
+              ),
+            );
+
+    // 2. TEKS MENYUSUL
+    _textSlide =
+        Tween<
+              Offset
+            >(
+              begin: const Offset(
+                0,
+                0.15,
+              ),
+              end: Offset.zero,
+            )
+            .animate(
+              CurvedAnimation(
+                parent: _enterController,
+                curve: const Interval(
+                  0.2,
+                  0.7,
+                  curve: Curves.easeOutCubic,
+                ),
+              ),
+            );
+    _textFade =
+        Tween<
+              double
+            >(
+              begin: 0.0,
+              end: 1.0,
+            )
+            .animate(
+              CurvedAnimation(
+                parent: _enterController,
+                curve: const Interval(
+                  0.2,
+                  0.5,
+                  curve: Curves.easeOut,
+                ),
+              ),
+            );
+
+    // 3. MOBIL MASUK PALING AKHIR
+    _carSlide =
+        Tween<
+              Offset
+            >(
+              begin: const Offset(
+                -0.4,
+                0,
+              ),
+              end: Offset.zero,
+            )
+            .animate(
+              CurvedAnimation(
+                parent: _enterController,
+                curve: const Interval(
+                  0.5,
+                  1.0,
+                  curve: Curves.easeOutCubic,
+                ),
+              ),
+            );
+    _carFade =
+        Tween<
+              double
+            >(
+              begin: 0.0,
+              end: 1.0,
+            )
+            .animate(
+              CurvedAnimation(
+                parent: _enterController,
+                curve: const Interval(
+                  0.5,
+                  0.8,
+                  curve: Curves.easeOut,
+                ),
+              ),
+            );
+
+    _globalFade =
+        Tween<
+              double
+            >(
+              begin: 0.0,
+              end: 1.0,
+            )
+            .animate(
+              CurvedAnimation(
+                parent: _enterController,
+                curve: const Interval(
+                  0.0,
+                  0.5,
+                  curve: Curves.easeOut,
+                ),
+              ),
+            );
+
+    _enterController.forward();
+  }
+
+  @override
+  void dispose() {
+    _enterController.dispose();
+    super.dispose();
+  }
+
   LinearGradient _getTeamGradient(
     String teamName,
   ) {
@@ -188,48 +381,23 @@ class _DriverDetailPageState
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // ==========================================
-          // 0. LAYER BACKGROUND (ALA LANDING PAGE)
-          // ==========================================
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/bgdong.webp',
-              fit: BoxFit.cover,
-              errorBuilder: (
-                context,
-                error,
-                stackTrace,
-              ) => const SizedBox(),
-            ),
-          ),
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.15,
-              child: Image.asset(
-                'assets/images/bgnice.webp',
-                fit: BoxFit.cover,
-                color: Colors.black26,
-                colorBlendMode: BlendMode.darken,
-                errorBuilder: (
-                  context,
-                  error,
-                  stackTrace,
-                ) => const SizedBox(),
-              ),
-            ),
+          const Positioned.fill(
+            child: AnimatedBackground(),
           ),
 
-          // ==========================================
-          // 1. LAYER KONTEN UTAMA
-          // ==========================================
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // --- TOP NAVBAR (SUB-NAVIGATION) ---
+              // ==========================================
+              // TOP NAVBAR
+              // ==========================================
               Container(
-                color: const Color(
-                  0xFF15151E,
-                ), // Warna navbar tetap hitam F1 agar kontras
+                color:
+                    const Color(
+                      0xFF15151E,
+                    ).withOpacity(
+                      0.55,
+                    ),
                 child: SafeArea(
                   bottom: false,
                   child: Padding(
@@ -238,6 +406,7 @@ class _DriverDetailPageState
                       vertical: 16.0,
                     ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -270,20 +439,69 @@ class _DriverDetailPageState
                           ),
                         ),
 
-                        if (!isMobile) const Spacer(),
-
-                        Expanded(
-                          flex: isMobile
-                              ? 1
-                              : 0,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                if (isMobile)
-                                  const SizedBox(
-                                    width: 24,
+                        if (isMobile)
+                          IconButton(
+                            icon: AnimatedSwitcher(
+                              duration: const Duration(
+                                milliseconds: 300,
+                              ),
+                              transitionBuilder:
+                                  (
+                                    child,
+                                    anim,
+                                  ) => RotationTransition(
+                                    turns:
+                                        child.key ==
+                                            const ValueKey(
+                                              'close',
+                                            )
+                                        ? Tween<
+                                                double
+                                              >(
+                                                begin: 0.5,
+                                                end: 1,
+                                              )
+                                              .animate(
+                                                anim,
+                                              )
+                                        : Tween<
+                                                double
+                                              >(
+                                                begin: 0.5,
+                                                end: 1,
+                                              )
+                                              .animate(
+                                                anim,
+                                              ),
+                                    child: FadeTransition(
+                                      opacity: anim,
+                                      child: child,
+                                    ),
                                   ),
+                              child: Icon(
+                                _isMobileMenuOpen
+                                    ? Icons.close
+                                    : Icons.menu,
+                                key: ValueKey(
+                                  _isMobileMenuOpen
+                                      ? 'close'
+                                      : 'menu',
+                                ),
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isMobileMenuOpen = !_isMobileMenuOpen;
+                              });
+                            },
+                          )
+                        else
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
                                 _buildNavTab(
                                   'Statistics',
                                 ),
@@ -299,94 +517,218 @@ class _DriverDetailPageState
                               ],
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
                 ),
               ),
 
-              // --- SCROLLABLE CONTENT (HERO & STATS) ---
+              // ==========================================
+              // SCROLLABLE CONTENT & MOBILE OVERLAY
+              // ==========================================
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // HERO SECTION
-                      Container(
-                        height: isMobile
-                            ? 650
-                            : 500,
-                        decoration: BoxDecoration(
-                          gradient: _getTeamGradient(
-                            widget.driver.tim,
-                          ),
-                        ),
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: Opacity(
-                                opacity: 0.1,
-                                child: Image.asset(
-                                  'assets/images/pattern.webp',
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (
-                                    context,
-                                    error,
-                                    stackTrace,
-                                  ) => const SizedBox(),
-                                ),
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // HERO SECTION
+                          Container(
+                            height: isMobile
+                                ? 550
+                                : 500,
+                            decoration: BoxDecoration(
+                              gradient: _getTeamGradient(
+                                widget.driver.tim,
                               ),
                             ),
-                            Positioned(
-                              right: isMobile
-                                  ? -50
-                                  : 50,
-                              bottom: -20,
-                              child: Text(
-                                widget.driver.nomorMobil.toString(),
-                                style: GoogleFonts.montserrat(
-                                  fontSize: isMobile
-                                      ? 300
-                                      : 450,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.black.withOpacity(
-                                    0.1,
-                                  ),
-                                  height: 1.0,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 40,
-                                left: isMobile
-                                    ? 24
-                                    : 80,
-                                right: isMobile
-                                    ? 24
-                                    : 80,
-                              ),
-                              child: isMobile
-                                  ? _buildMobileHero(
-                                      firstName,
-                                      lastName,
-                                    )
-                                  : _buildDesktopHero(
-                                      firstName,
-                                      lastName,
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: Opacity(
+                                    opacity: 0.1,
+                                    child: Image.asset(
+                                      'assets/images/pattern.webp',
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) => const SizedBox(),
                                     ),
+                                  ),
+                                ),
+                                // Nomor Mobil Background
+                                Positioned(
+                                  right: isMobile
+                                      ? -10
+                                      : 50,
+                                  top: isMobile
+                                      ? 10
+                                      : null, // <--- TAMBAHKAN INI: Di mobile posisinya nempel atas
+                                  bottom: isMobile
+                                      ? null
+                                      : -20, // <--- UBAH INI: Di mobile bottom-nya dinonaktifkan (null)
+                                  child: FadeTransition(
+                                    opacity: _globalFade,
+                                    child: Text(
+                                      widget.driver.nomorMobil.toString(),
+                                      style: GoogleFonts.montserrat(
+                                        // Ukuran font diperkecil sedikit di mobile agar pas di pojok atas
+                                        fontSize: isMobile
+                                            ? 180
+                                            : 450,
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.black.withOpacity(
+                                          0.12,
+                                        ),
+                                        height: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    top: 40,
+                                    left: isMobile
+                                        ? 24
+                                        : 80,
+                                    right: isMobile
+                                        ? 24
+                                        : 80,
+                                  ),
+                                  child: isMobile
+                                      ? _buildMobileHero(
+                                          firstName,
+                                          lastName,
+                                        )
+                                      : _buildDesktopHero(
+                                          firstName,
+                                          lastName,
+                                        ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
+
+                          AnimatedSwitcher(
+                            duration: const Duration(
+                              milliseconds: 320,
+                            ),
+                            switchInCurve: Curves.easeOutCubic,
+                            switchOutCurve: Curves.easeInCubic,
+                            child: Container(
+                              key:
+                                  ValueKey<
+                                    String
+                                  >(
+                                    _activeTab,
+                                  ),
+                              child: _buildTabContent(
+                                isMobile,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    if (isMobile)
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          ignoring: !_isMobileMenuOpen,
+                          child: GestureDetector(
+                            onTap: () => setState(
+                              () => _isMobileMenuOpen = false,
+                            ),
+                            child: AnimatedOpacity(
+                              duration: const Duration(
+                                milliseconds: 300,
+                              ),
+                              opacity: _isMobileMenuOpen
+                                  ? 1.0
+                                  : 0.0,
+                              child: Container(
+                                color: Colors.black.withOpacity(
+                                  0.6,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
 
-                      // KONTEN TAB STATISTIK
-                      _buildTabContent(
-                        isMobile,
+                    if (isMobile)
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: ClipRect(
+                          child: AnimatedContainer(
+                            duration: const Duration(
+                              milliseconds: 350,
+                            ),
+                            curve: Curves.easeOutCubic,
+                            height: _isMobileMenuOpen
+                                ? 270.0
+                                : 0.0,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color:
+                                  const Color(
+                                    0xFF15151E,
+                                  ).withOpacity(
+                                    0.98,
+                                  ),
+                              border: Border(
+                                bottom: BorderSide(
+                                  color:
+                                      const Color(
+                                        0xFFE10600,
+                                      ).withOpacity(
+                                        0.8,
+                                      ),
+                                  width: 2,
+                                ),
+                              ),
+                              boxShadow: [
+                                if (_isMobileMenuOpen)
+                                  const BoxShadow(
+                                    color: Colors.black54,
+                                    blurRadius: 15,
+                                    offset: Offset(
+                                      0,
+                                      5,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            child: SingleChildScrollView(
+                              physics: const NeverScrollableScrollPhysics(),
+                              child: Column(
+                                children: [
+                                  _buildDropdownItem(
+                                    'Statistics',
+                                    Icons.analytics_outlined,
+                                  ),
+                                  _buildDropdownItem(
+                                    'Biography',
+                                    Icons.menu_book_rounded,
+                                  ),
+                                  _buildDropdownItem(
+                                    'Latest Post',
+                                    Icons.feed_outlined,
+                                  ),
+                                  _buildDropdownItem(
+                                    'Discussion',
+                                    Icons.forum_outlined,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
+                  ],
                 ),
               ),
             ],
@@ -396,15 +738,108 @@ class _DriverDetailPageState
     );
   }
 
-  // --- WIDGET UNTUK MEMBANGUN TAB ITEM ---
+  Widget _buildDropdownItem(
+    String title,
+    IconData icon,
+  ) {
+    final bool isSelected =
+        _activeTab ==
+        title;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _isMobileMenuOpen = false;
+          });
+          Future.delayed(
+            const Duration(
+              milliseconds: 150,
+            ),
+            () {
+              setState(() {
+                _activeTab = title;
+              });
+            },
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 20,
+          ),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.white.withOpacity(
+                  0.05,
+                ),
+              ),
+            ),
+            color: isSelected
+                ? Colors.white.withOpacity(
+                    0.05,
+                  )
+                : Colors.transparent,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isSelected
+                    ? const Color(
+                        0xFFE10600,
+                      )
+                    : Colors.white70,
+                size: 24,
+              ),
+              const SizedBox(
+                width: 16,
+              ),
+              Text(
+                title,
+                style: GoogleFonts.montserrat(
+                  color: isSelected
+                      ? Colors.white
+                      : Colors.white70,
+                  fontSize: 16,
+                  fontWeight: isSelected
+                      ? FontWeight.bold
+                      : FontWeight.w500,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildNavTab(
     String title,
   ) {
-    bool isActive =
+    final bool isActive =
         _activeTab ==
         title;
+    final bool isHovered =
+        _hoveredTab ==
+        title;
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
+      onEnter:
+          (
+            _,
+          ) => setState(
+            () => _hoveredTab = title,
+          ),
+      onExit:
+          (
+            _,
+          ) => setState(
+            () => _hoveredTab = null,
+          ),
       child: GestureDetector(
         onTap: () {
           setState(() {
@@ -418,27 +853,49 @@ class _DriverDetailPageState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                title,
+              AnimatedDefaultTextStyle(
+                duration: const Duration(
+                  milliseconds: 180,
+                ),
                 style: GoogleFonts.montserrat(
-                  color: isActive
+                  color:
+                      isActive ||
+                          isHovered
                       ? Colors.white
                       : Colors.white54,
+                  fontSize: 14,
                   fontWeight: isActive
                       ? FontWeight.bold
                       : FontWeight.w500,
-                  fontSize: 14,
+                ),
+                child: Text(
+                  title,
                 ),
               ),
               const SizedBox(
-                height: 4,
+                height: 5,
               ),
-              Container(
-                height: 2,
+              AnimatedContainer(
+                duration: const Duration(
+                  milliseconds: 220,
+                ),
+                curve: Curves.easeOutCubic,
+                height: 3,
                 width: isActive
-                    ? 24
-                    : 0,
-                color: Colors.white,
+                    ? 44
+                    : (isHovered
+                          ? 24
+                          : 0),
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? const Color(
+                          0xFFE10600,
+                        )
+                      : Colors.white70,
+                  borderRadius: BorderRadius.circular(
+                    2,
+                  ),
+                ),
               ),
             ],
           ),
@@ -447,7 +904,6 @@ class _DriverDetailPageState
     );
   }
 
-  // --- WIDGET UNTUK MENAMPILKAN KONTEN SESUAI TAB ---
   Widget _buildTabContent(
     bool isMobile,
   ) {
@@ -459,7 +915,6 @@ class _DriverDetailPageState
       );
     } else if (_activeTab ==
         'Latest Post') {
-      // LatestPostTab sekarang mengurus loginnya sendiri
       return LatestPostTab(
         driverName: widget.driver.nama,
         driverTeam: widget.driver.tim,
@@ -468,14 +923,12 @@ class _DriverDetailPageState
       );
     } else if (_activeTab ==
         'Discussion') {
-      // DiscussionTab sekarang mengurus loginnya sendiri
       return DiscussionTab(
         driverName: widget.driver.nama,
         isMobile: isMobile,
       );
     }
 
-    // --- CARI DATA STATISTIK DARI FILE statistikv2.dart ---
     DriverStatistics? detailStats;
     try {
       detailStats = statistikF1.firstWhere(
@@ -585,7 +1038,6 @@ class _DriverDetailPageState
     );
   }
 
-  // --- KOLOM KIRI: SEASON STATS ---
   Widget _buildSeasonStatsColumn(
     DriverStatistics stats,
   ) {
@@ -783,7 +1235,6 @@ class _DriverDetailPageState
     );
   }
 
-  // --- KOLOM KANAN: CAREER STATS ---
   Widget _buildCareerStatsColumn(
     DriverStatistics stats,
   ) {
@@ -856,7 +1307,6 @@ class _DriverDetailPageState
     );
   }
 
-  // --- Helper Widget: Baris Season Stats ---
   Widget _buildStatRow(
     String label,
     String value,
@@ -886,7 +1336,6 @@ class _DriverDetailPageState
     );
   }
 
-  // --- Helper Widget: Baris Career Stats ---
   Widget _buildCareerRow(
     String label,
     String value,
@@ -926,7 +1375,6 @@ class _DriverDetailPageState
     );
   }
 
-  // --- Helper Function: Format Angka Posisi ---
   String _formatPosition(
     int pos,
   ) {
@@ -945,7 +1393,6 @@ class _DriverDetailPageState
     return "${pos}th";
   }
 
-  // --- Helper Function: Format Poin ---
   String _formatCareerPoints(
     double points,
   ) {
@@ -969,50 +1416,332 @@ class _DriverDetailPageState
           Positioned(
             right: 900,
             bottom: -400,
-            child: Transform.rotate(
-              angle: 1.6,
-              child: Image.asset(
-                widget.driver.fotoMobil,
-                height: 1300,
-                fit: BoxFit.contain,
-                errorBuilder: (
-                  context,
-                  error,
-                  stackTrace,
-                ) => const SizedBox(),
+            child: SlideTransition(
+              position: _carSlide,
+              child: FadeTransition(
+                opacity: _carFade,
+                child: Transform.rotate(
+                  angle: 1.6,
+                  child: Image.asset(
+                    widget.driver.fotoMobil,
+                    height: 1300,
+                    fit: BoxFit.contain,
+                    errorBuilder: (
+                      context,
+                      error,
+                      stackTrace,
+                    ) => const SizedBox(),
+                  ),
+                ),
               ),
             ),
           ),
           Positioned(
             right: 710,
             bottom: -500,
-            child: Transform.rotate(
-              angle: 0.0,
-              child: Image.asset(
-                widget.driver.fotoAset,
-                height: 1000,
-                fit: BoxFit.contain,
-                errorBuilder: (
-                  context,
-                  error,
-                  stackTrace,
-                ) => const SizedBox(),
+            child: SlideTransition(
+              position: _driverSlide,
+              child: FadeTransition(
+                opacity: _driverFade,
+                child: Transform.rotate(
+                  angle: 0.0,
+                  child: Image.asset(
+                    widget.driver.fotoAset,
+                    height: 1000,
+                    fit: BoxFit.contain,
+                    errorBuilder: (
+                      context,
+                      error,
+                      stackTrace,
+                    ) => const SizedBox(),
+                  ),
+                ),
               ),
             ),
           ),
           Positioned(
             left: 0,
             bottom: 80,
+            child: SlideTransition(
+              position: _textSlide,
+              child: FadeTransition(
+                opacity: _textFade,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      firstName,
+                      style: GoogleFonts.caveat(
+                        color: Colors.white,
+                        fontSize: 48,
+                        fontWeight: FontWeight.w400,
+                        height: 1.0,
+                        shadows: const [
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 10.0,
+                            offset: Offset(
+                              2.0,
+                              2.0,
+                            ),
+                          ),
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 25.0,
+                            offset: Offset(
+                              0.0,
+                              0.0,
+                            ),
+                          ),
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 40.0,
+                            offset: Offset(
+                              0.0,
+                              0.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      lastName.toUpperCase(),
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 72,
+                        fontWeight: FontWeight.w900,
+                        height: 1.0,
+                        shadows: const [
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 10.0,
+                            offset: Offset(
+                              3.0,
+                              3.0,
+                            ),
+                          ),
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 30.0,
+                            offset: Offset(
+                              0.0,
+                              0.0,
+                            ),
+                          ),
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 50.0,
+                            offset: Offset(
+                              0.0,
+                              0.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(
+                                  0.9,
+                                ),
+                                blurRadius: 10.0,
+                                spreadRadius: 2.0,
+                                offset: const Offset(
+                                  2.0,
+                                  2.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: Image.asset(
+                            'assets/images/flags/${widget.driver.negara}.webp',
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (
+                                  context,
+                                  error,
+                                  stackTrace,
+                                ) => const Icon(
+                                  Icons.flag,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        Text(
+                          "${widget.driver.negara[0].toUpperCase()}${widget.driver.negara.substring(1)}  |  ${widget.driver.tim}  |  ${widget.driver.nomorMobil}",
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            shadows: const [
+                              Shadow(
+                                color: Colors.black,
+                                blurRadius: 8.0,
+                                offset: Offset(
+                                  2.0,
+                                  2.0,
+                                ),
+                              ),
+                              Shadow(
+                                color: Colors.black,
+                                blurRadius: 20.0,
+                                offset: Offset(
+                                  0.0,
+                                  0.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ==========================================
+  // LAYOUT MOBILE YANG SUDAH DIKREASIKAN (TENGAH, SETENGAH BADAN, MOBIL DI BELAKANG)
+  // ==========================================
+  Widget _buildMobileHero(
+    String firstName,
+    String lastName,
+  ) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned(
+          bottom: 0,
+          right: -24, // Melebar melebihi padding
+          left: -24,
+          child: SizedBox(
+            height: 420, // Lebih tinggi agar komposisi pas
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // 1. FOTO MOBIL MASUK TERAKHIR (DI BELAKANG ORANG)
+                Positioned(
+                  top: -250, // Naik ke atas bahu pembalap
+                  left: -400,
+                  right: -50,
+                  child: SlideTransition(
+                    position: _carSlide,
+                    child: FadeTransition(
+                      opacity: _carFade,
+                      child: Transform.rotate(
+                        angle: -0.0, // Miringkan sedikit agar dinamis
+                        child: Image.asset(
+                          widget.driver.fotoMobil,
+                          height: 1000, // Mobil diperbesar
+                          fit: BoxFit.contain,
+                          errorBuilder: (
+                            context,
+                            error,
+                            stackTrace,
+                          ) => const SizedBox(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // 2. FOTO ORANG MUNCUL DULUAN (DI TENGAH DEPAN, POTONG KAKI)
+                Positioned(
+                  bottom: -20, // Nempel di bawah
+                  left: 0,
+                  right: 0,
+                  child: SlideTransition(
+                    position: _driverSlide,
+                    child: FadeTransition(
+                      opacity: _driverFade,
+                      child: ClipRect(
+                        // Memotong bagian bawah (kaki)
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          heightFactor: 0.60, // Ambil 60% dari atas (kepala s/d perut)
+                          child: Image.asset(
+                            widget.driver.fotoAset,
+                            height: 600, // Ukuran raksasa
+                            fit: BoxFit.contain,
+                            alignment: Alignment.topCenter,
+                            errorBuilder: (
+                              context,
+                              error,
+                              stackTrace,
+                            ) => const SizedBox(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // 3. TEKS (MENYUSUL, DI ATAS GAMBAR DENGAN SHADOW TEBAL)
+        SlideTransition(
+          position: _textSlide,
+          child: FadeTransition(
+            opacity: _textFade,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
                   firstName,
                   style: GoogleFonts.caveat(
                     color: Colors.white,
-                    fontSize: 48,
+                    fontSize: 32, // Sedikit lebih kecil agar aman
                     fontWeight: FontWeight.w400,
+                    height: 1.0,
+                    shadows: const [
+                      Shadow(
+                        color: Colors.black,
+                        blurRadius: 8.0,
+                        offset: Offset(
+                          1.0,
+                          1.0,
+                        ),
+                      ),
+                      Shadow(
+                        color: Colors.black,
+                        blurRadius: 20.0,
+                        offset: Offset(
+                          0.0,
+                          0.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  lastName.toUpperCase(),
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: 42, // Sedikit lebih kecil agar muat 1 baris
+                    fontWeight: FontWeight.w900,
                     height: 1.0,
                     shadows: const [
                       Shadow(
@@ -1031,60 +1760,17 @@ class _DriverDetailPageState
                           0.0,
                         ),
                       ),
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 40.0,
-                        offset: Offset(
-                          0.0,
-                          0.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Text(
-                  lastName.toUpperCase(),
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 72,
-                    fontWeight: FontWeight.w900,
-                    height: 1.0,
-                    shadows: const [
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 10.0,
-                        offset: Offset(
-                          3.0,
-                          3.0,
-                        ),
-                      ),
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 30.0,
-                        offset: Offset(
-                          0.0,
-                          0.0,
-                        ),
-                      ),
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 50.0,
-                        offset: Offset(
-                          0.0,
-                          0.0,
-                        ),
-                      ),
                     ],
                   ),
                 ),
                 const SizedBox(
-                  height: 24,
+                  height: 16,
                 ),
                 Row(
                   children: [
                     Container(
-                      width: 24,
-                      height: 24,
+                      width: 22,
+                      height: 22,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         boxShadow: [
@@ -1092,11 +1778,11 @@ class _DriverDetailPageState
                             color: Colors.black.withOpacity(
                               0.9,
                             ),
-                            blurRadius: 10.0,
-                            spreadRadius: 2.0,
+                            blurRadius: 8.0,
+                            spreadRadius: 1.0,
                             offset: const Offset(
-                              2.0,
-                              2.0,
+                              1.0,
+                              1.0,
                             ),
                           ),
                         ],
@@ -1105,45 +1791,43 @@ class _DriverDetailPageState
                       child: Image.asset(
                         'assets/images/flags/${widget.driver.negara}.webp',
                         fit: BoxFit.cover,
-                        errorBuilder:
-                            (
-                              context,
-                              error,
-                              stackTrace,
-                            ) => const Icon(
-                              Icons.flag,
-                              size: 16,
-                              color: Colors.white,
-                            ),
+                        errorBuilder: (
+                          context,
+                          error,
+                          stackTrace,
+                        ) => const SizedBox(),
                       ),
                     ),
                     const SizedBox(
-                      width: 12,
+                      width: 8,
                     ),
-                    Text(
-                      "${widget.driver.negara[0].toUpperCase()}${widget.driver.negara.substring(1)}  |  ${widget.driver.tim}  |  ${widget.driver.nomorMobil}",
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        shadows: const [
-                          Shadow(
-                            color: Colors.black,
-                            blurRadius: 8.0,
-                            offset: Offset(
-                              2.0,
-                              2.0,
+                    Flexible(
+                      child: Text(
+                        "${widget.driver.negara[0].toUpperCase()}${widget.driver.negara.substring(1)} | ${widget.driver.tim}",
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          shadows: const [
+                            Shadow(
+                              color: Colors.black,
+                              blurRadius: 5.0,
+                              offset: Offset(
+                                1.0,
+                                1.0,
+                              ),
                             ),
-                          ),
-                          Shadow(
-                            color: Colors.black,
-                            blurRadius: 20.0,
-                            offset: Offset(
-                              0.0,
-                              0.0,
+                            Shadow(
+                              color: Colors.black,
+                              blurRadius: 15.0,
+                              offset: Offset(
+                                0.0,
+                                0.0,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -1151,206 +1835,6 @@ class _DriverDetailPageState
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  // --- LAYOUT MOBILE ---
-  Widget _buildMobileHero(
-    String firstName,
-    String lastName,
-  ) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Positioned(
-          bottom: 0,
-          right: -20,
-          left: -20,
-          child: SizedBox(
-            height: 350,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Positioned(
-                  right: 90,
-                  bottom: 20,
-                  child: Transform.rotate(
-                    angle: -0.1,
-                    child: Image.asset(
-                      widget.driver.fotoMobil,
-                      height: 140,
-                      fit: BoxFit.contain,
-                      errorBuilder: (
-                        context,
-                        error,
-                        stackTrace,
-                      ) => const SizedBox(),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: -10,
-                  bottom: -10,
-                  child: Transform.rotate(
-                    angle: 0.0,
-                    child: Image.asset(
-                      widget.driver.fotoAset,
-                      height: 380,
-                      fit: BoxFit.contain,
-                      errorBuilder: (
-                        context,
-                        error,
-                        stackTrace,
-                      ) => const SizedBox(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              firstName,
-              style: GoogleFonts.caveat(
-                color: Colors.white,
-                fontSize: 36,
-                fontWeight: FontWeight.w400,
-                height: 1.0,
-                shadows: const [
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 8.0,
-                    offset: Offset(
-                      1.0,
-                      1.0,
-                    ),
-                  ),
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 20.0,
-                    offset: Offset(
-                      0.0,
-                      0.0,
-                    ),
-                  ),
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 30.0,
-                    offset: Offset(
-                      0.0,
-                      0.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              lastName.toUpperCase(),
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontSize: 48,
-                fontWeight: FontWeight.w900,
-                height: 1.0,
-                shadows: const [
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 10.0,
-                    offset: Offset(
-                      2.0,
-                      2.0,
-                    ),
-                  ),
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 25.0,
-                    offset: Offset(
-                      0.0,
-                      0.0,
-                    ),
-                  ),
-                  Shadow(
-                    color: Colors.black,
-                    blurRadius: 40.0,
-                    offset: Offset(
-                      0.0,
-                      0.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            Row(
-              children: [
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(
-                          0.9,
-                        ),
-                        blurRadius: 8.0,
-                        spreadRadius: 1.0,
-                        offset: const Offset(
-                          1.0,
-                          1.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.asset(
-                    'assets/images/flags/${widget.driver.negara}.webp',
-                    fit: BoxFit.cover,
-                    errorBuilder: (
-                      context,
-                      error,
-                      stackTrace,
-                    ) => const SizedBox(),
-                  ),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  "${widget.driver.negara[0].toUpperCase()}${widget.driver.negara.substring(1)} | ${widget.driver.tim}",
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    shadows: const [
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 5.0,
-                        offset: Offset(
-                          1.0,
-                          1.0,
-                        ),
-                      ),
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 15.0,
-                        offset: Offset(
-                          0.0,
-                          0.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
       ],
     );
