@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:drayve/widgets/animated_background.dart';
 
 class AuthPage
     extends
@@ -107,7 +108,7 @@ class _AuthPageState
       'wrong-password' => 'Email atau password salah.',
       'email-already-in-use' => 'Email ini sudah terdaftar.',
       'weak-password' => 'Password terlalu lemah. Gunakan minimal 6 karakter.',
-      'operation-not-allowed' => 'Metode Email/Password belum diaktifkan di Firebase.',
+      'operation-not-allowed' => 'Metode otentikasi belum diaktifkan di Firebase.',
       'network-request-failed' => 'Koneksi internet bermasalah. Coba lagi.',
       _ =>
         error.message ??
@@ -180,7 +181,6 @@ class _AuthPageState
         );
     }
   }
-  
 
   Future<
     void
@@ -202,6 +202,7 @@ class _AuthPageState
       await user?.updateDisplayName(
         name,
       );
+
       if (user !=
           null) {
         await FirebaseFirestore.instance
@@ -218,7 +219,7 @@ class _AuthPageState
               'createdAt': FieldValue.serverTimestamp(),
             });
       }
-      // Keep the existing sign-up flow: create the account, then return to login.
+
       await FirebaseAuth.instance.signOut();
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -233,7 +234,7 @@ class _AuthPageState
           ),
         ),
       );
-      toggleView(); // Kembali ke panel login
+      toggleView();
     } on FirebaseAuthException catch (
       error
     ) {
@@ -248,9 +249,7 @@ class _AuthPageState
           await FirebaseAuth.instance.signOut();
         } catch (
           _
-        ) {
-          // Preserve the original profile-write error for the user.
-        }
+        ) {}
         _showAuthError(
           FirebaseAuthException(
             code: 'unknown',
@@ -265,6 +264,92 @@ class _AuthPageState
         );
     }
   }
+
+  // --- FUNGSI SOCIAL LOGIN (WEB POPUP) ---
+  Future<
+    void
+  >
+  _handleSocialLogin(
+    AuthProvider provider,
+  ) async {
+    if (_isSubmitting) return;
+    setState(
+      () => _isSubmitting = true,
+    );
+
+    try {
+      // signInWithPopup sangat dianjurkan untuk Flutter Web
+      final credential = await FirebaseAuth.instance.signInWithPopup(
+        provider,
+      );
+      final user = credential.user;
+
+      if (user !=
+          null) {
+        // Cek apakah user baru pertama kali login, jika ya, simpan ke Firestore
+        final userDoc = FirebaseFirestore.instance
+            .collection(
+              'users',
+            )
+            .doc(
+              user.uid,
+            );
+        final docSnapshot = await userDoc.get();
+
+        if (!docSnapshot.exists) {
+          await userDoc.set({
+            'uid': user.uid,
+            'name':
+                user.displayName ??
+                'F1 Enthusiast',
+            'email':
+                user.email ??
+                '',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Welcome, ${user.displayName ?? 'F1 Enthusiast'}!",
+            ),
+            backgroundColor: const Color(
+              0xFFE8002D,
+            ),
+          ),
+        );
+        Navigator.pop(
+          context,
+          true,
+        );
+      }
+    } on FirebaseAuthException catch (
+      error
+    ) {
+      _showAuthError(
+        error,
+      );
+    } finally {
+      if (mounted)
+        setState(
+          () => _isSubmitting = false,
+        );
+    }
+  }
+
+  void _signInWithGoogle() => _handleSocialLogin(
+    GoogleAuthProvider(),
+  );
+  void _signInWithFacebook() => _handleSocialLogin(
+    FacebookAuthProvider(),
+  );
+  void _signInWithTwitter() => _handleSocialLogin(
+    TwitterAuthProvider(),
+  );
 
   @override
   Widget build(
@@ -290,34 +375,10 @@ class _AuthPageState
       body: Stack(
         children: [
           // ==========================================
-          // 1. BACKGROUND SETEMA DENGAN LANDING PAGE
+          // BACKGROUND ANIMASI INTERAKTIF (BARU)
           // ==========================================
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/bgdong.webp',
-              fit: BoxFit.cover,
-              errorBuilder: (
-                context,
-                error,
-                stackTrace,
-              ) => const SizedBox(),
-            ),
-          ),
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.15,
-              child: Image.asset(
-                'assets/images/bgnice.webp',
-                fit: BoxFit.cover,
-                color: Colors.black26,
-                colorBlendMode: BlendMode.darken,
-                errorBuilder: (
-                  context,
-                  error,
-                  stackTrace,
-                ) => const SizedBox(),
-              ),
-            ),
+          const Positioned.fill(
+            child: AnimatedBackground(),
           ),
 
           SafeArea(
@@ -520,6 +581,7 @@ class _AuthPageState
           children: [
             Text(
               "Login to DRAYVE",
+              textAlign: TextAlign.center, // <--- TAMBAHKAN INI
               style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontSize: 32,
@@ -649,6 +711,7 @@ class _AuthPageState
           children: [
             Text(
               "Create Account",
+              textAlign: TextAlign.center, // <--- TAMBAHKAN INI
               style: GoogleFonts.poppins(
                 color: Colors.white,
                 fontSize: 32,
@@ -895,57 +958,66 @@ class _AuthPageState
       children: [
         _buildAssetIcon(
           'assets/icons/gikon.webp',
+          onTap: _signInWithGoogle,
         ),
         const SizedBox(
           width: 16,
         ),
         _buildAssetIcon(
           'assets/icons/mikon.webp',
+          onTap: _signInWithFacebook,
         ),
         const SizedBox(
           width: 16,
         ),
         _buildAssetIcon(
           'assets/icons/xikon.webp',
+          onTap: _signInWithTwitter,
         ),
       ],
     );
   }
 
   Widget _buildAssetIcon(
-    String assetPath,
-  ) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.white24,
-        ),
-      ),
-      child: Center(
-        child: Image.asset(
-          assetPath,
-          width: 18,
-          height: 18,
-          color: Colors.white,
-          errorBuilder:
-              (
-                context,
-                error,
-                stackTrace,
-              ) => const Icon(
-                Icons.broken_image,
-                color: Colors.white54,
-                size: 18,
-              ),
+    String assetPath, {
+    VoidCallback? onTap,
+  }) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.white24,
+            ),
+          ),
+          child: Center(
+            child: Image.asset(
+              assetPath,
+              width: 18,
+              height: 18,
+              color: Colors.white,
+              errorBuilder:
+                  (
+                    context,
+                    error,
+                    stackTrace,
+                  ) => const Icon(
+                    Icons.broken_image,
+                    color: Colors.white54,
+                    size: 18,
+                  ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  // PENYESUAIAN PADA _buildTextField UNTUK TEXTBOX YANG LEBIH BESAR
   Widget _buildTextField(
     IconData icon,
     String hint, {
@@ -962,7 +1034,7 @@ class _AuthPageState
       style: GoogleFonts.montserrat(
         color: Colors.white,
         fontSize: 15,
-      ), // Ukuran font isian dinaikkan sedikit
+      ),
       validator: validator,
       decoration: InputDecoration(
         filled: true,
@@ -973,13 +1045,12 @@ class _AuthPageState
           icon,
           color: Colors.white54,
           size: 22,
-        ), // Ikon sedikit dibesarkan agar proporsional
+        ),
         hintText: hint,
         hintStyle: GoogleFonts.montserrat(
           color: Colors.white38,
           fontSize: 15,
         ),
-        // Padding vertikal dinaikkan dari 16 ke 20 agar textbox makin lega/besar
         contentPadding: const EdgeInsets.symmetric(
           vertical: 20,
           horizontal: 16,

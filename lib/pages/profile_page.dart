@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:drayve/pages/landing_page.dart'; // Import landing page untuk navigasi
+import 'package:image_picker/image_picker.dart';
+import 'package:drayve/pages/landing_page.dart';
+import 'package:drayve/widgets/animated_background.dart';
 
 class ProfilePage
     extends
@@ -23,6 +27,8 @@ class _ProfilePageState
         > {
   String currentName = "F1 Enthusiast";
   String currentEmail = "user@drayve.com";
+  String? _photoBase64;
+  bool _isUploading = false;
 
   final _formKey =
       GlobalKey<
@@ -35,10 +41,15 @@ class _ProfilePageState
   void initState() {
     super.initState();
     final user = FirebaseAuth.instance.currentUser;
-    currentName = user?.displayName?.isNotEmpty == true
+    currentName =
+        user?.displayName?.isNotEmpty ==
+            true
         ? user!.displayName!
         : 'F1 Enthusiast';
-    currentEmail = user?.email ?? '';
+    currentEmail =
+        user?.email ??
+        '';
+
     _nameController = TextEditingController(
       text: currentName,
     );
@@ -48,27 +59,42 @@ class _ProfilePageState
     _loadProfile();
   }
 
-  Future<void> _loadProfile() async {
+  Future<
+    void
+  >
+  _loadProfile() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    if (user ==
+        null)
+      return;
     try {
       final snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
+          .collection(
+            'users',
+          )
+          .doc(
+            user.uid,
+          )
           .get();
-      if (!mounted || !snapshot.exists) return;
-      final savedName = snapshot.data()?['name'] as String?;
+      if (!mounted ||
+          !snapshot.exists)
+        return;
+
+      final data = snapshot.data();
       setState(() {
-        if (savedName != null && savedName.isNotEmpty) {
-          currentName = savedName;
-          _nameController.text = savedName;
+        if (data?['name'] !=
+            null) {
+          currentName = data!['name'];
+          _nameController.text = currentName;
         }
-        currentEmail = user.email ?? '';
-        _emailController.text = currentEmail;
+        if (data?['photoBase64'] !=
+            null) {
+          _photoBase64 = data!['photoBase64'];
+        }
       });
-    } catch (_) {
-      // Firebase Auth profile remains available if Firestore is not set up yet.
-    }
+    } catch (
+      _
+    ) {}
   }
 
   @override
@@ -78,69 +104,218 @@ class _ProfilePageState
     super.dispose();
   }
 
-  Future<void> _saveProfile() async {
+  // ==========================================
+  // UPLOAD FOTO KE FIRESTORE (BASE64 - 100% GRATIS)
+  // ==========================================
+  Future<
+    void
+  >
+  _pickAndUploadImage() async {
+    final picker = ImagePicker();
+    // Kompres kualitas agar ukurannya kecil dan muat di Firestore
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 40,
+      maxWidth: 300,
+      maxHeight: 300,
+    );
+
+    if (image ==
+        null)
+      return;
+
+    setState(
+      () => _isUploading = true,
+    );
+
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      final bytes = await image.readAsBytes();
+
+      // Ubah gambar jadi string Base64
+      final base64String = base64Encode(
+        bytes,
+      );
+
+      // Simpan langsung ke Firestore dokumen pengguna
+      await FirebaseFirestore.instance
+          .collection(
+            'users',
+          )
+          .doc(
+            user.uid,
+          )
+          .set(
+            {
+              'photoBase64': base64String,
+            },
+            SetOptions(
+              merge: true,
+            ),
+          );
+
+      setState(() {
+        _photoBase64 = base64String;
+      });
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Profile picture updated successfully!",
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (
+      e
+    ) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Image size too large or failed to save.",
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted)
+        setState(
+          () => _isUploading = false,
+        );
+    }
+  }
+
+  Future<
+    void
+  >
+  _sendPasswordReset() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) return;
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: email,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Password reset link sent to $email",
+            style: GoogleFonts.montserrat(),
+          ),
+          backgroundColor: Colors.blueAccent,
+        ),
+      );
+    } catch (
+      error
+    ) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Error sending password reset link.",
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<
+    void
+  >
+  _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    if (user ==
+        null)
+      return;
     try {
       final newName = _nameController.text.trim();
       final newEmail = _emailController.text.trim();
-      await user.updateDisplayName(newName);
-      if (newEmail != (user.email ?? '')) {
-        await user.verifyBeforeUpdateEmail(newEmail);
+      await user.updateDisplayName(
+        newName,
+      );
+      if (newEmail !=
+          (user.email ??
+              '')) {
+        await user.verifyBeforeUpdateEmail(
+          newEmail,
+        );
       }
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        'uid': user.uid,
-        'name': newName,
-        'email': user.email,
-        if (newEmail != (user.email ?? '')) 'pendingEmail': newEmail,
-        'updatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+      await FirebaseFirestore.instance
+          .collection(
+            'users',
+          )
+          .doc(
+            user.uid,
+          )
+          .set(
+            {
+              'uid': user.uid,
+              'name': newName,
+              'email': user.email,
+              if (newEmail !=
+                  (user.email ??
+                      ''))
+                'pendingEmail': newEmail,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(
+              merge: true,
+            ),
+          );
       if (!mounted) return;
       setState(() {
         currentName = newName;
-        currentEmail = user.email ?? '';
+        currentEmail =
+            user.email ??
+            '';
       });
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(
         SnackBar(
           content: Text(
-          newEmail != (user.email ?? '')
-              ? "Profile updated. Check your inbox to confirm the email change."
-              : "Profile updated successfully!",
+            "Profile updated successfully!",
             style: GoogleFonts.montserrat(),
           ),
           backgroundColor: const Color(
             0xFFE8002D,
           ),
-          duration: const Duration(
-            seconds: 2,
-          ),
         ),
       );
-    } on FirebaseAuthException catch (error) {
+    } catch (
+      error
+    ) {
       if (!mounted) return;
-      final message = error.code == 'requires-recent-login'
-          ? 'Login ulang sebelum mengganti email.'
-          : error.message ?? 'Profil gagal diperbarui.';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profil gagal disimpan. Periksa pengaturan Firestore.')),
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Failed to update profile.',
+          ),
+        ),
       );
     }
   }
 
-  // ==========================================
-  // FUNGSI LOGOUT BARU
-  // ==========================================
-  Future<void> _logout() async {
+  Future<
+    void
+  >
+  _logout() async {
     await FirebaseAuth.instance.signOut();
     if (!mounted) return;
-
-    // 2. Tampilkan pesan berhasil keluar
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(
@@ -149,14 +324,9 @@ class _ProfilePageState
           "You have successfully logged out.",
           style: GoogleFonts.montserrat(),
         ),
-        backgroundColor: Colors.orange, // Warna oranye agar beda dari error/success
-        duration: const Duration(
-          seconds: 2,
-        ),
+        backgroundColor: Colors.orange,
       ),
     );
-
-    // 3. Kembali ke Landing Page dan bersihkan seluruh tumpukan halaman sebelumnya
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
@@ -165,9 +335,6 @@ class _ProfilePageState
         ) => const LandingPage(),
       ),
       (
-        Route<
-          dynamic
-        >
         route,
       ) => false,
     );
@@ -190,46 +357,28 @@ class _ProfilePageState
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-            size: 20,
-          ),
-          onPressed: () => Navigator.pop(
-            context,
-          ),
-        ),
-        title: Text(
-          "MY PROFILE",
-          style: GoogleFonts.montserrat(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.15,
-              child: Image.asset(
-                'assets/images/pattern.webp',
-                fit: BoxFit.cover,
-                errorBuilder: (
+          const Positioned.fill(
+            child: AnimatedBackground(),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(
+                24.0,
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                onPressed: () => Navigator.pop(
                   context,
-                  error,
-                  stackTrace,
-                ) => const SizedBox(),
+                ),
               ),
             ),
           ),
-
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(
@@ -275,23 +424,24 @@ class _ProfilePageState
                               ),
                             ),
                             child: ClipOval(
-                              child: Image.asset(
-                                'assets/images/default_profile.webp',
-                                fit: BoxFit.cover,
-                                errorBuilder:
-                                    (
-                                      context,
-                                      error,
-                                      stackTrace,
-                                    ) => Container(
-                                      color: Colors.white12,
-                                      child: const Icon(
-                                        Icons.person,
-                                        color: Colors.white54,
-                                        size: 60,
+                              child:
+                                  _photoBase64 !=
+                                          null &&
+                                      _photoBase64!.isNotEmpty
+                                  ? Image.memory(
+                                      base64Decode(
+                                        _photoBase64!,
                                       ),
+                                      fit: BoxFit.cover,
+                                      width: 120,
+                                      height: 120,
+                                    )
+                                  : Image.asset(
+                                      'assets/images/default_profile.webp',
+                                      fit: BoxFit.cover,
+                                      width: 120,
+                                      height: 120,
                                     ),
-                              ),
                             ),
                           ),
                           Container(
@@ -301,24 +451,28 @@ class _ProfilePageState
                               ),
                               shape: BoxShape.circle,
                             ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              onPressed: () {
-                                ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      "Feature to upload image coming soon!",
+                            child: _isUploading
+                                ? const Padding(
+                                    padding: EdgeInsets.all(
+                                      12.0,
                                     ),
+                                    child: SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  )
+                                : IconButton(
+                                    icon: const Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    onPressed: _pickAndUploadImage,
                                   ),
-                                );
-                              },
-                            ),
                           ),
                         ],
                       ),
@@ -333,13 +487,12 @@ class _ProfilePageState
                         validator:
                             (
                               value,
-                            ) {
-                              if (value ==
-                                      null ||
-                                  value.isEmpty)
-                                return 'Username cannot be empty';
-                              return null;
-                            },
+                            ) =>
+                                value ==
+                                        null ||
+                                    value.isEmpty
+                                ? 'Username cannot be empty'
+                                : null,
                       ),
                       const SizedBox(
                         height: 20,
@@ -364,11 +517,25 @@ class _ProfilePageState
                               return null;
                             },
                       ),
+
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: _sendPasswordReset,
+                          child: Text(
+                            "Reset Password?",
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white54,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(
-                        height: 40,
+                        height: 24,
                       ),
 
-                      // TOMBOL SAVE
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -400,13 +567,10 @@ class _ProfilePageState
                         height: 16,
                       ),
 
-                      // ==========================================
-                      // TOMBOL LOGOUT BARU
-                      // ==========================================
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton(
-                          onPressed: _logout, // Memanggil fungsi logout di atas
+                          onPressed: _logout,
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(
                               color: Colors.white38,

@@ -1,4 +1,4 @@
-====== FILE: C:\Users\leevi\flutter_lab\DRAYVE\pubspec.yaml ======
+﻿====== FILE: C:\Users\leevi\flutter_lab\DRAYVE\pubspec.yaml ======
 name: drayve
 description: "A new Flutter project."
 
@@ -35,9 +35,106 @@ flutter:
     - assets/icons/
 
   fonts:
-    - family: MagnetoBold
+    - family: Ethnocentric
       fonts:
-        - asset: assets/fonts/MAGNETOB.TTF
+        - asset: assets/fonts/Ethnocentric-Italic.otf
+        - asset: assets/fonts/Ethnocentric-Italic.otf
+          style: italic
+====== FILE: C:\Users\leevi\flutter_lab\DRAYVE\firebase.json ======
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "drayve-l44p1",
+          "configurations": {
+            "web": "1:296470902325:web:9ae25cd83906c67473e37c"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "/@(index.html|flutter_bootstrap.js|flutter_service_worker.js|main.dart.js|version.json)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
+====== FILE: C:\Users\leevi\flutter_lab\DRAYVE\firestore.rules ======
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.uid == request.auth.uid;
+      allow read, update, delete: if request.auth != null
+                                  && request.auth.uid == userId;
+    }
+  }
+}
+====== FILE: C:\Users\leevi\flutter_lab\DRAYVE\analysis_options.yaml ======
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+
+linter:
+  # The lint rules applied to this project can be customized in the
+  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
+  # included above or to enable additional rules. A list of all available lints
+  # and their documentation is published at https://dart.dev/lints.
+  #
+  # Instead of disabling a lint rule for the entire project in the
+  # section below, it can also be suppressed for a single line of code
+  # or a specific dart file by using the `// ignore: name_of_lint` and
+  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
+  # producing the lint.
+  rules:
+    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
+    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
 ====== FILE: C:\Users\leevi\flutter_lab\DRAYVE\lib\data\auth_state.dart ======
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -543,9 +640,9 @@ Ia tetap menjadi bagian dari Alpine pada musim Formula 1 2026.
     team: 'Haas F1 Team',
     number: 31,
     dateOfBirth: '17/09/1996',
-    placeOfBirth: 'Évreux, France',
+    placeOfBirth: 'Ã‰vreux, France',
     biography: '''
-Esteban Ocon berasal dari Évreux, Prancis, dan memulai perjalanan
+Esteban Ocon berasal dari Ã‰vreux, Prancis, dan memulai perjalanan
 balapnya melalui karting.
 
 Ia kemudian berkembang melalui berbagai kategori junior sebelum
@@ -645,9 +742,9 @@ Mulai musim 2026 ia menjadi bagian dari proyek Audi Formula 1.
     team: 'Audi',
     number: 5,
     dateOfBirth: '14/10/2004',
-    placeOfBirth: 'São Paulo, Brazil',
+    placeOfBirth: 'SÃ£o Paulo, Brazil',
     biography: '''
-Gabriel Bortoleto berasal dari São Paulo, Brasil, dan mulai membangun
+Gabriel Bortoleto berasal dari SÃ£o Paulo, Brasil, dan mulai membangun
 kariernya melalui karting.
 
 Ia kemudian pindah ke Eropa dan berkembang melalui kategori single-seater.
@@ -1224,13 +1321,13 @@ dataSosmedF1 = [
     driverName: 'Kimi Antonelli',
     posts: [
       PostData(
-        content: "Unbelievable feeling! P1 today! Massive thanks to the team for an incredible car. The hard work is paying off! 🏆🇮🇹 #F1",
+        content: "Unbelievable feeling! P1 today! Massive thanks to the team for an incredible car. The hard work is paying off! ðŸ†ðŸ‡®ðŸ‡¹ #F1",
         timeAgo: "2 hours ago",
         likes: 215000,
         comments: 14200,
       ),
       PostData(
-        content: "First pole position feels surreal. Let's convert this tomorrow! ⏱️🔥",
+        content: "First pole position feels surreal. Let's convert this tomorrow! â±ï¸ðŸ”¥",
         timeAgo: "1 day ago",
         likes: 185000,
         comments: 8900,
@@ -1245,7 +1342,7 @@ dataSosmedF1 = [
       ),
       CommentData(
         username: "MercInsider",
-        content: "Replacing Lewis wasn't easy, but you're showing exactly why Toto chose you. 👏",
+        content: "Replacing Lewis wasn't easy, but you're showing exactly why Toto chose you. ðŸ‘",
         timeAgo: "2h ago",
         likes: 890,
       ),
@@ -1257,13 +1354,13 @@ dataSosmedF1 = [
     driverName: 'George Russell',
     posts: [
       PostData(
-        content: "Tough race out there, but we gathered a lot of important data. We'll bounce back stronger at the next one! 💪🏎️ #F1 #KeepPushing",
+        content: "Tough race out there, but we gathered a lot of important data. We'll bounce back stronger at the next one! ðŸ’ªðŸŽï¸ #F1 #KeepPushing",
         timeAgo: "5 hours ago",
         likes: 124500,
         comments: 4205,
       ),
       PostData(
-        content: "Great session today! The car feels amazing and the setup is perfectly dialed in. Ready to give it everything! 🔥🏁",
+        content: "Great session today! The car feels amazing and the setup is perfectly dialed in. Ready to give it everything! ðŸ”¥ðŸ",
         timeAgo: "2 days ago",
         likes: 145200,
         comments: 3400,
@@ -1278,7 +1375,7 @@ dataSosmedF1 = [
       ),
       CommentData(
         username: "SpeedDemon",
-        content: "Always supporting you, George! Let's go grab that championship! 🏆",
+        content: "Always supporting you, George! Let's go grab that championship! ðŸ†",
         timeAgo: "1d ago",
         likes: 145,
       ),
@@ -1290,13 +1387,13 @@ dataSosmedF1 = [
     driverName: 'Lewis Hamilton',
     posts: [
       PostData(
-        content: "Still we rise. Grateful for the amazing support from the Tifosi this weekend. We keep pushing forward together. 🔴✨",
+        content: "Still we rise. Grateful for the amazing support from the Tifosi this weekend. We keep pushing forward together. ðŸ”´âœ¨",
         timeAgo: "1 day ago",
         likes: 890000,
         comments: 45000,
       ),
       PostData(
-        content: "Monza in red is something I'll never forget. Thank you for the energy! 🇮🇹❤️",
+        content: "Monza in red is something I'll never forget. Thank you for the energy! ðŸ‡®ðŸ‡¹â¤ï¸",
         timeAgo: "1 week ago",
         likes: 1200000,
         comments: 62000,
@@ -1311,7 +1408,7 @@ dataSosmedF1 = [
       ),
       CommentData(
         username: "Tifosi4Life",
-        content: "FORZA LEWIS! Bring home the 8th! 🏆🔴",
+        content: "FORZA LEWIS! Bring home the 8th! ðŸ†ðŸ”´",
         timeAgo: "10h ago",
         likes: 3200,
       ),
@@ -1323,13 +1420,13 @@ dataSosmedF1 = [
     driverName: 'Lando Norris',
     posts: [
       PostData(
-        content: "P1 BABY!!! What a weekend! Massive thanks to the whole papaya family at MTC and at the track! 🏆🧡",
+        content: "P1 BABY!!! What a weekend! Massive thanks to the whole papaya family at MTC and at the track! ðŸ†ðŸ§¡",
         timeAgo: "1 day ago",
         likes: 485000,
         comments: 22400,
       ),
       PostData(
-        content: "Papaya rules! Let's keep this momentum going into the European leg. 🚀",
+        content: "Papaya rules! Let's keep this momentum going into the European leg. ðŸš€",
         timeAgo: "4 days ago",
         likes: 395000,
         comments: 14500,
@@ -1338,7 +1435,7 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "PapayaRules",
-        content: "Defending World Champion showing them how it's done! 🧡",
+        content: "Defending World Champion showing them how it's done! ðŸ§¡",
         timeAgo: "1h ago",
         likes: 1540,
       ),
@@ -1356,13 +1453,13 @@ dataSosmedF1 = [
     driverName: 'Charles Leclerc',
     posts: [
       PostData(
-        content: "FORZA FERRARI! 🔴 Winning in front of the Tifosi is a feeling I will never ever forget. Grazie mille!",
+        content: "FORZA FERRARI! ðŸ”´ Winning in front of the Tifosi is a feeling I will never ever forget. Grazie mille!",
         timeAgo: "3 hours ago",
         likes: 750000,
         comments: 38000,
       ),
       PostData(
-        content: "Qualifying was tricky, but P2 gives us a great fighting chance for tomorrow. Let's go! 🐎",
+        content: "Qualifying was tricky, but P2 gives us a great fighting chance for tomorrow. Let's go! ðŸŽ",
         timeAgo: "5 days ago",
         likes: 512000,
         comments: 16700,
@@ -1371,7 +1468,7 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "IlPredestinato",
-        content: "What a drive Charles! You deserve this so much! 🔴🏎️",
+        content: "What a drive Charles! You deserve this so much! ðŸ”´ðŸŽï¸",
         timeAgo: "1h ago",
         likes: 2890,
       ),
@@ -1389,7 +1486,7 @@ dataSosmedF1 = [
     driverName: 'Max Verstappen',
     posts: [
       PostData(
-        content: "Simply lovely! Max points this weekend. The car was on rails today. Great job team! ☝️🦁",
+        content: "Simply lovely! Max points this weekend. The car was on rails today. Great job team! â˜ï¸ðŸ¦",
         timeAgo: "4 hours ago",
         likes: 620000,
         comments: 28000,
@@ -1404,7 +1501,7 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "OrangeArmy",
-        content: "Unstoppable! Pure masterclass once again Max! 🇳🇱🦁",
+        content: "Unstoppable! Pure masterclass once again Max! ðŸ‡³ðŸ‡±ðŸ¦",
         timeAgo: "1h ago",
         likes: 3100,
       ),
@@ -1422,13 +1519,13 @@ dataSosmedF1 = [
     driverName: 'Oscar Piastri',
     posts: [
       PostData(
-        content: "Solid points today. We lacked a bit of ultimate pace but executed the strategy perfectly. On to the next one! 🧡🏎️",
+        content: "Solid points today. We lacked a bit of ultimate pace but executed the strategy perfectly. On to the next one! ðŸ§¡ðŸŽï¸",
         timeAgo: "12 hours ago",
         likes: 210000,
         comments: 7500,
       ),
       PostData(
-        content: "Great feeling to be back racing in Albert Park. Thanks for the massive support at home! 🇦🇺🦘",
+        content: "Great feeling to be back racing in Albert Park. Thanks for the massive support at home! ðŸ‡¦ðŸ‡ºðŸ¦˜",
         timeAgo: "2 weeks ago",
         likes: 350000,
         comments: 12000,
@@ -1437,7 +1534,7 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "AussieGrit",
-        content: "Ice cold as always, Oscar. Great drive! 🥶👏",
+        content: "Ice cold as always, Oscar. Great drive! ðŸ¥¶ðŸ‘",
         timeAgo: "3h ago",
         likes: 980,
       ),
@@ -1455,7 +1552,7 @@ dataSosmedF1 = [
     driverName: 'Isack Hadjar',
     posts: [
       PostData(
-        content: "First podium with Red Bull Racing! What a crazy race. Thanks to the team for trusting me! 🇫🇷🐂",
+        content: "First podium with Red Bull Racing! What a crazy race. Thanks to the team for trusting me! ðŸ‡«ðŸ‡·ðŸ‚",
         timeAgo: "1 day ago",
         likes: 185000,
         comments: 6400,
@@ -1470,7 +1567,7 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "FrenchF1",
-        content: "Allez Isack! You're proving you belong in that top seat! 🇫🇷",
+        content: "Allez Isack! You're proving you belong in that top seat! ðŸ‡«ðŸ‡·",
         timeAgo: "4h ago",
         likes: 540,
       ),
@@ -1488,7 +1585,7 @@ dataSosmedF1 = [
     driverName: 'Liam Lawson',
     posts: [
       PostData(
-        content: "Fought hard for every single point today. The Racing Bulls squad did a mega job with the pitstops! 🇳🇿🐃",
+        content: "Fought hard for every single point today. The Racing Bulls squad did a mega job with the pitstops! ðŸ‡³ðŸ‡¿ðŸƒ",
         timeAgo: "14 hours ago",
         likes: 145000,
         comments: 4800,
@@ -1503,7 +1600,7 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "KiwiRacer",
-        content: "Doing NZ proud mate! Great overtakes today! 🇳🇿",
+        content: "Doing NZ proud mate! Great overtakes today! ðŸ‡³ðŸ‡¿",
         timeAgo: "2h ago",
         likes: 670,
       ),
@@ -1521,7 +1618,7 @@ dataSosmedF1 = [
     driverName: 'Pierre Gasly',
     posts: [
       PostData(
-        content: "Allez Alpine! A hard-fought P6 today. We are definitely making steps in the right direction. 💙🇫🇷",
+        content: "Allez Alpine! A hard-fought P6 today. We are definitely making steps in the right direction. ðŸ’™ðŸ‡«ðŸ‡·",
         timeAgo: "1 day ago",
         likes: 110000,
         comments: 3400,
@@ -1536,7 +1633,7 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "Gasly10",
-        content: "Extracting 110% out of that car as usual Pierre! 💪",
+        content: "Extracting 110% out of that car as usual Pierre! ðŸ’ª",
         timeAgo: "3h ago",
         likes: 430,
       ),
@@ -1554,7 +1651,7 @@ dataSosmedF1 = [
     driverName: 'Arvid Lindblad',
     posts: [
       PostData(
-        content: "Double points finish for the team! Still can't believe I'm racing these guys. Huge thanks to VCARB for the amazing car today! 🇬🇧🤘",
+        content: "Double points finish for the team! Still can't believe I'm racing these guys. Huge thanks to VCARB for the amazing car today! ðŸ‡¬ðŸ‡§ðŸ¤˜",
         timeAgo: "10 hours ago",
         likes: 98000,
         comments: 2700,
@@ -1587,13 +1684,13 @@ dataSosmedF1 = [
     driverName: 'Franco Colapinto',
     posts: [
       PostData(
-        content: "¡Vamos! Great strategy from the wall today. Happy to bring home some good points for Alpine! 🇦🇷💙",
+        content: "Â¡Vamos! Great strategy from the wall today. Happy to bring home some good points for Alpine! ðŸ‡¦ðŸ‡·ðŸ’™",
         timeAgo: "18 hours ago",
         likes: 215000,
         comments: 8900,
       ),
       PostData(
-        content: "Crazy race, but we survived the chaos. Thanks to all the Argentine fans for the crazy support! 🇦🇷🙌",
+        content: "Crazy race, but we survived the chaos. Thanks to all the Argentine fans for the crazy support! ðŸ‡¦ðŸ‡·ðŸ™Œ",
         timeAgo: "2 weeks ago",
         likes: 280000,
         comments: 11500,
@@ -1602,7 +1699,7 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "ArgF1",
-        content: "¡Orgullo argentino! You drove brilliantly today Franco! 🇦🇷👏",
+        content: "Â¡Orgullo argentino! You drove brilliantly today Franco! ðŸ‡¦ðŸ‡·ðŸ‘",
         timeAgo: "2h ago",
         likes: 1400,
       ),
@@ -1620,7 +1717,7 @@ dataSosmedF1 = [
     driverName: 'Oliver Bearman',
     posts: [
       PostData(
-        content: "P8! The Haas was absolutely flying in the final stint. Massive effort from everyone in the garage! 🇬🇧🐻",
+        content: "P8! The Haas was absolutely flying in the final stint. Massive effort from everyone in the garage! ðŸ‡¬ðŸ‡§ðŸ»",
         timeAgo: "1 day ago",
         likes: 105000,
         comments: 3100,
@@ -1635,13 +1732,13 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "OllieFanClub",
-        content: "Ollie putting that Haas where it doesn't belong! Huge drive! 🐻",
+        content: "Ollie putting that Haas where it doesn't belong! Huge drive! ðŸ»",
         timeAgo: "1h ago",
         likes: 450,
       ),
       CommentData(
         username: "F1Tifosi",
-        content: "Ferrari is definitely watching your progress. Keep it up Ollie! 🔴",
+        content: "Ferrari is definitely watching your progress. Keep it up Ollie! ðŸ”´",
         timeAgo: "5h ago",
         likes: 670,
       ),
@@ -1653,7 +1750,7 @@ dataSosmedF1 = [
     driverName: 'Carlos Sainz',
     posts: [
       PostData(
-        content: "Smooth Operator! Dragged the Williams into Q3 today. Let's see what we can do in the race! 🌶️💙",
+        content: "Smooth Operator! Dragged the Williams into Q3 today. Let's see what we can do in the race! ðŸŒ¶ï¸ðŸ’™",
         timeAgo: "2 days ago",
         likes: 175000,
         comments: 5200,
@@ -1668,7 +1765,7 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "ChiliSainz",
-        content: "That Q3 lap was pure magic Carlos! Smooth operator indeed! 🌶️",
+        content: "That Q3 lap was pure magic Carlos! Smooth operator indeed! ðŸŒ¶ï¸",
         timeAgo: "4h ago",
         likes: 890,
       ),
@@ -1686,7 +1783,7 @@ dataSosmedF1 = [
     driverName: 'Fernando Alonso',
     posts: [
       PostData(
-        content: "We never give up. Maximum attack until the last lap. Good points for the team today. 🇪🇸💚",
+        content: "We never give up. Maximum attack until the last lap. Good points for the team today. ðŸ‡ªðŸ‡¸ðŸ’š",
         timeAgo: "1 day ago",
         likes: 250000,
         comments: 8400,
@@ -1701,7 +1798,7 @@ dataSosmedF1 = [
     comments: [
       CommentData(
         username: "MagicAlonso",
-        content: "Age is literally just a number for this man. What a legend! 🇪🇸🐐",
+        content: "Age is literally just a number for this man. What a legend! ðŸ‡ªðŸ‡¸ðŸ",
         timeAgo: "1h ago",
         likes: 1800,
       ),
@@ -1899,7 +1996,7 @@ import 'package:google_fonts/google_fonts.dart';
 class ProfileContent {
   static const name = 'LEEVI QUSHAI\nRAY IFTIKHAR';
   static const email = '25051204390@mhs.unesa.ac.id';
-  static const quote = '“Orang Biasa Masih Butuh Banyak Belajar”';
+  static const quote = 'â€œOrang Biasa Masih Butuh Banyak Belajarâ€';
 
   static const background = 'assets/images/background.webp';
   static const portrait = 'assets/images/profile_cutout.webp';
@@ -1948,7 +2045,8 @@ class AboutMePage
         const Text(
           "DRAYVE",
           style: TextStyle(
-            fontFamily: 'MagnetoBold',
+            fontFamily: 'Ethnocentric',
+            fontStyle: FontStyle.italic,
             fontSize: 40,
             color: Colors.white,
             letterSpacing: 2.0,
@@ -2057,7 +2155,7 @@ class AboutMePage
               _buildFeatureItem(
                 Icons.dashboard_customize,
                 "2. Detail Page Pembalap",
-                "Ketika pengguna mengklik salah satu pembalap, mereka akan masuk ke halaman profil khusus. Di sini terdapat empat bagian utama:\n\n• Statistics & Biography: Menyajikan rekam jejak, poin, posisi klasemen, hingga kisah perjalanan karier sang pembalap.\n• Latest Post & Fan Discussion: DRAYVE bukan sekadar aplikasi penyedia data, melainkan platform sosial. Pengguna bisa melihat update postingan terbaru pembalap dan masuk ke ruang obrolan langsung untuk berdiskusi dengan sesama penggemar.",
+                "Ketika pengguna mengklik salah satu pembalap, mereka akan masuk ke halaman profil khusus. Di sini terdapat empat bagian utama:\n\nâ€¢ Statistics & Biography: Menyajikan rekam jejak, poin, posisi klasemen, hingga kisah perjalanan karier sang pembalap.\nâ€¢ Latest Post & Fan Discussion: DRAYVE bukan sekadar aplikasi penyedia data, melainkan platform sosial. Pengguna bisa melihat update postingan terbaru pembalap dan masuk ke ruang obrolan langsung untuk berdiskusi dengan sesama penggemar.",
               ),
 
               _buildFeatureItem(
@@ -4605,26 +4703,47 @@ import 'package:drayve/pages/login_signup_page.dart';
 import 'package:drayve/pages/profile_page.dart';
 import 'package:drayve/data/auth_state.dart'; // IMPORT GLOBAL STATE
 
-class LandingPage extends StatefulWidget {
+class LandingPage
+    extends
+        StatefulWidget {
   const LandingPage({super.key});
 
   @override
-  State<LandingPage> createState() => _LandingPageState();
+  State<
+    LandingPage
+  >
+  createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage> {
+class _LandingPageState
+    extends
+        State<
+          LandingPage
+        > {
   String _activeMenu = '';
   String _selectedTeam = 'All';
   String _searchQuery = '';
   String? _hoveredMenu;
 
-  final Set<String> _favoriteDrivers = {};
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final Set<
+    String
+  >
+  _favoriteDrivers = {};
+  final GlobalKey<
+    ScaffoldState
+  >
+  _scaffoldKey =
+      GlobalKey<
+        ScaffoldState
+      >();
 
   late final SmoothScrollController _scrollController;
   final TextEditingController _searchController = TextEditingController();
 
-  static const List<String> _teams = [
+  static const List<
+    String
+  >
+  _teams = [
     'All',
     'Ferrari',
     'Mercedes',
@@ -4662,43 +4781,84 @@ class _LandingPageState extends State<LandingPage> {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         0,
-        duration: const Duration(milliseconds: 450),
+        duration: const Duration(
+          milliseconds: 450,
+        ),
         curve: Curves.easeOutCubic,
       );
     }
   }
 
-  Future<void> _requireLogin() async {
+  Future<
+    void
+  >
+  _requireLogin() async {
     final result = await Navigator.push(
       context,
-      DrayvePageRoute(builder: (context) => const AuthPage()),
+      DrayvePageRoute(
+        builder: (
+          context,
+        ) => const AuthPage(),
+      ),
     );
 
     // Perbarui tampilan menggunakan Global State
-    if (result == true && mounted) {
-      setState(() {});
+    if (result ==
+            true &&
+        mounted) {
+      setState(
+        () {},
+      );
     }
   }
 
-  List<Statistik> _getFilteredDrivers() {
-    Iterable<Statistik> drivers = listPembalap;
+  List<
+    Statistik
+  >
+  _getFilteredDrivers() {
+    Iterable<
+      Statistik
+    >
+    drivers = listPembalap;
 
-    if (_activeMenu == 'Favorite') {
-      drivers = drivers.where((d) => _favoriteDrivers.contains(d.nama));
+    if (_activeMenu ==
+        'Favorite') {
+      drivers = drivers.where(
+        (
+          d,
+        ) => _favoriteDrivers.contains(
+          d.nama,
+        ),
+      );
     }
 
-    if (_selectedTeam != 'All') {
+    if (_selectedTeam !=
+        'All') {
       final teamLower = _selectedTeam.toLowerCase();
-      drivers = drivers.where((d) => d.tim.toLowerCase().contains(teamLower));
+      drivers = drivers.where(
+        (
+          d,
+        ) => d.tim.toLowerCase().contains(
+          teamLower,
+        ),
+      );
     }
 
     if (_searchQuery.trim().isNotEmpty) {
       final q = _searchQuery.trim().toLowerCase();
       drivers = drivers.where(
-        (d) =>
-            d.nama.toLowerCase().contains(q) ||
-            d.tim.toLowerCase().contains(q) ||
-            d.nomorMobil.toString().contains(q),
+        (
+          d,
+        ) =>
+            d.nama.toLowerCase().contains(
+              q,
+            ) ||
+            d.tim.toLowerCase().contains(
+              q,
+            ) ||
+            d.nomorMobil.toString().contains(
+              q,
+            ),
       );
     }
 
@@ -4706,17 +4866,37 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isMobile = screenWidth < 800;
-    final int crossAxisCount = screenWidth > 1200
+  Widget build(
+    BuildContext context,
+  ) {
+    final double screenWidth = MediaQuery.of(
+      context,
+    ).size.width;
+    final bool isMobile =
+        screenWidth <
+        800;
+    final int crossAxisCount =
+        screenWidth >
+            1200
         ? 3
-        : (screenWidth > 800 ? 2 : 1);
-    final double hPadding = isMobile ? 20.0 : 40.0;
-    final double vPadding = isMobile ? 16.0 : 24.0;
-    final double cardAspectRatio = isMobile ? 1.2 : 1.8;
+        : (screenWidth >
+                  800
+              ? 2
+              : 1);
+    final double hPadding = isMobile
+        ? 20.0
+        : 40.0;
+    final double vPadding = isMobile
+        ? 16.0
+        : 24.0;
+    final double cardAspectRatio = isMobile
+        ? 1.2
+        : 1.8;
 
-    final List<Statistik> displayedDrivers = _getFilteredDrivers();
+    final List<
+      Statistik
+    >
+    displayedDrivers = _getFilteredDrivers();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -4734,17 +4914,27 @@ class _LandingPageState extends State<LandingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // --- NAVBAR ---
-                _buildTopNavbar(isMobile, hPadding, vPadding),
+                _buildTopNavbar(
+                  isMobile,
+                  hPadding,
+                  vPadding,
+                ),
 
                 // --- CONTENT AREA ---
                 Expanded(
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 320),
+                    duration: const Duration(
+                      milliseconds: 320,
+                    ),
                     switchInCurve: Curves.easeOutCubic,
                     switchOutCurve: Curves.easeInCubic,
-                    child: _activeMenu == 'About'
+                    child:
+                        _activeMenu ==
+                            'About'
                         ? SingleChildScrollView(
-                            key: const ValueKey('about_view'),
+                            key: const ValueKey(
+                              'about_view',
+                            ),
                             controller: _scrollController,
                             padding: EdgeInsets.symmetric(
                               horizontal: hPadding,
@@ -4753,7 +4943,9 @@ class _LandingPageState extends State<LandingPage> {
                             child: const AboutMePage(),
                           )
                         : CustomScrollView(
-                            key: ValueKey('drivers_view_$_activeMenu'),
+                            key: ValueKey(
+                              'drivers_view_$_activeMenu',
+                            ),
                             controller: _scrollController,
                             slivers: [
                               SliverPadding(
@@ -4784,29 +4976,41 @@ class _LandingPageState extends State<LandingPage> {
                                     48.0,
                                   ),
                                   sliver: SliverGrid(
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: crossAxisCount,
-                                      crossAxisSpacing: isMobile ? 16 : 24,
-                                      mainAxisSpacing: isMobile ? 16 : 24,
+                                      crossAxisSpacing: isMobile
+                                          ? 16
+                                          : 24,
+                                      mainAxisSpacing: isMobile
+                                          ? 16
+                                          : 24,
                                       childAspectRatio: cardAspectRatio,
                                     ),
                                     delegate: SliverChildBuilderDelegate(
-                                      (context, index) {
-                                        final currentDriver =
-                                            displayedDrivers[index];
+                                      (
+                                        context,
+                                        index,
+                                      ) {
+                                        final currentDriver = displayedDrivers[index];
                                         return RevealOnce(
-                                          key: ValueKey(currentDriver.id),
+                                          key: ValueKey(
+                                            currentDriver.id,
+                                          ),
                                           id: 'card_${currentDriver.id}',
                                           delay: Duration(
-                                            milliseconds: (index % 6) * 55,
+                                            milliseconds:
+                                                (index %
+                                                    6) *
+                                                55,
                                           ),
                                           child: DriverCard(
                                             driver: currentDriver,
-                                            isFavorite: _favoriteDrivers
-                                                .contains(currentDriver.nama),
-                                            onFavoriteToggle: () =>
-                                                _toggleFavorite(currentDriver),
+                                            isFavorite: _favoriteDrivers.contains(
+                                              currentDriver.nama,
+                                            ),
+                                            onFavoriteToggle: () => _toggleFavorite(
+                                              currentDriver,
+                                            ),
                                           ),
                                         );
                                       },
@@ -4826,27 +5030,43 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
-  void _toggleFavorite(Statistik driver) {
+  void _toggleFavorite(
+    Statistik driver,
+  ) {
     if (!globalIsLoggedIn) {
       _requireLogin();
     } else {
       setState(() {
-        if (_favoriteDrivers.contains(driver.nama)) {
-          _favoriteDrivers.remove(driver.nama);
+        if (_favoriteDrivers.contains(
+          driver.nama,
+        )) {
+          _favoriteDrivers.remove(
+            driver.nama,
+          );
         } else {
-          _favoriteDrivers.add(driver.nama);
+          _favoriteDrivers.add(
+            driver.nama,
+          );
         }
       });
     }
   }
 
-  Widget _buildTopNavbar(bool isMobile, double hPadding, double vPadding) {
+  Widget _buildTopNavbar(
+    bool isMobile,
+    double hPadding,
+    double vPadding,
+  ) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.55),
+        color: Colors.black.withValues(
+          alpha: 0.55,
+        ),
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: Colors.white.withValues(
+              alpha: 0.08,
+            ),
             width: 1,
           ),
         ),
@@ -4864,8 +5084,9 @@ class _LandingPageState extends State<LandingPage> {
                   child: const Text(
                     'DRAYVE',
                     style: TextStyle(
-                      fontFamily: 'MagnetoBold',
-                      fontSize: 26,
+                      fontFamily: 'Ethnocentric',
+                      fontStyle: FontStyle.italic,
+                      fontSize: 24,
                       color: Colors.white,
                       letterSpacing: 1.5,
                     ),
@@ -4879,11 +5100,14 @@ class _LandingPageState extends State<LandingPage> {
                         color: Colors.white,
                         size: 28,
                       ),
-                      onPressed: () =>
-                          _scaffoldKey.currentState?.openEndDrawer(),
+                      onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
                     ),
-                    const SizedBox(width: 8),
-                    _buildHeaderAction(isMobile),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    _buildHeaderAction(
+                      isMobile,
+                    ),
                   ],
                 ),
               ],
@@ -4903,8 +5127,9 @@ class _LandingPageState extends State<LandingPage> {
                           const Text(
                             'DRAYVE',
                             style: TextStyle(
-                              fontFamily: 'MagnetoBold',
-                              fontSize: 64,
+                              fontFamily: 'Ethnocentric',
+                              fontStyle: FontStyle.italic,
+                              fontSize: 32,
                               color: Colors.white,
                               letterSpacing: 1.5,
                             ),
@@ -4925,17 +5150,32 @@ class _LandingPageState extends State<LandingPage> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildNavMenu('Drivers', ''),
-                    const SizedBox(width: 32),
-                    _buildNavMenu('Favorite', 'Favorite'),
-                    const SizedBox(width: 32),
-                    _buildNavMenu('About', 'About'),
+                    _buildNavMenu(
+                      'Drivers',
+                      '',
+                    ),
+                    const SizedBox(
+                      width: 32,
+                    ),
+                    _buildNavMenu(
+                      'Favorite',
+                      'Favorite',
+                    ),
+                    const SizedBox(
+                      width: 32,
+                    ),
+                    _buildNavMenu(
+                      'About',
+                      'About',
+                    ),
                   ],
                 ),
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerRight,
-                    child: _buildHeaderAction(isMobile),
+                    child: _buildHeaderAction(
+                      isMobile,
+                    ),
                   ),
                 ),
               ],
@@ -4943,13 +5183,23 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
-  Widget _buildHeroAndFilters(bool isMobile, int totalShown) {
+  Widget _buildHeroAndFilters(
+    bool isMobile,
+    int totalShown,
+  ) {
     final searchBox = SizedBox(
-      width: isMobile ? double.infinity : 320,
+      width: isMobile
+          ? double.infinity
+          : 320,
       height: 38,
       child: TextField(
         controller: _searchController,
-        onChanged: (value) => setState(() => _searchQuery = value),
+        onChanged:
+            (
+              value,
+            ) => setState(
+              () => _searchQuery = value,
+            ),
         style: GoogleFonts.montserrat(
           color: Colors.white,
           fontSize: 13,
@@ -4977,23 +5227,37 @@ class _LandingPageState extends State<LandingPage> {
                   ),
                   onPressed: () {
                     _searchController.clear();
-                    setState(() => _searchQuery = '');
+                    setState(
+                      () => _searchQuery = '',
+                    );
                   },
                 )
               : null,
           filled: true,
-          fillColor: Colors.white.withValues(alpha: 0.08),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+          fillColor: Colors.white.withValues(
+            alpha: 0.08,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+          ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(
+              30,
+            ),
             borderSide: BorderSide(
-              color: Colors.white.withValues(alpha: 0.16),
+              color: Colors.white.withValues(
+                alpha: 0.16,
+              ),
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(
+              30,
+            ),
             borderSide: const BorderSide(
-              color: Color(0xFFE10600),
+              color: Color(
+                0xFFE10600,
+              ),
               width: 1.5,
             ),
           ),
@@ -5006,55 +5270,88 @@ class _LandingPageState extends State<LandingPage> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _teams.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final team = _teams[index];
-          final isSelected = _selectedTeam == team;
-          return HoverScale(
-            scale: 1.05,
-            onTap: () => setState(() => _selectedTeam = team),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOutCubic,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 7,
-              ),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFFE10600)
-                    : Colors.white.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: isSelected
-                      ? Colors.white.withValues(alpha: 0.65)
-                      : Colors.white.withValues(alpha: 0.14),
-                  width: 1,
+        separatorBuilder:
+            (
+              _,
+              _,
+            ) => const SizedBox(
+              width: 8,
+            ),
+        itemBuilder:
+            (
+              context,
+              index,
+            ) {
+              final team = _teams[index];
+              final isSelected =
+                  _selectedTeam ==
+                  team;
+              return HoverScale(
+                scale: 1.05,
+                onTap: () => setState(
+                  () => _selectedTeam = team,
                 ),
-                boxShadow: isSelected
-                    ? const [
-                        BoxShadow(
-                          color: Color(0x66E10600),
-                          blurRadius: 12,
-                          offset: Offset(0, 3),
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Center(
-                child: Text(
-                  team.toUpperCase(),
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontSize: 11.5,
-                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                    letterSpacing: 0.7,
+                child: AnimatedContainer(
+                  duration: const Duration(
+                    milliseconds: 200,
+                  ),
+                  curve: Curves.easeOutCubic,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? const Color(
+                            0xFFE10600,
+                          )
+                        : Colors.white.withValues(
+                            alpha: 0.08,
+                          ),
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                    border: Border.all(
+                      color: isSelected
+                          ? Colors.white.withValues(
+                              alpha: 0.65,
+                            )
+                          : Colors.white.withValues(
+                              alpha: 0.14,
+                            ),
+                      width: 1,
+                    ),
+                    boxShadow: isSelected
+                        ? const [
+                            BoxShadow(
+                              color: Color(
+                                0x66E10600,
+                              ),
+                              blurRadius: 12,
+                              offset: Offset(
+                                0,
+                                3,
+                              ),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Center(
+                    child: Text(
+                      team.toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontSize: 11.5,
+                        fontWeight: isSelected
+                            ? FontWeight.w800
+                            : FontWeight.w600,
+                        letterSpacing: 0.7,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
-        },
+              );
+            },
       ),
     );
 
@@ -5067,25 +5364,38 @@ class _LandingPageState extends State<LandingPage> {
           children: [
             Container(
               width: 5,
-              height: isMobile ? 24 : 32,
-              margin: const EdgeInsets.only(right: 12),
+              height: isMobile
+                  ? 24
+                  : 32,
+              margin: const EdgeInsets.only(
+                right: 12,
+              ),
               decoration: BoxDecoration(
-                color: const Color(0xFFE10600),
-                borderRadius: BorderRadius.circular(4),
+                color: const Color(
+                  0xFFE10600,
+                ),
+                borderRadius: BorderRadius.circular(
+                  4,
+                ),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color(0x88E10600),
+                    color: Color(
+                      0x88E10600,
+                    ),
                     blurRadius: 10,
                   ),
                 ],
               ),
             ),
             Text(
-              _activeMenu == 'Favorite'
+              _activeMenu ==
+                      'Favorite'
                   ? 'FAVORITE DRIVERS'
                   : 'F1 DRIVERS 2026',
               style: GoogleFonts.montserrat(
-                fontSize: isMobile ? 24 : 32,
+                fontSize: isMobile
+                    ? 24
+                    : 32,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,
                 letterSpacing: 0.5,
@@ -5093,9 +5403,12 @@ class _LandingPageState extends State<LandingPage> {
             ),
           ],
         ),
-        const SizedBox(height: 6),
+        const SizedBox(
+          height: 6,
+        ),
         Text(
-          _activeMenu == 'Favorite'
+          _activeMenu ==
+                  'Favorite'
               ? 'Your personal paddock heroes ($totalShown drivers)'
               : 'Find your favorite drivers for the 2026 season ($totalShown drivers)',
           style: GoogleFonts.montserrat(
@@ -5105,34 +5418,52 @@ class _LandingPageState extends State<LandingPage> {
           ),
         ),
 
-        const SizedBox(height: 18),
+        const SizedBox(
+          height: 18,
+        ),
 
         // Search Bar sejajar (1 baris) dengan Filter Team di Desktop
         if (isMobile) ...[
           searchBox,
-          const SizedBox(height: 12),
+          const SizedBox(
+            height: 12,
+          ),
           filterChips,
         ] else
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               searchBox,
-              const SizedBox(width: 14),
-              Expanded(child: filterChips),
+              const SizedBox(
+                width: 14,
+              ),
+              Expanded(
+                child: filterChips,
+              ),
             ],
           ),
 
-        SizedBox(height: isMobile ? 12 : 18),
+        SizedBox(
+          height: isMobile
+              ? 12
+              : 18,
+        ),
       ],
     );
   }
 
   Widget _buildEmptyState() {
-    final isFavEmpty = _activeMenu == 'Favorite' &&
-        _selectedTeam == 'All' &&
+    final isFavEmpty =
+        _activeMenu ==
+            'Favorite' &&
+        _selectedTeam ==
+            'All' &&
         _searchQuery.isEmpty;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
+      padding: const EdgeInsets.symmetric(
+        vertical: 48.0,
+        horizontal: 24.0,
+      ),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -5144,7 +5475,9 @@ class _LandingPageState extends State<LandingPage> {
               color: Colors.white38,
               size: 56,
             ),
-            const SizedBox(height: 14),
+            const SizedBox(
+              height: 14,
+            ),
             Text(
               isFavEmpty
                   ? "No favorite drivers yet.\nClick the star icon on a driver's card to add them here!"
@@ -5157,7 +5490,9 @@ class _LandingPageState extends State<LandingPage> {
               ),
             ),
             if (!isFavEmpty) ...[
-              const SizedBox(height: 16),
+              const SizedBox(
+                height: 16,
+              ),
               HoverScale(
                 onTap: () {
                   _searchController.clear();
@@ -5172,8 +5507,12 @@ class _LandingPageState extends State<LandingPage> {
                     vertical: 9,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE10600),
-                    borderRadius: BorderRadius.circular(20),
+                    color: const Color(
+                      0xFFE10600,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
                   ),
                   child: Text(
                     'RESET FILTER',
@@ -5195,7 +5534,9 @@ class _LandingPageState extends State<LandingPage> {
 
   Widget _buildMobileDrawer() {
     return Drawer(
-      backgroundColor: const Color(0xFF1E2124),
+      backgroundColor: const Color(
+        0xFF1E2124,
+      ),
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -5203,7 +5544,10 @@ class _LandingPageState extends State<LandingPage> {
             decoration: const BoxDecoration(
               color: Colors.black,
               border: Border(
-                bottom: BorderSide(color: Colors.white24, width: 1),
+                bottom: BorderSide(
+                  color: Colors.white24,
+                  width: 1,
+                ),
               ),
             ),
             child: Column(
@@ -5213,13 +5557,16 @@ class _LandingPageState extends State<LandingPage> {
                 const Text(
                   'DRAYVE',
                   style: TextStyle(
-                    fontFamily: 'MagnetoBold',
-                    fontSize: 32,
+                    fontFamily: 'Ethnocentric',
+                    fontStyle: FontStyle.italic,
+                    fontSize: 28,
                     color: Colors.white,
                     letterSpacing: 1.5,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(
+                  height: 8,
+                ),
                 Text(
                   'F1 Drivers Hub Community',
                   style: GoogleFonts.montserrat(
@@ -5230,32 +5577,62 @@ class _LandingPageState extends State<LandingPage> {
               ],
             ),
           ),
-          _buildDrawerItem('Drivers', '', Icons.sports_motorsports_outlined),
-          _buildDrawerItem('Favorite', 'Favorite', Icons.star_border),
-          _buildDrawerItem('About', 'About', Icons.info_outline),
+          _buildDrawerItem(
+            'Drivers',
+            '',
+            Icons.sports_motorsports_outlined,
+          ),
+          _buildDrawerItem(
+            'Favorite',
+            'Favorite',
+            Icons.star_border,
+          ),
+          _buildDrawerItem(
+            'About',
+            'About',
+            Icons.info_outline,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildDrawerItem(String label, String menuKey, IconData icon) {
-    final bool isSelected = _activeMenu == menuKey;
+  Widget _buildDrawerItem(
+    String label,
+    String menuKey,
+    IconData icon,
+  ) {
+    final bool isSelected =
+        _activeMenu ==
+        menuKey;
     return ListTile(
       leading: Icon(
         icon,
-        color: isSelected ? const Color(0xFFE10600) : Colors.white70,
+        color: isSelected
+            ? const Color(
+                0xFFE10600,
+              )
+            : Colors.white70,
       ),
       title: Text(
         label,
         style: GoogleFonts.montserrat(
-          color: isSelected ? Colors.white : Colors.white70,
+          color: isSelected
+              ? Colors.white
+              : Colors.white70,
           fontSize: 16,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+          fontWeight: isSelected
+              ? FontWeight.bold
+              : FontWeight.w500,
         ),
       ),
       onTap: () {
-        Navigator.pop(context);
-        if (menuKey == 'Favorite' && !globalIsLoggedIn) {
+        Navigator.pop(
+          context,
+        );
+        if (menuKey ==
+                'Favorite' &&
+            !globalIsLoggedIn) {
           _requireLogin();
           return;
         }
@@ -5266,16 +5643,35 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
-  Widget _buildNavMenu(String label, String menuKey) {
-    final bool isSelected = _activeMenu == menuKey;
-    final bool isHovered = _hoveredMenu == label;
+  Widget _buildNavMenu(
+    String label,
+    String menuKey,
+  ) {
+    final bool isSelected =
+        _activeMenu ==
+        menuKey;
+    final bool isHovered =
+        _hoveredMenu ==
+        label;
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hoveredMenu = label),
-      onExit: (_) => setState(() => _hoveredMenu = null),
+      onEnter:
+          (
+            _,
+          ) => setState(
+            () => _hoveredMenu = label,
+          ),
+      onExit:
+          (
+            _,
+          ) => setState(
+            () => _hoveredMenu = null,
+          ),
       child: GestureDetector(
         onTap: () {
-          if (menuKey == 'Favorite' && !globalIsLoggedIn) {
+          if (menuKey ==
+                  'Favorite' &&
+              !globalIsLoggedIn) {
             _requireLogin();
             return;
           }
@@ -5287,23 +5683,45 @@ class _LandingPageState extends State<LandingPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 180),
+              duration: const Duration(
+                milliseconds: 180,
+              ),
               style: GoogleFonts.montserrat(
-                color: isSelected || isHovered ? Colors.white : Colors.white70,
+                color:
+                    isSelected ||
+                        isHovered
+                    ? Colors.white
+                    : Colors.white70,
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
               ),
-              child: Text(label),
+              child: Text(
+                label,
+              ),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(
+              height: 5,
+            ),
             AnimatedContainer(
-              duration: const Duration(milliseconds: 220),
+              duration: const Duration(
+                milliseconds: 220,
+              ),
               curve: Curves.easeOutCubic,
               height: 3,
-              width: isSelected ? 44 : (isHovered ? 24 : 0),
+              width: isSelected
+                  ? 44
+                  : (isHovered
+                        ? 24
+                        : 0),
               decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFFE10600) : Colors.white70,
-                borderRadius: BorderRadius.circular(2),
+                color: isSelected
+                    ? const Color(
+                        0xFFE10600,
+                      )
+                    : Colors.white70,
+                borderRadius: BorderRadius.circular(
+                  2,
+                ),
               ),
             ),
           ],
@@ -5312,22 +5730,34 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
-  Widget _buildHeaderAction(bool isMobile) {
+  Widget _buildHeaderAction(
+    bool isMobile,
+  ) {
     if (globalIsLoggedIn) {
       return HoverScale(
         onTap: () {
           Navigator.push(
             context,
-            DrayvePageRoute(builder: (context) => const ProfilePage()),
+            DrayvePageRoute(
+              builder: (
+                context,
+              ) => const ProfilePage(),
+            ),
           );
         },
         child: Container(
-          width: isMobile ? 40 : 48,
-          height: isMobile ? 40 : 48,
+          width: isMobile
+              ? 40
+              : 48,
+          height: isMobile
+              ? 40
+              : 48,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: const Color(0xFFE8002D),
+              color: const Color(
+                0xFFE8002D,
+              ),
               width: 2,
             ),
           ),
@@ -5335,14 +5765,21 @@ class _LandingPageState extends State<LandingPage> {
             child: Image.asset(
               'assets/images/default_profile.webp',
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                color: Colors.white12,
-                child: Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  size: isMobile ? 24 : 30,
-                ),
-              ),
+              errorBuilder:
+                  (
+                    context,
+                    error,
+                    stackTrace,
+                  ) => Container(
+                    color: Colors.white12,
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: isMobile
+                          ? 24
+                          : 30,
+                    ),
+                  ),
             ),
           ),
         ),
@@ -5352,24 +5789,39 @@ class _LandingPageState extends State<LandingPage> {
         onTap: _requireLogin,
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.white, width: 1.8),
-            borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color: Colors.white,
+              width: 1.8,
+            ),
+            borderRadius: BorderRadius.circular(
+              6,
+            ),
             image: const DecorationImage(
-              image: AssetImage('assets/images/TBlogin.webp'),
+              image: AssetImage(
+                'assets/images/TBlogin.webp',
+              ),
               fit: BoxFit.cover,
             ),
           ),
           padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 16 : 34,
-            vertical: isMobile ? 6 : 10,
+            horizontal: isMobile
+                ? 16
+                : 34,
+            vertical: isMobile
+                ? 6
+                : 10,
           ),
           child: Text(
             'LOGIN',
             style: GoogleFonts.montserrat(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: isMobile ? 12 : 14,
-              letterSpacing: isMobile ? 1.0 : 1.5,
+              fontSize: isMobile
+                  ? 12
+                  : 14,
+              letterSpacing: isMobile
+                  ? 1.0
+                  : 1.5,
             ),
           ),
         ),
@@ -5638,7 +6090,7 @@ class _InteractivePostCardState
                       ),
                     ),
                     Text(
-                      "${widget.post.timeAgo}  •  ${widget.driverTeam}",
+                      "${widget.post.timeAgo}  â€¢  ${widget.driverTeam}",
                       style: GoogleFonts.montserrat(
                         color: Colors.white54,
                         fontSize: 12,
@@ -7580,12 +8032,13 @@ class _SplashScreenState
                                   child: const Text(
                                     'DRAYVE',
                                     style: TextStyle(
+                                      fontFamily: 'Ethnocentric',
+                                      fontStyle: FontStyle.italic,
                                       color: Color(
                                         0xFFE10600,
                                       ),
-                                      fontSize: 34,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 7.5,
+                                      fontSize: 30, // Disesuaikan karena Ethnocentric sangat lebar
+                                      letterSpacing: 2.5, // Jarak antar huruf pas seperti logo asli
                                       height: 1.0,
                                     ),
                                   ),
@@ -8136,7 +8589,7 @@ import 'package:flutter/scheduler.dart';
 /// Background animasi DRAYVE (versi ringan & interaktif).
 ///
 /// Lapisan (belakang -> depan):
-/// 1. Gradasi "bernapas"  : gumpalan warna oranye–maroon yang bergerak pelan
+/// 1. Gradasi "bernapas"  : gumpalan warna oranyeâ€“maroon yang bergerak pelan
 ///                          dan ikut bergeser mengikuti kursor (parallax).
 /// 2. Kolase F1           : `bgnice.webp` samar, ikut bergeser sedikit.
 /// 3. Cursor glow          : cahaya lembut mengikuti kursor.
@@ -8315,7 +8768,7 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
 
 }
 // ---------------------------------------------------------------------------
-// LAPISAN 1 — Gradasi bergerak
+// LAPISAN 1 â€” Gradasi bergerak
 // ---------------------------------------------------------------------------
 
 class _Blob {
@@ -8426,7 +8879,7 @@ class _BlobPainter extends CustomPainter {
 }
 
 // ---------------------------------------------------------------------------
-// LAPISAN 3 — Cahaya kursor
+// LAPISAN 3 â€” Cahaya kursor
 // ---------------------------------------------------------------------------
 
 class _CursorGlowPainter extends CustomPainter {
@@ -8503,23 +8956,27 @@ import 'package:drayve/models/statistik.dart';
 import 'package:drayve/pages/driver_detail_page.dart';
 import 'package:drayve/widgets/drayve_page_route.dart';
 
-class DriverCard extends StatefulWidget {
+class DriverCard
+    extends
+        StatefulWidget {
   final Statistik driver;
   final bool isFavorite;
   final VoidCallback onFavoriteToggle;
 
-  const DriverCard({
-    super.key,
-    required this.driver,
-    required this.isFavorite,
-    required this.onFavoriteToggle,
-  });
+  const DriverCard({super.key, required this.driver, required this.isFavorite, required this.onFavoriteToggle});
 
   @override
-  State<DriverCard> createState() => _DriverCardState();
+  State<
+    DriverCard
+  >
+  createState() => _DriverCardState();
 }
 
-class _DriverCardState extends State<DriverCard> {
+class _DriverCardState
+    extends
+        State<
+          DriverCard
+        > {
   bool _hovered = false;
   bool _pressed = false;
 
@@ -8527,46 +8984,182 @@ class _DriverCardState extends State<DriverCard> {
   Offset _pointer = Offset.zero;
 
   // Warna utama & kedua berdasarkan nama tim
-  (Color, Color) _getTeamColors(String teamName) {
+  (
+    Color,
+    Color,
+  )
+  _getTeamColors(
+    String teamName,
+  ) {
     final lower = teamName.toLowerCase();
-    if (lower.contains('ferrari')) {
-      return (const Color(0xFFE8002D), const Color(0xFF7A0018));
-    } else if (lower.contains('mercedes')) {
-      return (const Color(0xFF00A19B), const Color(0xFF004D4A));
-    } else if (lower.contains('mclaren')) {
-      return (const Color(0xFFFF8000), const Color(0xFF804000));
-    } else if (lower.contains('red bull')) {
-      return (const Color(0xFF152A72), const Color(0xFF0A1539));
-    } else if (lower.contains('aston')) {
-      return (const Color(0xFF229971), const Color(0xFF0E4C38));
-    } else if (lower.contains('williams')) {
-      return (const Color(0xFF005AFF), const Color(0xFF002D80));
-    } else if (lower.contains('audi')) {
-      return (const Color(0xFFE20514), const Color(0xFF71020A));
-    } else if (lower.contains('haas')) {
-      return (const Color(0xFFB6BABD), const Color(0xFF5B5D5E));
-    } else if (lower.contains('alpine')) {
-      return (const Color(0xFFFF90C3), const Color(0xFF804861));
-    } else if (lower.contains('racing bulls')) {
-      return (const Color(0xFF6692FF), const Color(0xFF334980));
-    } else if (lower.contains('cadillac')) {
-      return (const Color(0xFFD4A373), const Color(0xFF6A5139));
+    if (lower.contains(
+      'ferrari',
+    )) {
+      return (
+        const Color(
+          0xFFE8002D,
+        ),
+        const Color(
+          0xFF7A0018,
+        ),
+      );
+    } else if (lower.contains(
+      'mercedes',
+    )) {
+      return (
+        const Color(
+          0xFF00A19B,
+        ),
+        const Color(
+          0xFF004D4A,
+        ),
+      );
+    } else if (lower.contains(
+      'mclaren',
+    )) {
+      return (
+        const Color(
+          0xFFFF8000,
+        ),
+        const Color(
+          0xFF804000,
+        ),
+      );
+    } else if (lower.contains(
+      'red bull',
+    )) {
+      return (
+        const Color(
+          0xFF152A72,
+        ),
+        const Color(
+          0xFF0A1539,
+        ),
+      );
+    } else if (lower.contains(
+      'aston',
+    )) {
+      return (
+        const Color(
+          0xFF229971,
+        ),
+        const Color(
+          0xFF0E4C38,
+        ),
+      );
+    } else if (lower.contains(
+      'williams',
+    )) {
+      return (
+        const Color(
+          0xFF005AFF,
+        ),
+        const Color(
+          0xFF002D80,
+        ),
+      );
+    } else if (lower.contains(
+      'audi',
+    )) {
+      return (
+        const Color(
+          0xFFE20514,
+        ),
+        const Color(
+          0xFF71020A,
+        ),
+      );
+    } else if (lower.contains(
+      'haas',
+    )) {
+      return (
+        const Color(
+          0xFFB6BABD,
+        ),
+        const Color(
+          0xFF5B5D5E,
+        ),
+      );
+    } else if (lower.contains(
+      'alpine',
+    )) {
+      return (
+        const Color(
+          0xFFFF90C3,
+        ),
+        const Color(
+          0xFF804861,
+        ),
+      );
+    } else if (lower.contains(
+      'racing bulls',
+    )) {
+      return (
+        const Color(
+          0xFF6692FF,
+        ),
+        const Color(
+          0xFF334980,
+        ),
+      );
+    } else if (lower.contains(
+      'cadillac',
+    )) {
+      return (
+        const Color(
+          0xFFD4A373,
+        ),
+        const Color(
+          0xFF6A5139,
+        ),
+      );
     } else {
-      return (const Color(0xFF2A2D34), const Color(0xFF000000));
+      return (
+        const Color(
+          0xFF2A2D34,
+        ),
+        const Color(
+          0xFF000000,
+        ),
+      );
     }
   }
 
-  void _onHover(PointerHoverEvent event, Size size) {
+  void _onHover(
+    PointerHoverEvent event,
+    Size size,
+  ) {
     if (size.isEmpty) return;
-    final dx = ((event.localPosition.dx / size.width) * 2 - 1).clamp(-1.0, 1.0);
-    final dy = ((event.localPosition.dy / size.height) * 2 - 1).clamp(-1.0, 1.0);
+    final dx =
+        ((event.localPosition.dx /
+                        size.width) *
+                    2 -
+                1)
+            .clamp(
+              -1.0,
+              1.0,
+            );
+    final dy =
+        ((event.localPosition.dy /
+                        size.height) *
+                    2 -
+                1)
+            .clamp(
+              -1.0,
+              1.0,
+            );
     setState(() {
       _hovered = true;
-      _pointer = Offset(dx, dy);
+      _pointer = Offset(
+        dx,
+        dy,
+      );
     });
   }
 
-  void _onExit(PointerExitEvent event) {
+  void _onExit(
+    PointerExitEvent event,
+  ) {
     setState(() {
       _hovered = false;
       _pressed = false;
@@ -8575,305 +9168,458 @@ class _DriverCardState extends State<DriverCard> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     final driver = widget.driver;
-    final (color1, color2) = _getTeamColors(driver.tim);
-    final parts = driver.nama.split(' ');
+    final (
+      color1,
+      color2,
+    ) = _getTeamColors(
+      driver.tim,
+    );
+    final parts = driver.nama.split(
+      ' ',
+    );
     final firstName = parts.first;
-    final lastName = parts.length > 1 ? parts.last : '';
+    final lastName =
+        parts.length >
+            1
+        ? parts.last
+        : '';
 
-    final scale = _pressed ? 0.97 : (_hovered ? 1.025 : 1.0);
-    final tiltX = _hovered ? -_pointer.dy * 0.055 : 0.0;
-    final tiltY = _hovered ? _pointer.dx * 0.055 : 0.0;
+    final scale = _pressed
+        ? 0.97
+        : (_hovered
+              ? 1.025
+              : 1.0);
+    final tiltX = _hovered
+        ? -_pointer.dy *
+              0.055
+        : 0.0;
+    final tiltY = _hovered
+        ? _pointer.dx *
+              0.055
+        : 0.0;
 
     return RepaintBoundary(
       child: LayoutBuilder(
-        builder: (context, constraints) {
-          final size = constraints.biggest;
-          return MouseRegion(
-            cursor: SystemMouseCursors.click,
-            onEnter: (_) => setState(() => _hovered = true),
-            onHover: (e) => _onHover(e, size),
-            onExit: _onExit,
-            child: GestureDetector(
-              onTapDown: (_) => setState(() => _pressed = true),
-              onTapUp: (_) => setState(() => _pressed = false),
-              onTapCancel: () => setState(() => _pressed = false),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  DrayvePageRoute(
-                    builder: (context) => DriverDetailPage(driver: driver),
+        builder:
+            (
+              context,
+              constraints,
+            ) {
+              final size = constraints.biggest;
+              return MouseRegion(
+                cursor: SystemMouseCursors.click,
+                onEnter:
+                    (
+                      _,
+                    ) => setState(
+                      () => _hovered = true,
+                    ),
+                onHover:
+                    (
+                      e,
+                    ) => _onHover(
+                      e,
+                      size,
+                    ),
+                onExit: _onExit,
+                child: GestureDetector(
+                  onTapDown:
+                      (
+                        _,
+                      ) => setState(
+                        () => _pressed = true,
+                      ),
+                  onTapUp:
+                      (
+                        _,
+                      ) => setState(
+                        () => _pressed = false,
+                      ),
+                  onTapCancel: () => setState(
+                    () => _pressed = false,
                   ),
-                );
-              },
-              child: TweenAnimationBuilder<Offset>(
-                tween: Tween<Offset>(begin: Offset.zero, end: _pointer),
-                duration: const Duration(milliseconds: 220),
-                curve: Curves.easeOutCubic,
-                builder: (context, smoothPointer, _) {
-                  return AnimatedScale(
-                    scale: scale,
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOutCubic,
-                    child: Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.identity()
-                        ..setEntry(3, 2, 0.001)
-                        ..rotateX(tiltX)
-                        ..rotateY(tiltY),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 240),
-                        curve: Curves.easeOutCubic,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [color1, color2],
-                          ),
-                          border: Border.all(
-                            color: _hovered
-                                ? Colors.white.withValues(alpha: 0.55)
-                                : Colors.white.withValues(alpha: 0.10),
-                            width: _hovered ? 1.6 : 1.0,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: color1.withValues(
-                                alpha: _hovered ? 0.50 : 0.18,
-                              ),
-                              blurRadius: _hovered ? 28 : 12,
-                              spreadRadius: _hovered ? 2 : 0,
-                              offset: Offset(0, _hovered ? 14 : 6),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      DrayvePageRoute(
+                        builder:
+                            (
+                              context,
+                            ) => DriverDetailPage(
+                              driver: driver,
                             ),
-                          ],
+                      ),
+                    );
+                  },
+                  child:
+                      TweenAnimationBuilder<
+                        Offset
+                      >(
+                        tween:
+                            Tween<
+                              Offset
+                            >(
+                              begin: Offset.zero,
+                              end: _pointer,
+                            ),
+                        duration: const Duration(
+                          milliseconds: 220,
                         ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Stack(
-                          children: [
-                            // --- LAYER 0: Background Pattern (Tanpa Opacity widget agar hemat GPU) ---
-                            Positioned(
-                              top: 0,
-                              right: -900,
-                              left: -50,
-                              bottom: -50,
-                              child: RotatedBox(
-                                quarterTurns: 1,
-                                child: Image.asset(
-                                  'assets/images/pattern.webp',
-                                  fit: BoxFit.cover,
-                                  color: const Color(0x26FFFFFF),
-                                  colorBlendMode: BlendMode.modulate,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const SizedBox(),
+                        curve: Curves.easeOutCubic,
+                        builder:
+                            (
+                              context,
+                              smoothPointer,
+                              _,
+                            ) {
+                              return AnimatedScale(
+                                scale: scale,
+                                duration: const Duration(
+                                  milliseconds: 220,
                                 ),
-                              ),
-                            ),
-
-                            // --- LAYER 1: Gambar Mobil ---
-                            Positioned(
-                              left: -250,
-                              bottom: -210,
-                              child: RotatedBox(
-                                quarterTurns: 1,
-                                child: Image.asset(
-                                  driver.fotoMobil,
-                                  height: 580,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const SizedBox(),
-                                ),
-                              ),
-                            ),
-
-                            // --- LAYER 2: Gambar Wajah Pembalap ---
-                            Positioned(
-                              right: 60,
-                              bottom: -310,
-                              child: Image.asset(
-                                driver.fotoAset,
-                                height: 600,
-                                fit: BoxFit.contain,
-                                alignment: Alignment.bottomRight,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 120,
-                                      color: Colors.white24,
+                                curve: Curves.easeOutCubic,
+                                child: Transform(
+                                  alignment: Alignment.center,
+                                  transform: Matrix4.identity()
+                                    ..setEntry(
+                                      3,
+                                      2,
+                                      0.001,
+                                    )
+                                    ..rotateX(
+                                      tiltX,
+                                    )
+                                    ..rotateY(
+                                      tiltY,
                                     ),
-                                  );
-                                },
-                              ),
-                            ),
-
-                            // --- LAYER 2.5: Kilau cahaya halus mengikuti kursor ---
-                            if (_hovered)
-                              Positioned.fill(
-                                child: IgnorePointer(
-                                  child: DecoratedBox(
+                                  child: AnimatedContainer(
+                                    duration: const Duration(
+                                      milliseconds: 240,
+                                    ),
+                                    curve: Curves.easeOutCubic,
                                     decoration: BoxDecoration(
-                                      gradient: RadialGradient(
-                                        center: Alignment(
-                                          smoothPointer.dx,
-                                          smoothPointer.dy,
-                                        ),
-                                        radius: 0.95,
+                                      borderRadius: BorderRadius.circular(
+                                        20,
+                                      ),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
                                         colors: [
-                                          Colors.white.withValues(alpha: 0.16),
-                                          Colors.transparent,
+                                          color1,
+                                          color2,
                                         ],
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                            // --- LAYER 3: Teks Utama ---
-                            Positioned(
-                              top: 24,
-                              left: 24,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    firstName,
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.1,
-                                    ),
-                                  ),
-                                  Text(
-                                    lastName,
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      height: 1.1,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withValues(alpha: 0.28),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Text(
-                                      driver.tim,
-                                      style: GoogleFonts.poppins(
-                                        color: Colors.white,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
+                                      border: Border.all(
+                                        color: _hovered
+                                            ? Colors.white.withValues(
+                                                alpha: 0.55,
+                                              )
+                                            : Colors.white.withValues(
+                                                alpha: 0.10,
+                                              ),
+                                        width: _hovered
+                                            ? 1.6
+                                            : 1.0,
                                       ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: color1.withValues(
+                                            alpha: _hovered
+                                                ? 0.50
+                                                : 0.18,
+                                          ),
+                                          blurRadius: _hovered
+                                              ? 28
+                                              : 12,
+                                          spreadRadius: _hovered
+                                              ? 2
+                                              : 0,
+                                          offset: Offset(
+                                            0,
+                                            _hovered
+                                                ? 14
+                                                : 6,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  AnimatedSlide(
-                                    offset: _hovered
-                                        ? const Offset(0.04, 0)
-                                        : Offset.zero,
-                                    duration: const Duration(milliseconds: 220),
-                                    curve: Curves.easeOutCubic,
-                                    child: Text(
-                                      driver.nomorMobil.toString(),
-                                      style: GoogleFonts.montserrat(
-                                        color: Colors.white,
-                                        fontSize: 48,
-                                        fontWeight: FontWeight.w900,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: Stack(
+                                      children: [
+                                        // --- LAYER 0: Background Pattern (Tanpa Opacity widget agar hemat GPU) ---
+                                        Positioned(
+                                          top: 0,
+                                          right: -900,
+                                          left: -50,
+                                          bottom: -50,
+                                          child: RotatedBox(
+                                            quarterTurns: 1,
+                                            child: Image.asset(
+                                              'assets/images/pattern.webp',
+                                              fit: BoxFit.cover,
+                                              color: const Color(
+                                                0x26FFFFFF,
+                                              ),
+                                              colorBlendMode: BlendMode.modulate,
+                                              errorBuilder: (
+                                                context,
+                                                error,
+                                                stackTrace,
+                                              ) => const SizedBox(),
+                                            ),
+                                          ),
+                                        ),
 
-                            // --- LAYER 4: Lingkaran Bendera Otomatis ---
-                            Positioned(
-                              top: 24,
-                              right: 24,
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFD9D9D9),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.6),
-                                    width: 1.5,
-                                  ),
-                                ),
-                                clipBehavior: Clip.antiAlias,
-                                child: Image.asset(
-                                  'assets/images/flags/${driver.negara.toLowerCase()}.webp',
-                                  fit: BoxFit.cover,
-                                  cacheWidth: 96,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(
-                                    Icons.flag,
-                                    size: 20,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ),
-                            ),
+                                        // --- LAYER 1: Gambar Mobil ---
+                                        Positioned(
+                                          left: -250,
+                                          bottom: -210,
+                                          child: RotatedBox(
+                                            quarterTurns: 1,
+                                            child: Image.asset(
+                                              driver.fotoMobil,
+                                              height: 580,
+                                              fit: BoxFit.contain,
+                                              errorBuilder: (
+                                                context,
+                                                error,
+                                                stackTrace,
+                                              ) => const SizedBox(),
+                                            ),
+                                          ),
+                                        ),
 
-                            // --- LAYER 5: TOMBOL BINTANG FAVORITE INTERAKTIF ---
-                            Positioned(
-                              bottom: 16,
-                              right: 16,
-                              child: GestureDetector(
-                                onTap: widget.onFavoriteToggle,
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: widget.isFavorite
-                                        ? Colors.amber.withValues(alpha: 0.22)
-                                        : Colors.black.withValues(alpha: 0.5),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: widget.isFavorite
-                                          ? Colors.amber
-                                          : Colors.white24,
-                                      width: 1.2,
-                                    ),
-                                  ),
-                                  child: AnimatedScale(
-                                    scale: widget.isFavorite ? 1.15 : 1.0,
-                                    duration: const Duration(milliseconds: 200),
-                                    curve: Curves.elasticOut,
-                                    child: Icon(
-                                      widget.isFavorite
-                                          ? Icons.star_rounded
-                                          : Icons.star_border_rounded,
-                                      color: widget.isFavorite
-                                          ? Colors.amber
-                                          : Colors.white,
-                                      size: 24,
+                                        // --- LAYER 2: Gambar Wajah Pembalap ---
+                                        Positioned(
+                                          right: 60,
+                                          bottom: -310,
+                                          child: Image.asset(
+                                            driver.fotoAset,
+                                            height: 600,
+                                            fit: BoxFit.contain,
+                                            alignment: Alignment.bottomRight,
+                                            errorBuilder:
+                                                (
+                                                  context,
+                                                  error,
+                                                  stackTrace,
+                                                ) {
+                                                  return const Align(
+                                                    alignment: Alignment.bottomRight,
+                                                    child: Icon(
+                                                      Icons.person,
+                                                      size: 120,
+                                                      color: Colors.white24,
+                                                    ),
+                                                  );
+                                                },
+                                          ),
+                                        ),
+
+                                        // --- LAYER 2.5: Kilau cahaya halus mengikuti kursor ---
+                                        if (_hovered)
+                                          Positioned.fill(
+                                            child: IgnorePointer(
+                                              child: DecoratedBox(
+                                                decoration: BoxDecoration(
+                                                  gradient: RadialGradient(
+                                                    center: Alignment(
+                                                      smoothPointer.dx,
+                                                      smoothPointer.dy,
+                                                    ),
+                                                    radius: 0.95,
+                                                    colors: [
+                                                      Colors.white.withValues(
+                                                        alpha: 0.16,
+                                                      ),
+                                                      Colors.transparent,
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                        // --- LAYER 3: Teks Utama ---
+                                        Positioned(
+                                          top: 24,
+                                          left: 24,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                firstName,
+                                                style: GoogleFonts.poppins(
+                                                  color: Colors.white,
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.w400,
+                                                  height: 1.1,
+                                                ),
+                                              ),
+                                              Text(
+                                                lastName,
+                                                style: GoogleFonts.poppins(
+                                                  color: Colors.white,
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.bold,
+                                                  height: 1.1,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 6,
+                                              ),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8,
+                                                  vertical: 2,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black.withValues(
+                                                    alpha: 0.28,
+                                                  ),
+                                                  borderRadius: BorderRadius.circular(
+                                                    6,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  driver.tim,
+                                                  style: GoogleFonts.poppins(
+                                                    color: Colors.white,
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 2,
+                                              ),
+                                              AnimatedSlide(
+                                                offset: _hovered
+                                                    ? const Offset(
+                                                        0.04,
+                                                        0,
+                                                      )
+                                                    : Offset.zero,
+                                                duration: const Duration(
+                                                  milliseconds: 220,
+                                                ),
+                                                curve: Curves.easeOutCubic,
+                                                child: Text(
+                                                  driver.nomorMobil.toString(),
+                                                  style: GoogleFonts.montserrat(
+                                                    color: Colors.white,
+                                                    fontSize: 48,
+                                                    fontWeight: FontWeight.w900,
+                                                    fontStyle: FontStyle.italic,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        // --- LAYER 4: Lingkaran Bendera Otomatis ---
+                                        Positioned(
+                                          top: 24,
+                                          right: 24,
+                                          child: Container(
+                                            width: 36,
+                                            height: 36,
+                                            decoration: BoxDecoration(
+                                              color: const Color(
+                                                0xFFD9D9D9,
+                                              ),
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.6,
+                                                ),
+                                                width: 1.5,
+                                              ),
+                                            ),
+                                            clipBehavior: Clip.antiAlias,
+                                            child: Image.asset(
+                                              'assets/images/flags/${driver.negara.toLowerCase()}.webp',
+                                              fit: BoxFit.cover,
+                                              cacheWidth: 96,
+                                              errorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => const Icon(
+                                                    Icons.flag,
+                                                    size: 20,
+                                                    color: Colors.black54,
+                                                  ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        // --- LAYER 5: TOMBOL BINTANG FAVORITE INTERAKTIF ---
+                                        Positioned(
+                                          bottom: 16,
+                                          right: 16,
+                                          child: GestureDetector(
+                                            onTap: widget.onFavoriteToggle,
+                                            child: AnimatedContainer(
+                                              duration: const Duration(
+                                                milliseconds: 200,
+                                              ),
+                                              padding: const EdgeInsets.all(
+                                                8,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: widget.isFavorite
+                                                    ? Colors.amber.withValues(
+                                                        alpha: 0.22,
+                                                      )
+                                                    : Colors.black.withValues(
+                                                        alpha: 0.5,
+                                                      ),
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: widget.isFavorite
+                                                      ? Colors.amber
+                                                      : Colors.white24,
+                                                  width: 1.2,
+                                                ),
+                                              ),
+                                              child: AnimatedScale(
+                                                scale: widget.isFavorite
+                                                    ? 1.15
+                                                    : 1.0,
+                                                duration: const Duration(
+                                                  milliseconds: 200,
+                                                ),
+                                                curve: Curves.elasticOut,
+                                                child: Icon(
+                                                  widget.isFavorite
+                                                      ? Icons.star_rounded
+                                                      : Icons.star_border_rounded,
+                                                  color: widget.isFavorite
+                                                      ? Colors.amber
+                                                      : Colors.white,
+                                                  size: 24,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
+                              );
+                            },
                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          );
-        },
+                ),
+              );
+            },
       ),
     );
   }
@@ -8887,14 +9633,10 @@ import 'package:flutter/material.dart';
 ///
 /// Animasi hanya diputar SEKALI per [id] (selama web terbuka), jadi saat
 /// user scroll naik-turun kartu tidak beranimasi berulang-ulang.
-class RevealOnce extends StatefulWidget {
-  const RevealOnce({
-    super.key,
-    required this.id,
-    required this.child,
-    this.delay = Duration.zero,
-    this.play = true,
-  });
+class RevealOnce
+    extends
+        StatefulWidget {
+  const RevealOnce({super.key, required this.id, required this.child, this.delay = Duration.zero, this.play = true});
 
   final String id;
   final Widget child;
@@ -8904,19 +9646,38 @@ class RevealOnce extends StatefulWidget {
   /// (misalnya menunggu intro lampu start selesai).
   final bool play;
 
-  static final Set<String> _revealed = <String>{};
+  static final Set<
+    String
+  >
+  _revealed =
+      <
+        String
+      >{};
 
   @override
-  State<RevealOnce> createState() => _RevealOnceState();
+  State<
+    RevealOnce
+  >
+  createState() => _RevealOnceState();
 }
 
-class _RevealOnceState extends State<RevealOnce>
-    with SingleTickerProviderStateMixin {
+class _RevealOnceState
+    extends
+        State<
+          RevealOnce
+        >
+    with
+        SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 650),
+    duration: const Duration(
+      milliseconds: 650,
+    ),
   );
-  late final Animation<double> _curve = CurvedAnimation(
+  late final Animation<
+    double
+  >
+  _curve = CurvedAnimation(
     parent: _controller,
     curve: Curves.easeOutCubic,
   );
@@ -8925,7 +9686,9 @@ class _RevealOnceState extends State<RevealOnce>
   @override
   void initState() {
     super.initState();
-    if (RevealOnce._revealed.contains(widget.id)) {
+    if (RevealOnce._revealed.contains(
+      widget.id,
+    )) {
       _controller.value = 1;
     } else if (widget.play) {
       _schedule();
@@ -8933,18 +9696,32 @@ class _RevealOnceState extends State<RevealOnce>
   }
 
   @override
-  void didUpdateWidget(covariant RevealOnce oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.play && !oldWidget.play && _controller.value == 0 && _timer == null) {
+  void didUpdateWidget(
+    covariant RevealOnce oldWidget,
+  ) {
+    super.didUpdateWidget(
+      oldWidget,
+    );
+    if (widget.play &&
+        !oldWidget.play &&
+        _controller.value ==
+            0 &&
+        _timer ==
+            null) {
       _schedule();
     }
   }
 
   void _schedule() {
-    RevealOnce._revealed.add(widget.id);
-    _timer = Timer(widget.delay, () {
-      if (mounted) _controller.forward();
-    });
+    RevealOnce._revealed.add(
+      widget.id,
+    );
+    _timer = Timer(
+      widget.delay,
+      () {
+        if (mounted) _controller.forward();
+      },
+    );
   }
 
   @override
@@ -8955,73 +9732,129 @@ class _RevealOnceState extends State<RevealOnce>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return AnimatedBuilder(
       animation: _curve,
       child: widget.child,
-      builder: (context, child) {
-        final v = _curve.value;
-        // Struktur widget dibuat tetap sama (walau v = 1) agar state child
-        // (misalnya animasi hover kartu) tidak ter-reset.
-        return Opacity(
-          opacity: v,
-          child: Transform.translate(
-            offset: Offset(0, 48 * (1 - v)),
-            child: Transform.scale(scale: 0.94 + 0.06 * v, child: child),
-          ),
-        );
-      },
+      builder:
+          (
+            context,
+            child,
+          ) {
+            final v = _curve.value;
+            // Struktur widget dibuat tetap sama (walau v = 1) agar state child
+            // (misalnya animasi hover kartu) tidak ter-reset.
+            return Opacity(
+              opacity: v,
+              child: Transform.translate(
+                offset: Offset(
+                  0,
+                  48 *
+                      (1 -
+                          v),
+                ),
+                child: Transform.scale(
+                  scale:
+                      0.94 +
+                      0.06 *
+                          v,
+                  child: child,
+                ),
+              ),
+            );
+          },
     );
   }
 }
 
 /// Membesar sedikit saat di-hover dan mengecil saat ditekan.
 /// Membuat tombol/ikon terasa "hidup" dan responsif.
-class HoverScale extends StatefulWidget {
-  const HoverScale({
-    super.key,
-    required this.child,
-    this.onTap,
-    this.scale = 1.06,
-  });
+class HoverScale
+    extends
+        StatefulWidget {
+  const HoverScale({super.key, required this.child, this.onTap, this.scale = 1.06});
 
   final Widget child;
   final VoidCallback? onTap;
   final double scale;
 
   @override
-  State<HoverScale> createState() => _HoverScaleState();
+  State<
+    HoverScale
+  >
+  createState() => _HoverScaleState();
 }
 
-class _HoverScaleState extends State<HoverScale> {
+class _HoverScaleState
+    extends
+        State<
+          HoverScale
+        > {
   bool _hover = false;
   bool _pressed = false;
 
   @override
-  Widget build(BuildContext context) {
-    final scale = _pressed ? 0.95 : (_hover ? widget.scale : 1.0);
+  Widget build(
+    BuildContext context,
+  ) {
+    final scale = _pressed
+        ? 0.95
+        : (_hover
+              ? widget.scale
+              : 1.0);
     Widget result = AnimatedScale(
       scale: scale,
-      duration: const Duration(milliseconds: 180),
+      duration: const Duration(
+        milliseconds: 180,
+      ),
       curve: Curves.easeOutBack,
       child: widget.child,
     );
 
-    if (widget.onTap != null) {
+    if (widget.onTap !=
+        null) {
       result = GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: widget.onTap,
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapUp: (_) => setState(() => _pressed = false),
-        onTapCancel: () => setState(() => _pressed = false),
+        onTapDown:
+            (
+              _,
+            ) => setState(
+              () => _pressed = true,
+            ),
+        onTapUp:
+            (
+              _,
+            ) => setState(
+              () => _pressed = false,
+            ),
+        onTapCancel: () => setState(
+          () => _pressed = false,
+        ),
         child: result,
       );
     }
 
     return MouseRegion(
-      cursor: widget.onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
-      onEnter: (_) => setState(() => _hover = true),
-      onExit: (_) => setState(() => _hover = false),
+      cursor:
+          widget.onTap !=
+              null
+          ? SystemMouseCursors.click
+          : MouseCursor.defer,
+      onEnter:
+          (
+            _,
+          ) => setState(
+            () => _hover = true,
+          ),
+      onExit:
+          (
+            _,
+          ) => setState(
+            () => _hover = false,
+          ),
       child: result,
     );
   }
@@ -9031,7 +9864,7 @@ import 'package:flutter/material.dart';
 
 /// ScrollController yang membuat scroll MOUSE WHEEL di web jadi halus.
 ///
-/// Secara default, Flutter Web melompat langsung ±100px setiap putaran
+/// Secara default, Flutter Web melompat langsung Â±100px setiap putaran
 /// wheel sehingga terasa "patah-patah". Di sini setiap putaran wheel
 /// dianimasikan (easeOutCubic). Putaran beruntun dijumlahkan ke target yang
 /// sama, jadi scroll cepat tetap responsif.
@@ -9219,15 +10052,11 @@ Future<void> main() async {
   );
 }
 
-class DrayveApp
-    extends
-        StatelessWidget {
+class DrayveApp extends StatelessWidget {
   const DrayveApp({super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DRAYVE - F1 Drivers Hub',
       debugShowCheckedModeBanner: false,
