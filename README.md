@@ -34,4 +34,4 @@ Jika ingin menjalankan proyek ini di komputermu sendiri:
 1. *Clone* repositori ini:
    ```bash
    git clone https://github.com/leeviray/DRAYVE_Flutter_Project.git
->>>>>>> 6a7ce3fcb5e0529a844aadb584688ab59efd0ded
+
