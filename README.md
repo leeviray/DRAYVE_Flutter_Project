@@ -21,7 +21,6 @@ DRAYVE adalah platform komunitas digital interaktif bergaya premium yang didedik
 * **Driver Statistics & Bio:** Rekam jejak, poin, posisi klasemen, dan detail biografi pembalap F1 2026.
 * **Real-time Fan Discussion:** Ruang obrolan/komentar antar penggemar yang tersinkronisasi seketika menggunakan StreamBuilder Firestore.
 * **Smart Authentication:** Sistem *Try before you buy*. Akses baca terbuka publik, namun interaksi (komentar/favorit) diwajibkan *login*.
-* **Trackpad Optimized:** Pengalaman *scrolling* momentum mulus menggunakan `BouncingScrollPhysics` dan deteksi kursor global.
 
 ## 🛠️ Teknologi yang Digunakan
 * **Frontend:** Flutter Web (Dart)
