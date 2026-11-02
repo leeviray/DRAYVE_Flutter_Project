@@ -56,10 +56,13 @@ teamMembers = [
     github: 'https://github.com/leeviray',
   ),
   TeamMember(
-    name: 'NAMA TEMAN\nPERTAMA',
-    email: 'teman1@mhs.unesa.ac.id',
+    name: 'AKMAL PRIYATAMA\nFADILAH RAMDHAN',
+    email: '25051204410@mhs.unesa.ac.id',
     portrait: 'assets/images/friend1.webp',
-    quote: '“Just work with it”',
+    quote: '“FORZA KIMIII”',
+    instagram: 'https://www.instagram.com/faadills?vrfl=MWxmYmZkcGdvODY0bw==',
+    tiktok: 'https://www.tiktok.com/@fadillz67',
+    github: 'https://github.com/fadilsss-ai',
   ),
   TeamMember(
     name: 'NAMA TEMAN\nKEDUA',
