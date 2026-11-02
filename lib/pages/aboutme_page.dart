@@ -25,6 +25,62 @@ class ProfileContent {
   static const headphones = 'assets/icons/arcticons_google-music.webp';
 }
 
+// ==========================================
+// DATA ANGGOTA TIM (5 ORANG)
+// Ganti nama, email, foto, quote & link sosmed teman-teman di sini.
+// Foto teman taruh di folder assets/images/ (contoh: friend1.webp)
+// ==========================================
+class TeamMember {
+  final String name;
+  final String email;
+  final String portrait;
+  final String quote;
+  final String instagram;
+  final String tiktok;
+  final String github;
+
+  const TeamMember({required this.name, required this.email, required this.portrait, required this.quote, this.instagram = '', this.tiktok = '', this.github = ''});
+}
+
+const List<
+  TeamMember
+>
+teamMembers = [
+  TeamMember(
+    name: ProfileContent.name,
+    email: ProfileContent.email,
+    portrait: ProfileContent.portrait,
+    quote: '“Orang Biasa Masih Butuh Banyak Belajar”',
+    instagram: 'https://www.instagram.com/l.qushai_/',
+    tiktok: 'https://www.tiktok.com/@ray_mond_ay',
+    github: 'https://github.com/leeviray',
+  ),
+  TeamMember(
+    name: 'NAMA TEMAN\nPERTAMA',
+    email: 'teman1@mhs.unesa.ac.id',
+    portrait: 'assets/images/friend1.webp',
+    quote: '“Just work with it”',
+  ),
+  TeamMember(
+    name: 'NAMA TEMAN\nKEDUA',
+    email: 'teman2@mhs.unesa.ac.id',
+    portrait: 'assets/images/friend2.webp',
+    quote: '“Life is a choice”',
+  ),
+  TeamMember(
+    name: 'NAMA TEMAN\nKETIGA',
+    email: 'teman3@mhs.unesa.ac.id',
+    portrait: 'assets/images/friend3.webp',
+    quote: '“Keep pushing forward”',
+  ),
+  TeamMember(
+    name: 'NAMA TEMAN\nKEEMPAT',
+    email: 'teman4@mhs.unesa.ac.id',
+    portrait: 'assets/images/friend4.webp',
+    quote: '“Lights out and away we go”',
+  ),
+];
+
 class ProfileLayout {
   static const waveLeft = .8;
   static const waveTop = .80;
@@ -293,17 +349,9 @@ class _InteractiveProfileCardState
         State<
           InteractiveProfileCard
         > {
-  int _currentTrack = 0;
+  int _currentIndex = 0;
+  int _direction = 1; // 1 = next (geser ke kiri), -1 = previous (geser ke kanan)
   bool _isPlaying = false;
-
-  final List<
-    String
-  >
-  _quotes = [
-    '“Orang Biasa Masih Butuh Banyak Belajar”',
-    '“Just work with it”',
-    '“Life is a choice”',
-  ];
 
   void _togglePlay() {
     setState(() {
@@ -313,20 +361,22 @@ class _InteractiveProfileCardState
 
   void _nextTrack() {
     setState(() {
-      _currentTrack =
-          (_currentTrack +
+      _direction = 1;
+      _currentIndex =
+          (_currentIndex +
               1) %
-          _quotes.length;
+          teamMembers.length;
     });
   }
 
   void _prevTrack() {
     setState(() {
-      _currentTrack =
-          (_currentTrack -
+      _direction = -1;
+      _currentIndex =
+          (_currentIndex -
               1 +
-              _quotes.length) %
-          _quotes.length;
+              teamMembers.length) %
+          teamMembers.length;
     });
   }
 
@@ -334,6 +384,7 @@ class _InteractiveProfileCardState
   Widget build(
     BuildContext context,
   ) {
+    final member = teamMembers[_currentIndex];
     return LayoutBuilder(
       builder:
           (
@@ -356,19 +407,9 @@ class _InteractiveProfileCardState
                     borderRadius: BorderRadius.circular(
                       48,
                     ),
-                    child: Image.asset(
-                      ProfileContent.background,
-                      fit: BoxFit.cover,
-                      errorBuilder:
-                          (
-                            context,
-                            error,
-                            stackTrace,
-                          ) => Container(
-                            color: const Color(
-                              0xFF2A2D34,
-                            ),
-                          ),
+                    child: _AnimatedGradientBackground(
+                      index: _currentIndex,
+                      isPlaying: _isPlaying,
                     ),
                   ),
                   Positioned.fill(
@@ -393,14 +434,18 @@ class _InteractiveProfileCardState
                   ),
                   isWide
                       ? _DesktopCard(
-                          quote: _quotes[_currentTrack],
+                          member: member,
+                          index: _currentIndex,
+                          direction: _direction,
                           isPlaying: _isPlaying,
                           onPrev: _prevTrack,
                           onPlay: _togglePlay,
                           onNext: _nextTrack,
                         )
                       : _MobileCard(
-                          quote: _quotes[_currentTrack],
+                          member: member,
+                          index: _currentIndex,
+                          direction: _direction,
                           isPlaying: _isPlaying,
                           onPrev: _prevTrack,
                           onPlay: _togglePlay,
@@ -410,6 +455,120 @@ class _InteractiveProfileCardState
               ),
             );
           },
+    );
+  }
+}
+
+// ==========================================
+// ANIMASI GESER (SLIDE) SAAT GANTI ANGGOTA
+// ==========================================
+class _SlideSwitcher
+    extends
+        StatelessWidget {
+  final int index;
+  final int direction;
+  final Widget child;
+  final double delay; // 0.0 - 0.2, untuk efek stagger
+  final double distance; // jarak geser relatif terhadap lebar widget
+
+  const _SlideSwitcher({required this.index, required this.direction, required this.child, this.delay = 0, this.distance = 0.25});
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    final currentKey =
+        ValueKey<
+          int
+        >(
+          index,
+        );
+    return AnimatedSwitcher(
+      duration: const Duration(
+        milliseconds: 800,
+      ),
+      layoutBuilder:
+          (
+            currentChild,
+            previousChildren,
+          ) => Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.topLeft,
+            children: [
+              ...previousChildren,
+              if (currentChild !=
+                  null)
+                currentChild,
+            ],
+          ),
+      transitionBuilder:
+          (
+            child,
+            animation,
+          ) {
+            final isIncoming =
+                child.key ==
+                currentKey;
+            // Masuk: sedikit tertunda (stagger) & melambat halus.
+            // Keluar: lebih cepat supaya tidak tabrakan dengan yang masuk.
+            final curved = CurvedAnimation(
+              parent: animation,
+              curve: isIncoming
+                  ? Interval(
+                      0.25 +
+                          delay,
+                      1,
+                      curve: Curves.easeOutQuart,
+                    )
+                  : const Interval(
+                      0.45,
+                      1,
+                      curve: Curves.easeInCubic,
+                    ),
+            );
+            final offset = Offset(
+              (isIncoming
+                      ? direction.toDouble()
+                      : -direction.toDouble()) *
+                  distance,
+              0,
+            );
+            return AnimatedBuilder(
+              animation: curved,
+              child: child,
+              builder:
+                  (
+                    context,
+                    child,
+                  ) {
+                    final t = curved.value;
+                    return FractionalTranslation(
+                      translation: Offset.lerp(
+                        offset,
+                        Offset.zero,
+                        t,
+                      )!,
+                      child: Transform.scale(
+                        scale:
+                            0.92 +
+                            0.08 *
+                                t,
+                        child: Opacity(
+                          opacity: t.clamp(
+                            0.0,
+                            1.0,
+                          ),
+                          child: child,
+                        ),
+                      ),
+                    );
+                  },
+            );
+          },
+      child: KeyedSubtree(
+        key: currentKey,
+        child: child,
+      ),
     );
   }
 }
@@ -451,14 +610,14 @@ class _GlassCard
                         0.15,
                       )
                     : Colors.white.withOpacity(
-                        0.39,
+                        0.08,
                       ),
                 borderRadius: BorderRadius.circular(
                   48,
                 ),
                 border: Border.all(
                   color: Colors.white.withOpacity(
-                    0.72,
+                    0.35,
                   ),
                   width: 1,
                 ),
@@ -475,11 +634,13 @@ class _GlassCard
 class _DesktopCard
     extends
         StatelessWidget {
-  final String quote;
+  final TeamMember member;
+  final int index;
+  final int direction;
   final bool isPlaying;
   final VoidCallback onPrev, onPlay, onNext;
 
-  const _DesktopCard({required this.quote, required this.isPlaying, required this.onPrev, required this.onPlay, required this.onNext});
+  const _DesktopCard({required this.member, required this.index, required this.direction, required this.isPlaying, required this.onPrev, required this.onPlay, required this.onNext});
 
   @override
   Widget
@@ -494,6 +655,12 @@ class _DesktopCard
             box,
           ) {
             final h = box.maxHeight;
+            final portraitW =
+                box.maxWidth *
+                .49;
+            final portraitH =
+                h *
+                1.03;
             return Stack(
               clipBehavior: Clip.none,
               children: [
@@ -507,9 +674,13 @@ class _DesktopCard
                   width:
                       box.maxWidth *
                       .46,
-                  child: _ProfileDetails(
-                    height: h,
-                    quote: quote,
+                  child: _SlideSwitcher(
+                    index: index,
+                    direction: direction,
+                    child: _ProfileDetails(
+                      height: h,
+                      member: member,
+                    ),
                   ),
                 ),
                 Positioned(
@@ -519,15 +690,21 @@ class _DesktopCard
                   bottom:
                       -h *
                       .10,
-                  height:
-                      h *
-                      1.03,
-                  width:
-                      box.maxWidth *
-                      .49,
-                  child: _buildAssetImage(
-                    ProfileContent.portrait,
-                    alignment: Alignment.bottomCenter,
+                  height: portraitH,
+                  width: portraitW,
+                  child: _SlideSwitcher(
+                    index: index,
+                    direction: direction,
+                    delay: 0.12,
+                    distance: 0.35,
+                    child: SizedBox(
+                      width: portraitW,
+                      height: portraitH,
+                      child: _buildPortrait(
+                        member.portrait,
+                        alignment: Alignment.bottomCenter,
+                      ),
+                    ),
                   ),
                 ),
                 Positioned(
@@ -567,7 +744,8 @@ class _DesktopCard
                   bottom:
                       h *
                       ProfileLayout.socialsBottom,
-                  child: const _SocialLinks(
+                  child: _SocialLinks(
+                    member: member,
                     size: 78,
                   ),
                 ),
@@ -578,10 +756,9 @@ class _DesktopCard
                   bottom:
                       h *
                       ProfileLayout.headphonesBottom,
-                  child: _buildAssetImage(
-                    ProfileContent.headphones,
-                    width: 70,
-                    height: 70,
+                  child: _AnimatedHeadphones(
+                    isPlaying: isPlaying,
+                    size: 70,
                   ),
                 ),
               ],
@@ -594,11 +771,13 @@ class _DesktopCard
 class _MobileCard
     extends
         StatelessWidget {
-  final String quote;
+  final TeamMember member;
+  final int index;
+  final int direction;
   final bool isPlaying;
   final VoidCallback onPrev, onPlay, onNext;
 
-  const _MobileCard({required this.quote, required this.isPlaying, required this.onPrev, required this.onPlay, required this.onNext});
+  const _MobileCard({required this.member, required this.index, required this.direction, required this.isPlaying, required this.onPrev, required this.onPlay, required this.onNext});
 
   @override
   Widget
@@ -626,11 +805,24 @@ class _MobileCard
                   height:
                       height *
                       0.85,
-                  child: Opacity(
-                    opacity: 0.65,
-                    child: _buildAssetImage(
-                      ProfileContent.portrait,
-                      alignment: Alignment.bottomRight,
+                  width: width,
+                  child: _SlideSwitcher(
+                    index: index,
+                    direction: direction,
+                    delay: 0.12,
+                    distance: 0.35,
+                    child: SizedBox(
+                      width: width,
+                      height:
+                          height *
+                          0.85,
+                      child: Opacity(
+                        opacity: 0.65,
+                        child: _buildPortrait(
+                          member.portrait,
+                          alignment: Alignment.bottomRight,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -647,48 +839,55 @@ class _MobileCard
                       const Spacer(
                         flex: 1,
                       ),
-                      Text(
-                        ProfileContent.name,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize:
-                              (width *
-                                      0.1)
-                                  .clamp(
-                                    24.0,
-                                    36.0,
-                                  ),
-                          height: 1.15,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 6,
-                      ),
-                      const Text(
-                        ProfileContent.email,
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 13,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      AnimatedSwitcher(
-                        duration: const Duration(
-                          milliseconds: 300,
-                        ),
-                        child: Text(
-                          quote,
-                          key: ValueKey(
-                            quote,
-                          ),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            height: 1.4,
+                      _SlideSwitcher(
+                        index: index,
+                        direction: direction,
+                        child: SizedBox(
+                          width:
+                              width -
+                              40,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                member.name,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize:
+                                      (width *
+                                              0.1)
+                                          .clamp(
+                                            24.0,
+                                            36.0,
+                                          ),
+                                  height: 1.15,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 6,
+                              ),
+                              Text(
+                                member.email,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              Text(
+                                member.quote,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -721,7 +920,8 @@ class _MobileCard
                         flex: 1,
                       ),
                       // SOCIAL LINKS (Ukurannya dikecilkan khusus Mobile)
-                      const _SocialLinks(
+                      _SocialLinks(
+                        member: member,
                         size: 46,
                       ),
                     ],
@@ -731,13 +931,10 @@ class _MobileCard
                 Positioned(
                   right: 16,
                   bottom: 16,
-                  child: Opacity(
-                    opacity: 0.3,
-                    child: _buildAssetImage(
-                      ProfileContent.headphones,
-                      width: 32,
-                      height: 32,
-                    ),
+                  child: _AnimatedHeadphones(
+                    isPlaying: isPlaying,
+                    size: 32,
+                    opacity: 0.45,
                   ),
                 ),
               ],
@@ -751,9 +948,9 @@ class _ProfileDetails
     extends
         StatelessWidget {
   final double height;
-  final String quote;
+  final TeamMember member;
 
-  const _ProfileDetails({required this.height, required this.quote});
+  const _ProfileDetails({required this.height, required this.member});
 
   @override
   Widget
@@ -761,25 +958,26 @@ class _ProfileDetails
     BuildContext context,
   ) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
     children: [
-      const Text(
-        ProfileContent.name,
-        style: TextStyle(
+      Text(
+        member.name,
+        style: const TextStyle(
           color: Colors.white,
-          fontSize: 64,
+          fontSize: 58,
           height: 1.18,
           fontWeight: FontWeight.w700,
           letterSpacing: .7,
         ),
       ),
       const SizedBox(
-        height: 4,
+        height: 18,
       ),
-      const Text(
-        ProfileContent.email,
-        style: TextStyle(
+      Text(
+        member.email,
+        style: const TextStyle(
           color: Colors.white,
-          fontSize: 16,
+          fontSize: 24,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -788,43 +986,12 @@ class _ProfileDetails
             height *
             .035,
       ),
-      AnimatedSwitcher(
-        duration: const Duration(
-          milliseconds: 300,
-        ),
-        transitionBuilder:
-            (
-              child,
-              animation,
-            ) => FadeTransition(
-              opacity: animation,
-              child: SlideTransition(
-                position:
-                    Tween<
-                          Offset
-                        >(
-                          begin: const Offset(
-                            0,
-                            0.2,
-                          ),
-                          end: Offset.zero,
-                        )
-                        .animate(
-                          animation,
-                        ),
-                child: child,
-              ),
-            ),
-        child: Text(
-          quote,
-          key: ValueKey(
-            quote,
-          ),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+      Text(
+        member.quote,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 30,
+          fontWeight: FontWeight.w600,
         ),
       ),
     ],
@@ -912,9 +1079,10 @@ class _MusicControls
 class _SocialLinks
     extends
         StatelessWidget {
+  final TeamMember member;
   final double size;
 
-  const _SocialLinks({required this.size});
+  const _SocialLinks({required this.member, required this.size});
 
   Future<
     void
@@ -922,6 +1090,7 @@ class _SocialLinks
   _launchUrl(
     String urlString,
   ) async {
+    if (urlString.isEmpty) return;
     final Uri url = Uri.parse(
       urlString,
     );
@@ -943,8 +1112,10 @@ class _SocialLinks
       _SocialIcon(
         asset: ProfileContent.instagram,
         size: size,
+        order: 0,
+        trigger: member.name,
         onTap: () => _launchUrl(
-          'https://www.instagram.com/l.qushai_/',
+          member.instagram,
         ),
       ),
       SizedBox(
@@ -954,11 +1125,13 @@ class _SocialLinks
       ),
       _SocialIcon(
         asset: ProfileContent.tiktok,
+        order: 1,
+        trigger: member.name,
         size:
             size *
             0.95, // Sedikit lebih kecil menyesuaikan proporsi aslinya
         onTap: () => _launchUrl(
-          'https://www.tiktok.com/@ray_mond_ay',
+          member.tiktok,
         ),
       ),
       SizedBox(
@@ -968,11 +1141,13 @@ class _SocialLinks
       ),
       _SocialIcon(
         asset: ProfileContent.github,
+        order: 2,
+        trigger: member.name,
         size:
             size *
             0.95, // Sedikit lebih kecil menyesuaikan proporsi aslinya
         onTap: () => _launchUrl(
-          'https://github.com/leeviray',
+          member.github,
         ),
       ),
     ],
@@ -981,25 +1156,719 @@ class _SocialLinks
 
 class _SocialIcon
     extends
-        StatelessWidget {
+        StatefulWidget {
   final String asset;
   final double size;
   final VoidCallback? onTap;
+  final int order; // urutan ikon untuk efek stagger
+  final String trigger; // berubah => animasi pop diputar ulang
 
-  const _SocialIcon({required this.asset, required this.size, this.onTap});
+  const _SocialIcon({required this.asset, required this.size, this.onTap, this.order = 0, this.trigger = ''});
 
   @override
-  Widget
-  build(
-    BuildContext context,
-  ) => HoverScale(
-    onTap: onTap,
-    child: _buildAssetImage(
-      asset,
-      width: size,
-      height: size,
+  State<
+    _SocialIcon
+  >
+  createState() => _SocialIconState();
+}
+
+class _SocialIconState
+    extends
+        State<
+          _SocialIcon
+        >
+    with
+        TickerProviderStateMixin {
+  // Animasi melayang (floating) terus-menerus
+  late final AnimationController _float = AnimationController(
+    vsync: this,
+    duration: const Duration(
+      milliseconds: 2600,
+    ),
+  )..repeat();
+
+  // Animasi pop-in saat ganti anggota
+  late final AnimationController _pop = AnimationController(
+    vsync: this,
+    duration: const Duration(
+      milliseconds: 900,
     ),
   );
+
+  bool _hover = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _playPop();
+  }
+
+  void _playPop() {
+    _pop.value = 0;
+    Future.delayed(
+      Duration(
+        milliseconds:
+            250 +
+            widget.order *
+                110,
+      ),
+      () {
+        if (mounted) _pop.forward();
+      },
+    );
+  }
+
+  @override
+  void didUpdateWidget(
+    covariant _SocialIcon oldWidget,
+  ) {
+    super.didUpdateWidget(
+      oldWidget,
+    );
+    if (oldWidget.trigger !=
+        widget.trigger) {
+      _playPop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _float.dispose();
+    _pop.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    final popCurve = CurvedAnimation(
+      parent: _pop,
+      curve: Curves.elasticOut,
+    );
+    return MouseRegion(
+      onEnter:
+          (
+            _,
+          ) => setState(
+            () => _hover = true,
+          ),
+      onExit:
+          (
+            _,
+          ) => setState(
+            () => _hover = false,
+          ),
+      child: AnimatedBuilder(
+        animation: Listenable.merge([
+          _float,
+          _pop,
+        ]),
+        builder:
+            (
+              context,
+              child,
+            ) {
+              final phase =
+                  _float.value *
+                      2 *
+                      math.pi +
+                  widget.order *
+                      1.1;
+              final dy =
+                  math.sin(
+                    phase,
+                  ) *
+                  widget.size *
+                  0.05;
+              final pop = popCurve.value;
+              return Transform.translate(
+                offset: Offset(
+                  0,
+                  dy,
+                ),
+                child: Transform.rotate(
+                  angle:
+                      (1 -
+                          pop) *
+                      -0.6,
+                  child: Transform.scale(
+                    scale: pop.clamp(
+                      0.0,
+                      1.3,
+                    ),
+                    child: child,
+                  ),
+                ),
+              );
+            },
+        child: HoverScale(
+          onTap: widget.onTap,
+          scale: 1.18,
+          child: AnimatedContainer(
+            duration: const Duration(
+              milliseconds: 250,
+            ),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: _hover
+                  ? [
+                      BoxShadow(
+                        color: Colors.white.withValues(
+                          alpha: 0.35,
+                        ),
+                        blurRadius: 18,
+                        spreadRadius: 1,
+                      ),
+                    ]
+                  : [],
+            ),
+            child: _buildAssetImage(
+              widget.asset,
+              width: widget.size,
+              height: widget.size,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ==========================================
+// IKON HEADPHONE ANIMASI
+// Idle: melayang & bergoyang pelan. Playing: berdenyut mengikuti "beat".
+// ==========================================
+class _AnimatedHeadphones
+    extends
+        StatefulWidget {
+  final bool isPlaying;
+  final double size;
+  final double opacity;
+
+  const _AnimatedHeadphones({required this.isPlaying, required this.size, this.opacity = 1});
+
+  @override
+  State<
+    _AnimatedHeadphones
+  >
+  createState() => _AnimatedHeadphonesState();
+}
+
+class _AnimatedHeadphonesState
+    extends
+        State<
+          _AnimatedHeadphones
+        >
+    with
+        TickerProviderStateMixin {
+  late final AnimationController _idle = AnimationController(
+    vsync: this,
+    duration: const Duration(
+      milliseconds: 3200,
+    ),
+  )..repeat();
+
+  late final AnimationController _beat = AnimationController(
+    vsync: this,
+    duration: const Duration(
+      milliseconds: 460,
+    ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isPlaying) _beat.repeat();
+  }
+
+  @override
+  void didUpdateWidget(
+    covariant _AnimatedHeadphones oldWidget,
+  ) {
+    super.didUpdateWidget(
+      oldWidget,
+    );
+    if (widget.isPlaying !=
+        oldWidget.isPlaying) {
+      if (widget.isPlaying) {
+        _beat.repeat();
+      } else {
+        _beat.animateTo(
+          0,
+          duration: const Duration(
+            milliseconds: 300,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _idle.dispose();
+    _beat.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    return HoverScale(
+      scale: 1.15,
+      child: AnimatedBuilder(
+        animation: Listenable.merge([
+          _idle,
+          _beat,
+        ]),
+        builder:
+            (
+              context,
+              child,
+            ) {
+              final t =
+                  _idle.value *
+                  2 *
+                  math.pi;
+              // Denyut: naik cepat lalu turun pelan
+              final b = widget.isPlaying
+                  ? math
+                        .pow(
+                          1 -
+                              _beat.value,
+                          3,
+                        )
+                        .toDouble()
+                  : 0.0;
+              return Transform.translate(
+                offset: Offset(
+                  0,
+                  math.sin(
+                        t,
+                      ) *
+                      widget.size *
+                      0.06,
+                ),
+                child: Transform.rotate(
+                  angle:
+                      math.sin(
+                        t *
+                            (widget.isPlaying
+                                ? 2
+                                : 1),
+                      ) *
+                      (widget.isPlaying
+                          ? 0.14
+                          : 0.07),
+                  child: Transform.scale(
+                    scale:
+                        1 +
+                        b *
+                            0.14,
+                    child: AnimatedOpacity(
+                      duration: const Duration(
+                        milliseconds: 400,
+                      ),
+                      opacity: widget.isPlaying
+                          ? 1
+                          : widget.opacity,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: widget.isPlaying
+                              ? [
+                                  BoxShadow(
+                                    color:
+                                        const Color(
+                                          0xFFE8002D,
+                                        ).withValues(
+                                          alpha:
+                                              0.25 +
+                                              b *
+                                                  0.35,
+                                        ),
+                                    blurRadius:
+                                        16 +
+                                        b *
+                                            14,
+                                    spreadRadius:
+                                        b *
+                                        4,
+                                  ),
+                                ]
+                              : [],
+                        ),
+                        child: child,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+        child: _buildAssetImage(
+          ProfileContent.headphones,
+          width: widget.size,
+          height: widget.size,
+        ),
+      ),
+    );
+  }
+}
+
+// ==========================================
+// BACKGROUND GRADIENT ANIMASI (BERGANTI PER ANGGOTA)
+// ==========================================
+class _GradientPalette {
+  final List<
+    Color
+  >
+  colors;
+  final Alignment begin;
+  final Alignment end;
+  final Color blobA;
+  final Color blobB;
+  final Alignment blobAPos;
+  final Alignment blobBPos;
+
+  const _GradientPalette({required this.colors, required this.begin, required this.end, required this.blobA, required this.blobB, required this.blobAPos, required this.blobBPos});
+}
+
+const List<
+  _GradientPalette
+>
+_palettes = [
+  // 1. F1 Red Night
+  _GradientPalette(
+    colors: [
+      Color(
+        0xFF0F0C29,
+      ),
+      Color(
+        0xFF6A0D2B,
+      ),
+      Color(
+        0xFFE8002D,
+      ),
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    blobA: Color(
+      0xFFFF4D6D,
+    ),
+    blobB: Color(
+      0xFF3A0CA3,
+    ),
+    blobAPos: Alignment(
+      0.7,
+      -0.6,
+    ),
+    blobBPos: Alignment(
+      -0.8,
+      0.7,
+    ),
+  ),
+  // 2. Ocean Neon
+  _GradientPalette(
+    colors: [
+      Color(
+        0xFF020024,
+      ),
+      Color(
+        0xFF0A3D91,
+      ),
+      Color(
+        0xFF00D4FF,
+      ),
+    ],
+    begin: Alignment.bottomLeft,
+    end: Alignment.topRight,
+    blobA: Color(
+      0xFF00F5D4,
+    ),
+    blobB: Color(
+      0xFF7209B7,
+    ),
+    blobAPos: Alignment(
+      -0.6,
+      -0.7,
+    ),
+    blobBPos: Alignment(
+      0.8,
+      0.6,
+    ),
+  ),
+  // 3. Sunset Purple
+  _GradientPalette(
+    colors: [
+      Color(
+        0xFF2B1055,
+      ),
+      Color(
+        0xFF7597DE,
+      ),
+      Color(
+        0xFFFF7E5F,
+      ),
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    blobA: Color(
+      0xFFFEB47B,
+    ),
+    blobB: Color(
+      0xFFB5179E,
+    ),
+    blobAPos: Alignment(
+      0.2,
+      0.8,
+    ),
+    blobBPos: Alignment(
+      -0.7,
+      -0.5,
+    ),
+  ),
+  // 4. Emerald Aurora
+  _GradientPalette(
+    colors: [
+      Color(
+        0xFF051937,
+      ),
+      Color(
+        0xFF004D7A,
+      ),
+      Color(
+        0xFF00BF72,
+      ),
+    ],
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    blobA: Color(
+      0xFFA8EB12,
+    ),
+    blobB: Color(
+      0xFF008793,
+    ),
+    blobAPos: Alignment(
+      -0.7,
+      0.6,
+    ),
+    blobBPos: Alignment(
+      0.7,
+      -0.7,
+    ),
+  ),
+  // 5. Papaya Gold
+  _GradientPalette(
+    colors: [
+      Color(
+        0xFF1A1A2E,
+      ),
+      Color(
+        0xFFC0392B,
+      ),
+      Color(
+        0xFFFF8000,
+      ),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    blobA: Color(
+      0xFFFFD166,
+    ),
+    blobB: Color(
+      0xFF8338EC,
+    ),
+    blobAPos: Alignment(
+      0.8,
+      0.7,
+    ),
+    blobBPos: Alignment(
+      -0.6,
+      -0.8,
+    ),
+  ),
+];
+
+class _AnimatedGradientBackground
+    extends
+        StatefulWidget {
+  final int index;
+  final bool isPlaying;
+
+  const _AnimatedGradientBackground({required this.index, required this.isPlaying});
+
+  @override
+  State<
+    _AnimatedGradientBackground
+  >
+  createState() => _AnimatedGradientBackgroundState();
+}
+
+class _AnimatedGradientBackgroundState
+    extends
+        State<
+          _AnimatedGradientBackground
+        >
+    with
+        SingleTickerProviderStateMixin {
+  // Gerakan blob cahaya yang terus "bernapas"
+  late final AnimationController _drift = AnimationController(
+    vsync: this,
+    duration: const Duration(
+      seconds: 14,
+    ),
+  )..repeat();
+
+  static const _switchDuration = Duration(
+    milliseconds: 1200,
+  );
+  static const _switchCurve = Curves.easeInOutCubic;
+
+  @override
+  void dispose() {
+    _drift.dispose();
+    super.dispose();
+  }
+
+  Widget _blob(
+    Color color,
+    Alignment target,
+    double phaseShift,
+    double sizeFactor,
+  ) {
+    return TweenAnimationBuilder<
+      Alignment
+    >(
+      tween: AlignmentTween(
+        end: target,
+      ),
+      duration: _switchDuration,
+      curve: _switchCurve,
+      builder:
+          (
+            context,
+            base,
+            _,
+          ) => AnimatedBuilder(
+            animation: _drift,
+            builder:
+                (
+                  context,
+                  _,
+                ) {
+                  final t =
+                      _drift.value *
+                          2 *
+                          math.pi +
+                      phaseShift;
+                  final speed = widget.isPlaying
+                      ? 2.0
+                      : 1.0;
+                  return Align(
+                    alignment:
+                        base +
+                        Alignment(
+                          math.sin(
+                                t *
+                                    speed,
+                              ) *
+                              0.25,
+                          math.cos(
+                                t *
+                                    speed,
+                              ) *
+                              0.2,
+                        ),
+                    child: LayoutBuilder(
+                      builder:
+                          (
+                            context,
+                            c,
+                          ) {
+                            final s =
+                                math.max(
+                                  c.maxWidth,
+                                  c.maxHeight,
+                                ) *
+                                sizeFactor;
+                            return AnimatedContainer(
+                              duration: _switchDuration,
+                              curve: _switchCurve,
+                              width: s,
+                              height: s,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: RadialGradient(
+                                  colors: [
+                                    color.withValues(
+                                      alpha: 0.75,
+                                    ),
+                                    color.withValues(
+                                      alpha: 0,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                    ),
+                  );
+                },
+          ),
+    );
+  }
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    final p =
+        _palettes[widget.index %
+            _palettes.length];
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        AnimatedContainer(
+          duration: _switchDuration,
+          curve: _switchCurve,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: p.begin,
+              end: p.end,
+              colors: p.colors,
+            ),
+          ),
+        ),
+        _blob(
+          p.blobA,
+          p.blobAPos,
+          0,
+          0.75,
+        ),
+        _blob(
+          p.blobB,
+          p.blobBPos,
+          math.pi,
+          0.9,
+        ),
+        // Lapisan vignette agar teks tetap terbaca
+        const DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              radius: 1.2,
+              colors: [
+                Colors.transparent,
+                Color(
+                  0x66000000,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 Widget
@@ -1032,6 +1901,41 @@ _buildAssetImage(
             Icons.image_not_supported,
             color: Colors.white38,
           ),
+        ),
+  );
+}
+
+// Foto anggota tim (fallback siluet jika foto belum ada)
+Widget
+_buildPortrait(
+  String assetPath, {
+  Alignment alignment = Alignment.bottomCenter,
+}) {
+  return Image.asset(
+    assetPath,
+    fit: BoxFit.contain,
+    alignment: alignment,
+    errorBuilder:
+        (
+          context,
+          error,
+          stackTrace,
+        ) => LayoutBuilder(
+          builder:
+              (
+                context,
+                c,
+              ) => Align(
+                alignment: alignment,
+                child: Icon(
+                  Icons.person,
+                  size: c.maxHeight.isFinite
+                      ? c.maxHeight *
+                            0.8
+                      : 200,
+                  color: Colors.white38,
+                ),
+              ),
         ),
   );
 }
