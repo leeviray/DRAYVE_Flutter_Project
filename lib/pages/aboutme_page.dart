@@ -65,22 +65,31 @@ teamMembers = [
     github: 'https://github.com/fadilsss-ai',
   ),
   TeamMember(
-    name: 'NAMA TEMAN\nKEDUA',
-    email: 'teman2@mhs.unesa.ac.id',
-    portrait: 'assets/images/friend2.webp',
-    quote: '“Life is a choice”',
+    name: 'NAMA TEMAN\nKEDUA', //GANTI INI REK
+    email: 'teman2@mhs.unesa.ac.id', //GANTI INI REK
+    portrait: 'assets/images/friend2.webp', //PASTIKAN FOTONYA SUDAH FOTOMU YA
+    quote: '“Life is a choice”', //GANTI INI REK
+    instagram: 'https://www.instagram.com/l.qushai_/', //GANTI INI REK
+    tiktok: 'https://www.tiktok.com/@ray_mond_ay', //GANTI INI REK
+    github: 'https://github.com/leeviray', //GANTI INI REK
   ),
   TeamMember(
-    name: 'NAMA TEMAN\nKETIGA',
-    email: 'teman3@mhs.unesa.ac.id',
-    portrait: 'assets/images/friend3.webp',
-    quote: '“Keep pushing forward”',
+    name: 'NAMA TEMAN\nKETIGA', //GANTI INI REK
+    email: 'teman3@mhs.unesa.ac.id', //GANTI INI REK
+    portrait: 'assets/images/friend3.webp', //PASTIKAN FOTONYA SUDAH FOTOMU YA
+    quote: '“Keep pushing forward”', //GANTI INI REK
+    instagram: 'https://www.instagram.com/l.qushai_/', //GANTI INI REK
+    tiktok: 'https://www.tiktok.com/@ray_mond_ay', //GANTI INI REK
+    github: 'https://github.com/leeviray', //GANTI INI REK
   ),
   TeamMember(
-    name: 'NAMA TEMAN\nKEEMPAT',
-    email: 'teman4@mhs.unesa.ac.id',
-    portrait: 'assets/images/friend4.webp',
-    quote: '“Lights out and away we go”',
+    name: 'NAMA TEMAN\nKEEMPAT', //GANTI INI REK
+    email: 'teman4@mhs.unesa.ac.id', //GANTI INI REK
+    portrait: 'assets/images/friend4.webp', //PASTIKAN FOTONYA SUDAH FOTOMU YA
+    quote: '“Lights out and away we go”', //GANTI INI REK
+    instagram: 'https://www.instagram.com/l.qushai_/', //GANTI INI REK
+    tiktok: 'https://www.tiktok.com/@ray_mond_ay', //GANTI INI REK
+    github: 'https://github.com/leeviray', //GANTI INI REK
   ),
 ];
 

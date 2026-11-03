@@ -1,0 +1,44 @@
+name: Deploy Flutter Web to GitHub Pages
+
+# Jalankan otomatis setiap kali ada push atau merge yang masuk ke branch main
+on:
+  push:
+    branches:
+      - main
+
+# Memberikan izin ke robot untuk mengupdate isi repo (branch gh-pages)
+permissions:
+  contents: write
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Mengambil kode terbaru dari branch main
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # 2. Menginstal Flutter di server GitHub (otomatis pakai versi stable terbaru)
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      # 3. Menjalankan flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. Melakukan build ke Flutter Web
+      # PENTING: Sesuaikan nama di dalam garis miring dengan nama repositorimu!
+      - name: Build Flutter Web
+        run: flutter build web --release --base-href "/DRAYVE_Flutter_Project/"
+
+      # 5. Mengirim hasil folder build/web ke branch gh-pages secara otomatis
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+          publish_branch: gh-pages
