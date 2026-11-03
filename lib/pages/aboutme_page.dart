@@ -65,13 +65,13 @@ teamMembers = [
     github: 'https://github.com/fadilsss-ai',
   ),
   TeamMember(
-    name: 'NAMA TEMAN\nKEDUA', //GANTI INI REK
-    email: 'teman2@mhs.unesa.ac.id', //GANTI INI REK
+    name: 'GIGIH JUANG\nPRANANTA', //GANTI INI REK
+    email: '25051204416@mhs.unesa.ac.id', //GANTI INI REK
     portrait: 'assets/images/friend2.webp', //PASTIKAN FOTONYA SUDAH FOTOMU YA
-    quote: '“Life is a choice”', //GANTI INI REK
-    instagram: 'https://www.instagram.com/l.qushai_/', //GANTI INI REK
-    tiktok: 'https://www.tiktok.com/@ray_mond_ay', //GANTI INI REK
-    github: 'https://github.com/leeviray', //GANTI INI REK
+    quote: '“JUST PROVE YOURSELF”', //GANTI INI REK
+    instagram: 'https://www.instagram.com/gihh_jprn', //GANTI INI REK
+    tiktok: 'https://www.tiktok.com/@kim_nyt', //GANTI INI REK
+    github: 'https://github.com/Gigih-Juang', //GANTI INI REK
   ),
   TeamMember(
     name: 'NAMA TEMAN\nKETIGA', //GANTI INI REK
