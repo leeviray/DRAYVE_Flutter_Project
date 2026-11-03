@@ -74,13 +74,13 @@ teamMembers = [
     github: 'https://github.com/Gigih-Juang', //GANTI INI REK
   ),
   TeamMember(
-    name: 'NAMA TEMAN\nKETIGA', //GANTI INI REK
-    email: 'teman3@mhs.unesa.ac.id', //GANTI INI REK
+    name: 'PRAWIRA HABIB\nDEWANGGA', //GANTI INI REK
+    email: '25051204394@mhs.unesa.ac.id', //GANTI INI REK
     portrait: 'assets/images/friend3.webp', //PASTIKAN FOTONYA SUDAH FOTOMU YA
-    quote: '“Keep pushing forward”', //GANTI INI REK
-    instagram: 'https://www.instagram.com/l.qushai_/', //GANTI INI REK
-    tiktok: 'https://www.tiktok.com/@ray_mond_ay', //GANTI INI REK
-    github: 'https://github.com/leeviray', //GANTI INI REK
+    quote: '“Ude tenang”', //GANTI INI REK
+    instagram: 'https://www.instagram.com/dewasawithdewa/', //GANTI INI REK
+    tiktok: 'https://www.tiktok.com/@youareback3', //GANTI INI REK
+    github: 'https://github.com/dewanggaJunior', //GANTI INI REK
   ),
   TeamMember(
     name: 'NAMA TEMAN\nKEEMPAT', //GANTI INI REK
