@@ -13309,8 +13309,8 @@ break
 case 5:s=l.a
 s===$&&A.a()
 s=A.bx(A.Cy(s+240),40)
-r=A.bx(A.a5T(l,B.qo,B.PV),24)
-q=A.bx(A.a5T(l,B.qo,B.PW),32)
+r=A.bx(A.a5T(l,B.qo,B.PW),24)
+q=A.bx(A.a5T(l,B.qo,B.PX),32)
 p=A.bx(l.a+15,8)
 o=A.bx(l.a+15,12)
 l.d===$&&A.a()
@@ -29090,7 +29090,7 @@ aa0(a){var s=a/100
 return(s<=0.0031308?s*12.92:1.055*Math.pow(s,0.4166666666666667)-0.055)*255},
 aDH(a){var s=Math.pow(Math.abs(a),0.42)
 return A.r_(a)*400*s/(s+27.13)},
-aDI(a){var s=A.aE0(a,B.PU),r=A.aDH(s[0]),q=A.aDH(s[1]),p=A.aDH(s[2])
+aDI(a){var s=A.aE0(a,B.PV),r=A.aDH(s[0]),q=A.aDH(s[1]),p=A.aDH(s[2])
 return Math.atan2((r+q-2*p)/9,(11*r+-12*q+p)/11)},
 aUq(a,b){var s,r,q,p,o,n=B.h.bv(b,4)<=1?0:100,m=(b&1)===0?0:100
 if(b<4){s=(a-n*0.7152-m*0.0722)/0.2126
@@ -35910,7 +35910,7 @@ aaU(){var s=this,r=s.r
 if(r==null){r=s.r=new A.Lr(s.c)
 r.d=new A.a7l(s)}return r},
 KZ(a){var s,r,q,p,o,n,m=this
-if(B.b.q(B.Q4,a.type)){s=m.aaU()
+if(B.b.q(B.Q5,a.type)){s=m.aaU()
 s.toString
 r=m.c.$0()
 q=r.b
@@ -46058,11 +46058,11 @@ return s==null?g:B.Ox[s]
 case 131:s=A.c4(h.b4(b))
 return s==null?g:B.Ou[s]
 case 132:s=A.c4(h.b4(b))
-return s==null?g:B.PX[s]
+return s==null?g:B.PY[s]
 case 133:s=A.c4(h.b4(b))
 return s==null?g:B.O6[s]
 case 134:s=A.c4(h.b4(b))
-return s==null?g:B.PZ[s]
+return s==null?g:B.Q_[s]
 case 135:s=A.c4(h.b4(b))
 return s==null?g:B.PK[s]
 case 136:s=A.c4(h.b4(b))
@@ -47028,7 +47028,7 @@ A.HB.prototype={
 akY(){this.R(new A.atP(this))},
 age(){this.R(new A.atN(this))},
 ai5(){this.R(new A.atO(this))},
-K(a){return A.Cb(new A.atQ(this,B.Q7[this.d]))}}
+K(a){return A.Cb(new A.atQ(this,B.PP[this.d]))}}
 A.atP.prototype={
 $0(){var s=this.a
 s.f=!s.f},
@@ -47358,7 +47358,7 @@ s.aX$=null
 s.aB()}}
 A.LO.prototype={
 K(a){var s,r,q,p,o,n=this,m=null,l=null
-try{l=B.b.AE(B.Q3,new A.a3g(n))}catch(s){l=null}if(l==null)return new A.bT(B.KX,A.eJ(A.al("Biography not available for this driver.",m,m,m,A.aK().$1$color(B.a3),m,m),m,m),m)
+try{l=B.b.AE(B.Q4,new A.a3g(n))}catch(s){l=null}if(l==null)return new A.bT(B.KX,A.eJ(A.al("Biography not available for this driver.",m,m,m,A.aK().$1$color(B.a3),m,m),m,m),m)
 r=n.d
 q=r?24:80
 p=A.al("BIOGRAPHY",m,m,m,A.aK().$5$color$fontSize$fontStyle$fontWeight$letterSpacing(B.f,r?32:48,B.ab,B.aC,2),m,m)
@@ -47624,7 +47624,7 @@ r=j.y
 r===$&&A.a()
 q=j.as
 q===$&&A.a()
-p=A.al(a,i,i,i,A.aOd().$5$color$fontSize$fontWeight$height$shadows(B.f,48,B.q,1,B.Q_),i,i)
+p=A.al(a,i,i,i,A.aOd().$5$color$fontSize$fontWeight$height$shadows(B.f,48,B.q,1,B.Q0),i,i)
 o=A.al(b.toUpperCase(),i,i,i,A.ix().$5$color$fontSize$fontWeight$height$shadows(B.f,72,B.aC,1,B.Ob),i,i)
 n=A.b([new A.cO(2,B.aQ,A.ad(B.d.aK(229.5),B.k.t()>>>16&255,B.k.t()>>>8&255,B.k.t()&255),B.lB,10)],t.E)
 m=j.a.c
@@ -47825,7 +47825,7 @@ DV(a,b,c){var s=null,r=this.d===b,q=A.ad(13,B.f.t()>>>16&255,B.f.t()>>>8&255,B.f
 return A.qX(B.aa,!0,s,A.aDS(!1,!0,A.c2(s,A.cj(A.b([o,B.ek,A.al(a,s,s,s,A.aK().$4$color$fontSize$fontWeight$letterSpacing(n,16,r?B.I:B.T,0.5),s,s)],t.p),B.x,B.p,B.r),B.m,s,s,new A.bg(p,s,new A.df(B.n,B.n,new A.aN(q,1,B.v,-1),B.n),s,s,s,B.M),s,s,s,s,B.p2,s,s,s),s,!0,s,s,s,s,s,s,new A.au5(this,b),s,s,s),B.m,B.S,0,s,s,s,s,s,B.dg)},
 a7x(a,b){var s=this,r=null,q=a?1/0:320,p=A.aK().$3$color$fontSize$fontWeight(B.f,13,B.T),o=A.aK().$3$color$fontSize$letterSpacing(B.a3,12.5,0.4),n=s.f.length!==0?A.qA(r,r,B.LO,r,r,new A.aui(s),B.ce,r,r,r):r,m=A.ad(20,B.f.t()>>>16&255,B.f.t()>>>8&255,B.f.t()&255),l=A.dl(A.aEH(r,B.d7,!1,r,!0,B.w,r,A.aOq(),s.Q,r,r,r,r,r,2,A.OG(r,r,r,B.KH,r,r,r,r,!0,new A.e2(4,A.bP(30),new A.aN(A.ad(41,B.f.t()>>>16&255,B.f.t()>>>8&255,B.f.t()&255),1,B.v,-1)),r,r,r,r,r,m,!0,r,r,r,r,new A.e2(4,A.bP(30),B.Dj),r,r,r,r,r,r,r,r,o,"Search driver, team, or #no...",r,r,r,r,r,r,r,r,r,!0,!0,!1,r,B.LX,r,r,r,r,r,r,n,r,r,r,r,r),B.V,!0,r,!0,r,!1,r,B.du,r,r,r,r,r,r,r,r,1,r,r,!1,"\u2022",r,new A.auj(s),r,r,r,!1,r,r,!1,r,!0,r,B.km,r,r,r,r,r,r,r,r,r,r,r,p,!0,B.b4,r,B.mp,r,r,r,r),38,q),k=A.dl(A.aUX(new A.auk(s),12,B.aM,new A.aul()),38,r)
 q=a?24:32
-q=A.c2(r,r,B.m,r,r,new A.bg(B.ak,r,r,A.bP(4),B.PR,r,B.M),r,q,r,B.KB,r,r,r,5)
+q=A.c2(r,r,B.m,r,r,new A.bg(B.ak,r,r,A.bP(4),B.PS,r,B.M),r,q,r,B.KB,r,r,r,5)
 p=s.d==="Favorite"?"FAVORITE DRIVERS":"F1 DRIVERS 2026"
 o=t.p
 p=A.cj(A.b([q,A.al(p,r,r,r,A.aK().$4$color$fontSize$fontWeight$letterSpacing(B.f,a?24:32,B.aC,0.5),r,r)],o),B.x,B.p,B.bj)
@@ -50108,7 +50108,7 @@ s.aI(a,b.cA())}else if(b instanceof A.BR){a.aF(148)
 s.aI(a,b.cA())}else s.wU(a,b)},
 hw(a,b){var s,r,q,p,o,n,m,l,k,j=this,i=null
 switch(a){case 129:s=A.c4(j.b4(b))
-return s==null?i:B.PQ[s]
+return s==null?i:B.PR[s]
 case 130:r=j.b4(b)
 r.toString
 r=J.jg(t.W.a(r),0)
@@ -64953,7 +64953,7 @@ p=h.gnM()
 o=h.r
 o=o==null?g:o*a2+a1
 n=h.w
-n=n==null?g:B.Q6[B.h.d5(n.goJ(),0,8)]
+n=n==null?g:B.Q7[B.h.d5(n.goJ(),0,8)]
 m=h.y
 m=m==null?g:m*a6+a5
 l=h.z
@@ -99023,8 +99023,8 @@ B.PL=s([137,80,78,71,13,10,26,10],t.Z)
 B.M3=new A.nO(0,"png")
 B.Md=new A.kt(B.M3,!1,0,"png")
 B.M1=new A.lR(B.PL,B.Md,0,"png")
-B.PP=s([71,73,70,56,55,97],t.Z)
-B.M0=new A.lR(B.PP,B.hO,1,"gif87a")
+B.PQ=s([71,73,70,56,55,97],t.Z)
+B.M0=new A.lR(B.PQ,B.hO,1,"gif87a")
 B.OZ=s([71,73,70,56,57,97],t.Z)
 B.M_=new A.lR(B.OZ,B.hO,2,"gif89a")
 B.Na=s([255,216,255],t.Z)
@@ -99044,8 +99044,8 @@ B.NP=s([B.mZ,B.Cv],A.a7("A<IQ>"))
 B.NR=s([0,0.42,1],t.n)
 B.OK=s([0.41233895,0.35762064,0.18051042],t.n)
 B.Of=s([0.2126,0.7152,0.0722],t.n)
-B.Q1=s([0.01932141,0.11916382,0.95034478],t.n)
-B.NS=s([B.OK,B.Of,B.Q1],t.zg)
+B.Q2=s([0.01932141,0.11916382,0.95034478],t.n)
+B.NS=s([B.OK,B.Of,B.Q2],t.zg)
 B.qi=s([0,4,12,1,5,13,3,7,15],t.t)
 B.a5f=new A.hH(0,1)
 B.a5k=new A.hH(0.5,1)
@@ -99373,12 +99373,12 @@ B.CS=new A.bN(0.7,-0.7)
 B.a55=new A.p0(B.PH,B.n6,B.jm,B.Gz,B.Gv,B.CR,B.CS)
 B.FU=new A.m(1,0.10196078431372549,0.10196078431372549,0.1803921568627451,B.e)
 B.Go=new A.m(1,0.7529411764705882,0.2235294117647059,0.16862745098039217,B.e)
-B.Q2=s([B.FU,B.Go,B.jH],t.d)
+B.Q3=s([B.FU,B.Go,B.jH],t.d)
 B.GE=new A.m(1,1,0.8196078431372549,0.4,B.e)
 B.GO=new A.m(1,0.5137254901960784,0.2196078431372549,0.9254901960784314,B.e)
 B.CY=new A.bN(0.8,0.7)
 B.CP=new A.bN(-0.6,-0.8)
-B.a56=new A.p0(B.Q2,B.dE,B.ey,B.GE,B.GO,B.CY,B.CP)
+B.a56=new A.p0(B.Q3,B.dE,B.ey,B.GE,B.GO,B.CY,B.CP)
 B.PM=s([B.a57,B.a58,B.a59,B.a55,B.a56],A.a7("A<p0>"))
 B.Jl=new A.dH(236,2,202,3,8,5,12,2,2,5,34,3,3,3,5)
 B.J0=new A.dG(167,1,8,32,1,13,13,0,21,1269)
@@ -99447,6 +99447,12 @@ B.J8=new A.dH(0,22,0,0,0,0,0,0,7,5,0,0,0,0,0)
 B.IQ=new A.dG(261,1,10,67,1,20,20,0,36,1797)
 B.JO=new A.dh("Valtteri Bottas",B.J8,B.IQ)
 B.PN=s([B.JN,B.JK,B.JZ,B.JL,B.JF,B.JU,B.JS,B.JI,B.JG,B.JR,B.JX,B.JY,B.K_,B.JJ,B.JT,B.JV,B.JH,B.JW,B.JQ,B.JM,B.JP,B.JO],A.a7("A<dh>"))
+B.YU=new A.oM("LEEVI QUSHAI\nRAY IFTIKHAR","25051204390@mhs.unesa.ac.id","assets/images/profile_cutout.webp","\u201cOrang Biasa Masih Butuh Banyak Belajar\u201d","https://www.instagram.com/l.qushai_/","https://www.tiktok.com/@ray_mond_ay","https://github.com/leeviray")
+B.YT=new A.oM("AKMAL PRIYATAMA\nFADILAH RAMDHAN","25051204410@mhs.unesa.ac.id","assets/images/friend1.webp","\u201cFORZA KIMIII\u201d","https://www.instagram.com/faadills?vrfl=MWxmYmZkcGdvODY0bw==","https://www.tiktok.com/@fadillz67","https://github.com/fadilsss-ai")
+B.YV=new A.oM("GIGIH JUANG\nPRANANTA","25051204416@mhs.unesa.ac.id","assets/images/friend2.webp","\u201cJUST PROVE YOURSELF\u201d","https://www.instagram.com/gihh_jprn","https://www.tiktok.com/@kim_nyt","https://github.com/Gigih-Juang")
+B.YS=new A.oM("NAMA TEMAN\nKETIGA","teman3@mhs.unesa.ac.id","assets/images/friend3.webp","\u201cKeep pushing forward\u201d","https://www.instagram.com/l.qushai_/","https://www.tiktok.com/@ray_mond_ay","https://github.com/leeviray")
+B.YR=new A.oM("NAMA TEMAN\nKEEMPAT","teman4@mhs.unesa.ac.id","assets/images/friend4.webp","\u201cLights out and away we go\u201d","https://www.instagram.com/l.qushai_/","https://www.tiktok.com/@ray_mond_ay","https://github.com/leeviray")
+B.PP=s([B.YU,B.YT,B.YV,B.YS,B.YR],A.a7("A<oM>"))
 B.CB=new A.iA(0,"unknown")
 B.CC=new A.iA(1,"passwordReset")
 B.CD=new A.iA(2,"verifyEmail")
@@ -99454,23 +99460,23 @@ B.CE=new A.iA(3,"recoverEmail")
 B.CF=new A.iA(4,"emailSignIn")
 B.CG=new A.iA(5,"verifyAndChangeEmail")
 B.CH=new A.iA(6,"revertSecondFactorAddition")
-B.PQ=s([B.CB,B.CC,B.CD,B.CE,B.CF,B.CG,B.CH],A.a7("A<iA>"))
+B.PR=s([B.CB,B.CC,B.CD,B.CE,B.CF,B.CG,B.CH],A.a7("A<iA>"))
 B.GB=new A.m(0.5333333333333333,0.8823529411764706,0.023529411764705882,0,B.e)
 B.DB=new A.cO(0,B.aQ,B.GB,B.i,10)
-B.PR=s([B.DB],t.E)
+B.PS=s([B.DB],t.E)
 B.NX=s([0.001200833568784504,0.002389694492170889,0.0002795742885861124],t.n)
 B.Pa=s([0.0005891086651375999,0.0029785502573438758,0.0003270666104008398],t.n)
 B.Oc=s([0.00010146692491640572,0.0005364214359186694,0.0032979401770712076],t.n)
-B.PU=s([B.NX,B.Pa,B.Oc],t.zg)
-B.PV=s([45,95,45,20,45,90,45,45,45],t.n)
-B.PW=s([120,120,20,45,20,15,20,120,120],t.n)
+B.PV=s([B.NX,B.Pa,B.Oc],t.zg)
+B.PW=s([45,95,45,20,45,90,45,45,45],t.n)
+B.PX=s([120,120,20,45,20,15,20,120,120],t.n)
 B.Wv=new A.mq(1,"estimate")
 B.Ww=new A.mq(2,"previous")
-B.PX=s([B.dm,B.Wv,B.Ww],A.a7("A<mq>"))
+B.PY=s([B.dm,B.Wv,B.Ww],A.a7("A<mq>"))
 B.TG=new A.rk(0,"enableIndexAutoCreation")
 B.TH=new A.rk(1,"disableIndexAutoCreation")
 B.TI=new A.rk(2,"deleteAllIndexes")
-B.PZ=s([B.TG,B.TH,B.TI],A.a7("A<rk>"))
+B.Q_=s([B.TG,B.TH,B.TI],A.a7("A<rk>"))
 B.e4=new A.i6(0,"controlModifier")
 B.e5=new A.i6(1,"shiftModifier")
 B.e6=new A.i6(2,"altModifier")
@@ -99482,7 +99488,7 @@ B.ly=new A.i6(7,"functionModifier")
 B.wC=new A.i6(8,"symbolModifier")
 B.qt=s([B.e4,B.e5,B.e6,B.e7,B.lv,B.lw,B.lx,B.ly,B.wC],A.a7("A<i6>"))
 B.WP=new A.ej(B.k,B.i,40)
-B.Q_=s([B.AX,B.AZ,B.WP],t.kO)
+B.Q0=s([B.AX,B.AZ,B.WP],t.kO)
 B.ld=s([!0,!1],t.HZ)
 B.Iw=new A.dg("George Russell","15/02/1998","King's Lynn, England","George Russell memulai perjalanan balapnya sejak usia muda dan berkembang\nmelalui dunia karting sebelum melanjutkan ke berbagai kategori balap junior.\n\nIa kemudian memenangkan gelar GP3 Series pada 2017 setelah menunjukkan\nkecepatan dan konsistensi yang kuat. Setahun kemudian ia melanjutkan\nkesuksesannya di Formula 2 dan menjadi juara Formula 2 2018.\n\nPerforma tersebut membuat Russell masuk ke program junior Mercedes.\nPada 2019 ia mendapatkan kesempatan debut di Formula 1 bersama Williams.\nMeskipun Williams pada periode tersebut berada di bagian belakang grid,\nRussell secara bertahap menunjukkan kemampuan kualifikasi dan balapnya.\n\nPada 2020 Russell mendapatkan kesempatan menggantikan Lewis Hamilton\ndi Mercedes pada Grand Prix Sakhir. Ia tampil kompetitif dalam mobil\nMercedes dan hampir memenangkan balapan tersebut.\n\nRussell kemudian meraih podium Formula 1 pertamanya pada 2021 bersama\nWilliams di Grand Prix Belgia. Pada 2022 ia resmi bergabung dengan\nMercedes sebagai rekan setim Lewis Hamilton.\n\nKemenangan Grand Prix pertamanya terjadi pada Grand Prix Sao Paulo 2022.\nRussell juga membantu Mercedes meraih kemenangan pada Sprint di akhir\npekan tersebut.\n\nSeiring berjalannya waktu, Russell menjadi salah satu pembalap utama\nMercedes. Ia melanjutkan perannya bersama tim pada era regulasi baru\nFormula 1 2026.\n")
 B.IB=new A.dg("Kimi Antonelli","25/08/2006","Bologna, Italy","Andrea Kimi Antonelli berasal dari Bologna, Italia, dan mulai menarik\nperhatian sejak berkompetisi di karting.\n\nIa kemudian masuk ke jenjang balap mobil dan menunjukkan perkembangan\nyang sangat cepat. Pada 2022 ia memenangkan gelar Italian Formula 4\ndan ADAC Formula 4.\n\nPada 2023 Antonelli melanjutkan perkembangannya ke Formula Regional.\nIa berhasil memenangkan gelar Formula Regional Middle East sekaligus\nFormula Regional European Championship.\n\nMercedes kemudian memberikan dukungan kepadanya melalui program junior\nmereka. Antonelli melanjutkan karier ke Formula 2 tanpa melalui jalur\nFormula 3 secara penuh.\n\nPerforma kuatnya membuat Mercedes mempertimbangkannya sebagai calon\npembalap masa depan tim. Pada 2025 ia mendapatkan kursi Formula 1 bersama\nMercedes setelah Lewis Hamilton pindah ke Ferrari.\n\nMusim rookie Antonelli menghasilkan sejumlah penampilan kuat dan podium.\nIa kemudian melanjutkan kariernya bersama Mercedes pada musim 2026.\n")
@@ -99506,15 +99512,9 @@ B.Iv=new A.dg("Fernando Alonso","29/07/1981","Oviedo, Spain","Fernando Alonso la
 B.Ix=new A.dg("Lance Stroll","29/10/1998","Montreal, Canada","Lance Stroll lahir di Montreal, Kanada, dan memulai karier melalui\nkarting.\n\nIa kemudian berkembang melalui berbagai kategori junior dan meraih\nkesuksesan di Formula 3.\n\nPada 2017 Stroll melakukan debut Formula 1 bersama Williams.\n\nDalam musim debutnya ia berhasil meraih podium pada Grand Prix\nAzerbaijan.\n\nIa juga mencatat sejarah dengan menjadi salah satu pembalap termuda\nyang mencapai baris depan grid pada periode awal kariernya.\n\nSetelah Williams, Stroll bergabung dengan Racing Point.\n\nKetika Racing Point berubah menjadi Aston Martin, ia melanjutkan\nkarier bersama tim tersebut.\n\nStroll tetap menjadi pembalap Aston Martin pada musim 2026.\n")
 B.Ir=new A.dg("Sergio Perez","26/01/1990","Guadalajara, Mexico","Sergio Perez lahir di Guadalajara, Meksiko, dan memulai karier\nmotorsport sejak usia muda.\n\nIa kemudian pindah ke Eropa untuk mengejar karier single-seater.\n\nPerez berhasil mencapai Formula 1 dan melakukan debut bersama Sauber\npada 2011.\n\nIa kemudian membela McLaren, Force India, Racing Point dan Red Bull.\n\nSepanjang kariernya Perez dikenal memiliki kemampuan mengelola ban\ndan mempertahankan performa dalam balapan jarak panjang.\n\nKemenangan Formula 1 pertamanya datang pada Grand Prix Sakhir 2020\nbersama Racing Point.\n\nSetelah itu ia bergabung dengan Red Bull Racing dan meraih beberapa\nkemenangan serta podium tambahan.\n\nPerez meninggalkan Formula 1 setelah musim 2024.\n\nPada 2026 ia kembali ke grid sebagai salah satu pembalap Cadillac,\nbersama tim baru tersebut pada era masuknya Cadillac ke Formula 1.\n")
 B.IE=new A.dg("Valtteri Bottas","28/08/1989","Nastola, Finland","Valtteri Bottas lahir di Nastola, Finlandia, dan mulai berkompetisi\ndalam karting sebelum berkembang melalui berbagai kategori junior.\n\nIa memenangkan berbagai kejuaraan junior dan kemudian mendapatkan\nkesempatan masuk Formula 1 bersama Williams pada 2013.\n\nBottas menunjukkan performa yang konsisten dan kemudian mendapatkan\nkesempatan bergabung dengan Mercedes pada 2017.\n\nBersama Mercedes ia meraih sejumlah kemenangan dan podium serta\nmembantu tim memenangkan beberapa gelar konstruktor.\n\nBottas juga menjadi salah satu pembalap yang beberapa kali meraih\npole position dan kemenangan Grand Prix selama periode bersama\nMercedes.\n\nSetelah Mercedes, Bottas bergabung dengan Alfa Romeo/Sauber.\n\nIa kemudian mengambil peran sebagai pembalap cadangan setelah\nmeninggalkan kursi penuh waktu.\n\nPada musim 2026 Bottas kembali ke grid Formula 1 bersama Cadillac,\nmenjadi bagian dari proyek baru tim tersebut.\n")
-B.Q3=s([B.Iw,B.IB,B.IC,B.Iy,B.It,B.ID,B.IH,B.Iz,B.Iu,B.Io,B.II,B.Is,B.Iq,B.IF,B.In,B.IG,B.IA,B.Ip,B.Iv,B.Ix,B.Ir,B.IE],A.a7("A<dg>"))
-B.Q4=s(["pointerdown","pointermove","pointerleave","pointerup","pointercancel","touchstart","touchend","touchmove","touchcancel","mousedown","mousemove","mouseleave","mouseup","wheel"],t.s)
-B.Q6=s([B.e_,B.hI,B.hJ,B.q,B.T,B.bL,B.I,B.e0,B.aC],A.a7("A<fn>"))
-B.YV=new A.oM("LEEVI QUSHAI\nRAY IFTIKHAR","25051204390@mhs.unesa.ac.id","assets/images/profile_cutout.webp","\u201cOrang Biasa Masih Butuh Banyak Belajar\u201d","https://www.instagram.com/l.qushai_/","https://www.tiktok.com/@ray_mond_ay","https://github.com/leeviray")
-B.YU=new A.oM("AKMAL PRIYATAMA\nFADILAH RAMDHAN","25051204410@mhs.unesa.ac.id","assets/images/friend1.webp","\u201cFORZA KIMIII\u201d","https://www.instagram.com/faadills?vrfl=MWxmYmZkcGdvODY0bw==","https://www.tiktok.com/@fadillz67","https://github.com/fadilsss-ai")
-B.YT=new A.oM("NAMA TEMAN\nKEDUA","teman2@mhs.unesa.ac.id","assets/images/friend2.webp","\u201cLife is a choice\u201d","https://www.instagram.com/l.qushai_/","https://www.tiktok.com/@ray_mond_ay","https://github.com/leeviray")
-B.YS=new A.oM("NAMA TEMAN\nKETIGA","teman3@mhs.unesa.ac.id","assets/images/friend3.webp","\u201cKeep pushing forward\u201d","https://www.instagram.com/l.qushai_/","https://www.tiktok.com/@ray_mond_ay","https://github.com/leeviray")
-B.YR=new A.oM("NAMA TEMAN\nKEEMPAT","teman4@mhs.unesa.ac.id","assets/images/friend4.webp","\u201cLights out and away we go\u201d","https://www.instagram.com/l.qushai_/","https://www.tiktok.com/@ray_mond_ay","https://github.com/leeviray")
-B.Q7=s([B.YV,B.YU,B.YT,B.YS,B.YR],A.a7("A<oM>"))
+B.Q4=s([B.Iw,B.IB,B.IC,B.Iy,B.It,B.ID,B.IH,B.Iz,B.Iu,B.Io,B.II,B.Is,B.Iq,B.IF,B.In,B.IG,B.IA,B.Ip,B.Iv,B.Ix,B.Ir,B.IE],A.a7("A<dg>"))
+B.Q5=s(["pointerdown","pointermove","pointerleave","pointerup","pointercancel","touchstart","touchend","touchmove","touchcancel","mousedown","mousemove","mouseleave","mouseup","wheel"],t.s)
+B.Q7=s([B.e_,B.hI,B.hJ,B.q,B.T,B.bL,B.I,B.e0,B.aC],A.a7("A<fn>"))
 B.Q8=s([0.015176349177441876,0.045529047532325624,0.07588174588720938,0.10623444424209313,0.13658714259697685,0.16693984095186062,0.19729253930674434,0.2276452376616281,0.2579979360165119,0.28835063437139563,0.3188300904430532,0.350925934958123,0.3848314933096426,0.42057480301049466,0.458183274052838,0.4976837250274023,0.5391024159806381,0.5824650784040898,0.6277969426914107,0.6751227633498623,0.7244668422128921,0.775853049866786,0.829304845476233,0.8848452951698498,0.942497089126609,1.0022825574869039,1.0642236851973577,1.1283421258858297,1.1946592148522128,1.2631959812511864,1.3339731595349034,1.407011200216447,1.4823302800086415,1.5599503113873272,1.6398909516233677,1.7221716113234105,1.8068114625156377,1.8938294463134073,1.9832442801866852,2.075074464868551,2.1693382909216234,2.2660538449872063,2.36523901573795,2.4669114995532007,2.5710888059345764,2.6777882626779785,2.7870270208169257,2.898822059350997,3.0131901897720907,3.1301480604002863,3.2497121605402226,3.3718988244681087,3.4967242352587946,3.624204428461639,3.754355295633311,3.887192587735158,4.022731918402185,4.160988767090289,4.301978482107941,4.445716283538092,4.592217266055746,4.741496401646282,4.893568542229298,5.048448422192488,5.20615066083972,5.3666897647573375,5.5300801301023865,5.696336044816294,5.865471690767354,6.037501145825082,6.212438385869475,6.390297286737924,6.571091626112461,6.7548350853498045,6.941541251256611,7.131223617812143,7.323895587840543,7.5195704746346665,7.7182615035334345,7.919981813454504,8.124744458384042,8.332562408825165,8.543448553206703,8.757415699253682,8.974476575321063,9.194643831691977,9.417930041841839,9.644347703669503,9.873909240696694,10.106627003236781,10.342513269534024,10.58158024687427,10.8238400726681,11.069304815507364,11.317986476196008,11.569896988756009,11.825048221409341,12.083451977536606,12.345119996613247,12.610063955123938,12.878295467455942,13.149826086772048,13.42466730586372,13.702830557985108,13.984327217668513,14.269168601521828,14.55736596900856,14.848930523210871,15.143873411576273,15.44220572664832,15.743938506781891,16.04908273684337,16.35764934889634,16.66964922287304,16.985093187232053,17.30399201960269,17.62635644741625,17.95219714852476,18.281524751807332,18.614349837764564,18.95068293910138,19.290534541298456,19.633915083172692,19.98083495742689,20.331304511189067,20.685334046541502,21.042933821039977,21.404114048223256,21.76888489811322,22.137256497705877,22.50923893145328,22.884842241736916,23.264076429332462,23.6469514538663,24.033477234264016,24.42366364919083,24.817520537484558,25.21505769858089,25.61628489293138,26.021211842414342,26.429848230738664,26.842203703840827,27.258287870275353,27.678110301598522,28.10168053274597,28.529008062403893,28.96010235337422,29.39497283293396,29.83362889318845,30.276079891419332,30.722335150426627,31.172403958865512,31.62629557157785,32.08401920991837,32.54558406207592,33.010999283389665,33.4802739966603,33.953417292456834,34.430438229418264,34.911345834551085,35.39614910352207,35.88485700094671,36.37747846067349,36.87402238606382,37.37449765026789,37.87891309649659,38.38727753828926,38.89959975977785,39.41588851594697,39.93615253289054,40.460400508064545,40.98864111053629,41.520882981230194,42.05713473317016,42.597404951718396,43.141702194811224,43.6900349931913,44.24241185063697,44.798841244188324,45.35933162437017,45.92389141541209,46.49252901546552,47.065252796817916,47.64207110610409,48.22299226451468,48.808024568002054,49.3971762874833,49.9904556690408,50.587870934119984,51.189430279724725,51.79514187861014,52.40501387947288,53.0190544071392,53.637271562750364,54.259673423945976,54.88626804504493,55.517063457223934,56.15206766869424,56.79128866487574,57.43473440856916,58.08241284012621,58.734331877617365,59.39049941699807,60.05092333227251,60.715611475655585,61.38457167773311,62.057811747619894,62.7353394731159,63.417162620860914,64.10328893648692,64.79372614476921,65.48848194977529,66.18756403501224,66.89098006357258,67.59873767827808,68.31084450182222,69.02730813691093,69.74813616640164,70.47333615344107,71.20291564160104,71.93688215501312,72.67524319850172,73.41800625771542,74.16517879925733,74.9167682708136,75.67278210128072,76.43322770089146,77.1981124613393,77.96744375590167,78.74122893956174,79.51947534912904,80.30219030335869,81.08938110306934,81.88105503125999,82.67721935322541,83.4778813166706,84.28304815182372,85.09272707154808,85.90692527145302,86.72564993000343,87.54890820862819,88.3767072518277,89.2090541872801,90.04595612594655,90.88742016217518,91.73345337380438,92.58406282226491,93.43925555268066,94.29903859396902,95.16341895893969,96.03240364439274,96.9059996312159,97.78421388448044,98.6670533535366,99.55452497210776],t.n)
 B.Vt=new A.a6(0.7078,8.3194)
 B.Ve=new A.a6(0.7895,2.4523)
@@ -100094,10 +100094,10 @@ B.Pu=s([B.w3,null,null,B.wi],t.L)
 B.On=s([B.w4,null,null,B.wj],t.L)
 B.OW=s([B.w5,null,null,B.db],t.L)
 B.N4=s([B.w6,null,null,B.wk],t.L)
-B.PS=s([B.w7,null,null,B.lo],t.L)
+B.PT=s([B.w7,null,null,B.lo],t.L)
 B.PG=s([B.w8,null,null,B.fi],t.L)
 B.NW=s([B.w9,null,null,B.dc],t.L)
-B.Q0=s([B.wa,null,null,B.fj],t.L)
+B.Q1=s([B.wa,null,null,B.fj],t.L)
 B.PF=s([B.wb,null,null,B.dd],t.L)
 B.NU=s([B.wc,null,null,B.lp],t.L)
 B.Nc=s([B.wd,null,null,B.de],t.L)
@@ -100105,11 +100105,11 @@ B.O5=s([B.we,null,null,B.fk],t.L)
 B.Pv=s([B.wf,null,null,B.df],t.L)
 B.Py=s([B.wg,null,null,B.fl],t.L)
 B.NY=s([B.fg,B.fg,B.i1,null],t.L)
-B.PT=s([B.hY,null,B.hY,null],t.L)
+B.PU=s([B.hY,null,B.hY,null],t.L)
 B.Oy=s([B.c0,null,null,B.dc],t.L)
 B.Oz=s([B.bM,null,null,B.dd],t.L)
 B.OA=s([B.bN,null,null,B.de],t.L)
-B.PY=s([B.c1,null,null,B.df],t.L)
+B.PZ=s([B.c1,null,null,B.df],t.L)
 B.PC=s([B.li,null,null,B.lp],t.L)
 B.NZ=s([B.ff,B.ff,B.i0,null],t.L)
 B.P5=s([B.b2,null,null,B.db],t.L)
@@ -100121,7 +100121,7 @@ B.O_=s([B.fh,B.fh,B.i2,null],t.L)
 B.OD=s([B.fc,null,null,B.fj],t.L)
 B.Pc=s([B.fd,null,null,B.fl],t.L)
 B.O0=s([B.cI,B.cI,B.da,null],t.L)
-B.RU=new A.cH(["*",B.NN,"+",B.Pu,"-",B.On,".",B.OW,"/",B.N4,"0",B.PS,"1",B.PG,"2",B.NW,"3",B.Q0,"4",B.PF,"5",B.NU,"6",B.Nc,"7",B.O5,"8",B.Pv,"9",B.Py,"Alt",B.NY,"AltGraph",B.PT,"ArrowDown",B.Oy,"ArrowLeft",B.Oz,"ArrowRight",B.OA,"ArrowUp",B.PY,"Clear",B.PC,"Control",B.NZ,"Delete",B.P5,"End",B.OB,"Enter",B.NT,"Home",B.OC,"Insert",B.PD,"Meta",B.O_,"PageDown",B.OD,"PageUp",B.Pc,"Shift",B.O0],A.a7("cH<z,U<f?>>"))
+B.RU=new A.cH(["*",B.NN,"+",B.Pu,"-",B.On,".",B.OW,"/",B.N4,"0",B.PT,"1",B.PG,"2",B.NW,"3",B.Q1,"4",B.PF,"5",B.NU,"6",B.Nc,"7",B.O5,"8",B.Pv,"9",B.Py,"Alt",B.NY,"AltGraph",B.PU,"ArrowDown",B.Oy,"ArrowLeft",B.Oz,"ArrowRight",B.OA,"ArrowUp",B.PZ,"Clear",B.PC,"Control",B.NZ,"Delete",B.P5,"End",B.OB,"Enter",B.NT,"Home",B.OC,"Insert",B.PD,"Meta",B.O_,"PageDown",B.OD,"PageUp",B.Pc,"Shift",B.O0],A.a7("cH<z,U<f?>>"))
 B.L8=new A.lH(0,"arrayUnion")
 B.L9=new A.lH(1,"arrayRemove")
 B.La=new A.lH(2,"delete")
@@ -100135,8 +100135,8 @@ B.OY=s(["Noto Sans HK","Noto Sans TC"],t.s)
 B.NQ=s(["Noto Sans JP"],t.s)
 B.Ng=s(["Noto Sans KR"],t.s)
 B.qp=s(["Noto Sans SC"],t.s)
-B.Q5=s(["Noto Sans SC","Noto Sans TC"],t.s)
-B.i5=new A.c1(B.Sy,[B.la,B.la,B.la,B.OY,B.NQ,B.Ng,B.qp,B.qp,B.Q5],t.VJ)
+B.Q6=s(["Noto Sans SC","Noto Sans TC"],t.s)
+B.i5=new A.c1(B.Sy,[B.la,B.la,B.la,B.OY,B.NQ,B.Ng,B.qp,B.qp,B.Q6],t.VJ)
 B.Su={Abort:0,Again:1,AltLeft:2,AltRight:3,ArrowDown:4,ArrowLeft:5,ArrowRight:6,ArrowUp:7,AudioVolumeDown:8,AudioVolumeMute:9,AudioVolumeUp:10,Backquote:11,Backslash:12,Backspace:13,BracketLeft:14,BracketRight:15,BrightnessDown:16,BrightnessUp:17,BrowserBack:18,BrowserFavorites:19,BrowserForward:20,BrowserHome:21,BrowserRefresh:22,BrowserSearch:23,BrowserStop:24,CapsLock:25,Comma:26,ContextMenu:27,ControlLeft:28,ControlRight:29,Convert:30,Copy:31,Cut:32,Delete:33,Digit0:34,Digit1:35,Digit2:36,Digit3:37,Digit4:38,Digit5:39,Digit6:40,Digit7:41,Digit8:42,Digit9:43,DisplayToggleIntExt:44,Eject:45,End:46,Enter:47,Equal:48,Escape:49,Esc:50,F1:51,F10:52,F11:53,F12:54,F13:55,F14:56,F15:57,F16:58,F17:59,F18:60,F19:61,F2:62,F20:63,F21:64,F22:65,F23:66,F24:67,F3:68,F4:69,F5:70,F6:71,F7:72,F8:73,F9:74,Find:75,Fn:76,FnLock:77,GameButton1:78,GameButton10:79,GameButton11:80,GameButton12:81,GameButton13:82,GameButton14:83,GameButton15:84,GameButton16:85,GameButton2:86,GameButton3:87,GameButton4:88,GameButton5:89,GameButton6:90,GameButton7:91,GameButton8:92,GameButton9:93,GameButtonA:94,GameButtonB:95,GameButtonC:96,GameButtonLeft1:97,GameButtonLeft2:98,GameButtonMode:99,GameButtonRight1:100,GameButtonRight2:101,GameButtonSelect:102,GameButtonStart:103,GameButtonThumbLeft:104,GameButtonThumbRight:105,GameButtonX:106,GameButtonY:107,GameButtonZ:108,Help:109,Home:110,Hyper:111,Insert:112,IntlBackslash:113,IntlRo:114,IntlYen:115,KanaMode:116,KeyA:117,KeyB:118,KeyC:119,KeyD:120,KeyE:121,KeyF:122,KeyG:123,KeyH:124,KeyI:125,KeyJ:126,KeyK:127,KeyL:128,KeyM:129,KeyN:130,KeyO:131,KeyP:132,KeyQ:133,KeyR:134,KeyS:135,KeyT:136,KeyU:137,KeyV:138,KeyW:139,KeyX:140,KeyY:141,KeyZ:142,KeyboardLayoutSelect:143,Lang1:144,Lang2:145,Lang3:146,Lang4:147,Lang5:148,LaunchApp1:149,LaunchApp2:150,LaunchAssistant:151,LaunchControlPanel:152,LaunchMail:153,LaunchScreenSaver:154,MailForward:155,MailReply:156,MailSend:157,MediaFastForward:158,MediaPause:159,MediaPlay:160,MediaPlayPause:161,MediaRecord:162,MediaRewind:163,MediaSelect:164,MediaStop:165,MediaTrackNext:166,MediaTrackPrevious:167,MetaLeft:168,MetaRight:169,MicrophoneMuteToggle:170,Minus:171,NonConvert:172,NumLock:173,Numpad0:174,Numpad1:175,Numpad2:176,Numpad3:177,Numpad4:178,Numpad5:179,Numpad6:180,Numpad7:181,Numpad8:182,Numpad9:183,NumpadAdd:184,NumpadBackspace:185,NumpadClear:186,NumpadClearEntry:187,NumpadComma:188,NumpadDecimal:189,NumpadDivide:190,NumpadEnter:191,NumpadEqual:192,NumpadMemoryAdd:193,NumpadMemoryClear:194,NumpadMemoryRecall:195,NumpadMemoryStore:196,NumpadMemorySubtract:197,NumpadMultiply:198,NumpadParenLeft:199,NumpadParenRight:200,NumpadSubtract:201,Open:202,PageDown:203,PageUp:204,Paste:205,Pause:206,Period:207,Power:208,PrintScreen:209,PrivacyScreenToggle:210,Props:211,Quote:212,Resume:213,ScrollLock:214,Select:215,SelectTask:216,Semicolon:217,ShiftLeft:218,ShiftRight:219,ShowAllWindows:220,Slash:221,Sleep:222,Space:223,Super:224,Suspend:225,Tab:226,Turbo:227,Undo:228,WakeUp:229,ZoomToggle:230}
 B.zy=new A.r(458907)
 B.ze=new A.r(458873)
