@@ -83,13 +83,13 @@ teamMembers = [
     github: 'https://github.com/dewanggaJunior', //GANTI INI REK
   ),
   TeamMember(
-    name: 'NAMA TEMAN\nKEEMPAT', //GANTI INI REK
-    email: 'teman4@mhs.unesa.ac.id', //GANTI INI REK
+    name: 'ANGGITO SATRIO\nWICAKSONO', //GANTI INI REK
+    email: '25051204428@mhs.unesa.ac.id', //GANTI INI REK
     portrait: 'assets/images/friend4.webp', //PASTIKAN FOTONYA SUDAH FOTOMU YA
-    quote: '“Lights out and away we go”', //GANTI INI REK
-    instagram: 'https://www.instagram.com/l.qushai_/', //GANTI INI REK
-    tiktok: 'https://www.tiktok.com/@ray_mond_ay', //GANTI INI REK
-    github: 'https://github.com/leeviray', //GANTI INI REK
+    quote: '“Berjuanglah sekeras mungkin agar cita-citamu tercapai”', //GANTI INI REK
+    instagram: 'https://www.instagram.com/angstrww/', //GANTI INI REK
+    tiktok: 'https://www.tiktok.com/@gitohhz', //GANTI INI REK
+    github: 'https://github.com/anggitosatrio', //GANTI INI REK
   ),
 ];
 
