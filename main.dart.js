@@ -39436,7 +39436,7 @@ A.aaf.prototype={
 $0(){var s,r,q,p,o,n,m,l,k,j=this
 for(s=j.a,r=j.b,q=j.c,p=0;p<7;++p){o=B.OV[p]
 n=s.a
-if(n+3<=r&&A.aB0(q,n,3,o,0)){m=B.Oh[p]
+if(n+3<=r&&A.aB0(q,n,3,o,0)){m=B.Oi[p]
 n=s.a
 l=m.length
 if(n+l<=r&&A.aB0(q,n+3,l-3,m,3)){s.a+=l
@@ -47028,7 +47028,7 @@ A.HB.prototype={
 akY(){this.R(new A.atP(this))},
 age(){this.R(new A.atN(this))},
 ai5(){this.R(new A.atO(this))},
-K(a){return A.Cb(new A.atQ(this,B.Ok[this.d]))}}
+K(a){return A.Cb(new A.atQ(this,B.Og[this.d]))}}
 A.atP.prototype={
 $0(){var s=this.a
 s.f=!s.f},
@@ -47959,7 +47959,7 @@ A.aul.prototype={
 $2(a,b){return B.fG},
 $S:464}
 A.auk.prototype={
-$2(a,b){var s=null,r=B.N9[b],q=this.a,p=q.e===r,o=p?B.ak:A.ad(20,B.f.t()>>>16&255,B.f.t()>>>8&255,B.f.t()&255),n=A.bP(20),m=A.hN(p?A.ad(166,B.f.t()>>>16&255,B.f.t()>>>8&255,B.f.t()&255):A.ad(36,B.f.t()>>>16&255,B.f.t()>>>8&255,B.f.t()&255),1),l=p?B.Og:s
+$2(a,b){var s=null,r=B.N9[b],q=this.a,p=q.e===r,o=p?B.ak:A.ad(20,B.f.t()>>>16&255,B.f.t()>>>8&255,B.f.t()&255),n=A.bP(20),m=A.hN(p?A.ad(166,B.f.t()>>>16&255,B.f.t()>>>8&255,B.f.t()&255):A.ad(36,B.f.t()>>>16&255,B.f.t()>>>8&255,B.f.t()&255),1),l=p?B.Oh:s
 return new A.eM(A.iB(A.eJ(A.al(r.toUpperCase(),s,s,s,A.aK().$4$color$fontSize$fontWeight$letterSpacing(B.f,11.5,p?B.e0:B.bL,0.7),s,s),s,s),B.m,s,B.aB,new A.bg(o,s,m,n,l,s,B.M),B.aa,s,s,B.KO,s),new A.auf(q,r),1.05,s)},
 $S:466}
 A.auf.prototype={
@@ -99071,13 +99071,13 @@ B.Ni=s([2.18349805,1.20311921],t.n)
 B.Px=s([2.33888662,1.28698796],t.n)
 B.PA=s([2.48660575,1.36351941],t.n)
 B.O9=s([2.62226596,1.44717976],t.n)
-B.Oi=s([2.7514899,1.53385819],t.n)
+B.Oj=s([2.7514899,1.53385819],t.n)
 B.OY=s([3.36298265,1.98288283],t.n)
 B.Ow=s([4.08649929,2.23811846],t.n)
 B.OP=s([4.85481134,2.47563463],t.n)
 B.Oe=s([5.62945551,2.72948597],t.n)
 B.Os=s([6.43023796,2.98020421],t.n)
-B.qj=s([B.Or,B.Ni,B.Px,B.PA,B.O9,B.Oi,B.OY,B.Ow,B.OP,B.Oe,B.Os],t.zg)
+B.qj=s([B.Or,B.Ni,B.Px,B.PA,B.O9,B.Oj,B.OY,B.Ow,B.OP,B.Oe,B.Os],t.zg)
 B.CI=new A.z9(0,"server")
 B.O6=s([B.CI],A.a7("A<z9>"))
 B.O7=s(["Arial"],t.s)
@@ -99090,17 +99090,17 @@ B.WO=new A.ej(B.k,B.i,50)
 B.Ob=s([B.WR,B.WQ,B.WO],t.kO)
 B.qk=s(["BlinkMacSystemFont"],t.s)
 B.Od=s([18,15,10,12,15,18,15,12,12],t.n)
-B.H9=new A.m(0.4,0.8823529411764706,0.023529411764705882,0,B.e)
-B.SK=new A.h(0,3)
-B.DF=new A.cO(0,B.aQ,B.H9,B.SK,12)
-B.Og=s([B.DF],t.E)
-B.Oh=s(["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],t.s)
 B.YU=new A.oM("LEEVI QUSHAI\nRAY IFTIKHAR","25051204390@mhs.unesa.ac.id","assets/images/profile_cutout.webp","\u201cOrang Biasa Masih Butuh Banyak Belajar\u201d","https://www.instagram.com/l.qushai_/","https://www.tiktok.com/@ray_mond_ay","https://github.com/leeviray")
 B.YT=new A.oM("AKMAL PRIYATAMA\nFADILAH RAMDHAN","25051204410@mhs.unesa.ac.id","assets/images/friend1.webp","\u201cFORZA KIMIII\u201d","https://www.instagram.com/faadills?vrfl=MWxmYmZkcGdvODY0bw==","https://www.tiktok.com/@fadillz67","https://github.com/fadilsss-ai")
 B.YV=new A.oM("GIGIH JUANG\nPRANANTA","25051204416@mhs.unesa.ac.id","assets/images/friend2.webp","\u201cJUST PROVE YOURSELF\u201d","https://www.instagram.com/gihh_jprn","https://www.tiktok.com/@kim_nyt","https://github.com/Gigih-Juang")
 B.YS=new A.oM("PRAWIRA HABIB\nDEWANGGA","25051204394@mhs.unesa.ac.id","assets/images/friend3.webp","\u201cUde tenang\u201d","https://www.instagram.com/dewasawithdewa/","https://www.tiktok.com/@youareback3","https://github.com/dewanggaJunior")
-B.YR=new A.oM("NAMA TEMAN\nKEEMPAT","teman4@mhs.unesa.ac.id","assets/images/friend4.webp","\u201cLights out and away we go\u201d","https://www.instagram.com/l.qushai_/","https://www.tiktok.com/@ray_mond_ay","https://github.com/leeviray")
-B.Ok=s([B.YU,B.YT,B.YV,B.YS,B.YR],A.a7("A<oM>"))
+B.YR=new A.oM("ANGGITO SATRIO\nWICAKSONO","25051204428@mhs.unesa.ac.id","assets/images/friend4.webp","\u201cBerjuanglah sekeras mungkin agar cita-citamu tercapai\u201d","https://www.instagram.com/angstrww/","https://www.tiktok.com/@gitohhz","https://github.com/anggitosatrio")
+B.Og=s([B.YU,B.YT,B.YV,B.YS,B.YR],A.a7("A<oM>"))
+B.H9=new A.m(0.4,0.8823529411764706,0.023529411764705882,0,B.e)
+B.SK=new A.h(0,3)
+B.DF=new A.cO(0,B.aQ,B.H9,B.SK,12)
+B.Oh=s([B.DF],t.E)
+B.Oi=s(["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],t.s)
 B.Ol=s(["Noto Color Emoji","Noto Sans Symbols","Noto Sans SC","Noto Sans TC","Noto Sans HK","Noto Sans JP","Noto Sans KR"],t.s)
 B.cH=s([1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,3624381080,310598401,607225278,1426881987,1925078388,2162078206,2614888103,3248222580,3835390401,4022224774,264347078,604807628,770255983,1249150122,1555081692,1996064986,2554220882,2821834349,2952996808,3210313671,3336571891,3584528711,113926993,338241895,666307205,773529912,1294757372,1396182291,1695183700,1986661051,2177026350,2456956037,2730485921,2820302411,3259730800,3345764771,3516065817,3600352804,4094571909,275423344,430227734,506948616,659060556,883997877,958139571,1322822218,1537002063,1747873779,1955562222,2024104815,2227730452,2361852424,2428436474,2756734187,3204031479,3329325298],t.t)
 B.lB=new A.h(2,2)
@@ -99343,12 +99343,12 @@ B.Mo=new A.vD(1,"failure")
 B.PL=s([B.Mn,B.Mo],A.a7("A<vD>"))
 B.Gp=new A.m(1,0.058823529411764705,0.047058823529411764,0.1607843137254902,B.e)
 B.Hh=new A.m(1,0.41568627450980394,0.050980392156862744,0.16862745098039217,B.e)
-B.Oj=s([B.Gp,B.Hh,B.a8],t.d)
+B.Ok=s([B.Gp,B.Hh,B.a8],t.d)
 B.GY=new A.m(1,1,0.30196078431372547,0.42745098039215684,B.e)
 B.FQ=new A.m(1,0.22745098039215686,0.047058823529411764,0.6392156862745098,B.e)
 B.CW=new A.bN(0.7,-0.6)
 B.CU=new A.bN(-0.8,0.7)
-B.a57=new A.p0(B.Oj,B.c5,B.cW,B.GY,B.FQ,B.CW,B.CU)
+B.a57=new A.p0(B.Ok,B.c5,B.cW,B.GY,B.FQ,B.CW,B.CU)
 B.G8=new A.m(1,0.00784313725490196,0,0.1411764705882353,B.e)
 B.GK=new A.m(1,0.0392156862745098,0.23921568627450981,0.5686274509803921,B.e)
 B.Ge=new A.m(1,0,0.8313725490196079,1,B.e)
