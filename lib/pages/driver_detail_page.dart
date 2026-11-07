@@ -5,6 +5,7 @@ import 'package:drayve/data/statistikv2.dart';
 import 'package:drayve/data/bio_karir.dart';
 import 'package:drayve/pages/bio.dart';
 import 'package:drayve/widgets/animated_background.dart';
+import 'package:drayve/widgets/smooth_scroll.dart';
 
 import 'latest_post.dart';
 import 'discussion.dart';
@@ -34,6 +35,8 @@ class _DriverDetailPageState
   String? _hoveredTab;
 
   bool _isMobileMenuOpen = false;
+
+  final SmoothScrollController _scrollController = SmoothScrollController();
 
   // ==========================================
   // KONTROL ANIMASI MOTION MASUK
@@ -221,6 +224,7 @@ class _DriverDetailPageState
   @override
   void dispose() {
     _enterController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -530,6 +534,7 @@ class _DriverDetailPageState
                 child: Stack(
                   children: [
                     SingleChildScrollView(
+                      controller: _scrollController,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
