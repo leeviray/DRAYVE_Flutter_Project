@@ -1,21 +1,27 @@
-import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
-/// ScrollController yang membuat scroll MOUSE WHEEL di web jadi halus.
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+
+/// ScrollController yang membuat scroll MOUSE WHEEL & TRACKPAD di web halus
+/// dan konsisten.
 ///
 /// Secara default, Flutter Web melompat langsung ±100px setiap putaran
-/// wheel sehingga terasa "patah-patah". Di sini setiap putaran wheel
-/// dianimasikan (easeOutCubic). Putaran beruntun dijumlahkan ke target yang
-/// sama, jadi scroll cepat tetap responsif.
+/// wheel sehingga terasa "patah-patah", sedangkan trackpad (di Windows/Chrome
+/// dikirim sebagai event wheel juga) mengirim delta yang ukurannya acak
+/// sehingga terasa macet-macet.
 ///
-/// Trackpad & layar sentuh tidak diubah karena sudah halus secara alami.
+/// Di sini SEMUA event wheel/trackpad diperlakukan sama: delta dijumlahkan ke
+/// satu target, lalu setiap frame posisi scroll mengejar target tersebut
+/// dengan smoothing eksponensial (independen dari frame rate). Hasilnya
+/// trackpad terasa sama seperti mouse biasa: halus dan responsif.
 class SmoothScrollController extends ScrollController {
   SmoothScrollController({
-    this.duration = const Duration(milliseconds: 420),
-    this.curve = Curves.easeOutCubic,
+    this.smoothing = 16.0,
   });
 
-  final Duration duration;
-  final Curve curve;
+  /// Semakin besar, semakin cepat posisi mengejar target (lebih "snappy").
+  final double smoothing;
 
   @override
   ScrollPosition createScrollPosition(
@@ -30,8 +36,7 @@ class SmoothScrollController extends ScrollController {
       keepScrollOffset: keepScrollOffset,
       oldPosition: oldPosition,
       debugLabel: debugLabel,
-      duration: duration,
-      curve: curve,
+      smoothing: smoothing,
     );
   }
 }
@@ -44,39 +49,88 @@ class _SmoothScrollPosition extends ScrollPositionWithSingleContext {
     super.keepScrollOffset,
     super.oldPosition,
     super.debugLabel,
-    required this.duration,
-    required this.curve,
+    required this.smoothing,
   });
 
-  final Duration duration;
-  final Curve curve;
+  final double smoothing;
 
-  /// Tujuan animasi wheel yang sedang berjalan (null = tidak ada).
+  /// Tujuan scroll yang sedang dikejar (null = tidak ada).
   double? _target;
+  Ticker? _ticker;
+  Duration _lastElapsed = Duration.zero;
+  bool _selfScrolling = false;
 
   @override
   void pointerScroll(double delta) {
     if (delta == 0.0) return;
 
-    // Delta kecil & beruntun biasanya dari trackpad -> biarkan default.
-    if (delta.abs() < 30) {
-      _target = null;
-      super.pointerScroll(delta);
+    final double from = _target ?? pixels;
+    final double target = (from + delta).clamp(minScrollExtent, maxScrollExtent);
+    if (target == pixels && _target == null) return;
+    _target = target;
+
+    _ticker ??= context.vsync.createTicker(_onTick);
+    if (!_ticker!.isActive) {
+      _lastElapsed = Duration.zero;
+      _ticker!.start();
+    }
+  }
+
+  void _onTick(Duration elapsed) {
+    final double? target = _target;
+    if (target == null) {
+      _stop();
       return;
     }
 
-    final from = _target ?? pixels;
-    final target = (from + delta).clamp(minScrollExtent, maxScrollExtent);
-    if (target == pixels) return;
-    _target = target;
-    animateTo(target, duration: duration, curve: curve);
+    final double dt = ((elapsed - _lastElapsed).inMicroseconds / 1e6)
+        .clamp(0.0, 0.05);
+    _lastElapsed = elapsed;
+
+    // Jaga target tetap valid jika konten berubah ukuran.
+    final double clampedTarget =
+        target.clamp(minScrollExtent, maxScrollExtent);
+    _target = clampedTarget;
+
+    final double diff = clampedTarget - pixels;
+    double step;
+    if (diff.abs() < 0.5) {
+      step = diff;
+    } else {
+      final double t = 1.0 - math.exp(-smoothing * (dt == 0 ? 1 / 60 : dt));
+      step = diff * t;
+    }
+
+    if (step != 0.0) {
+      _selfScrolling = true;
+      super.pointerScroll(step);
+      _selfScrolling = false;
+    }
+
+    if ((clampedTarget - pixels).abs() < 0.5) {
+      _stop();
+    }
+  }
+
+  void _stop() {
+    _target = null;
+    if (_ticker?.isActive ?? false) _ticker!.stop();
   }
 
   @override
   void beginActivity(ScrollActivity? newActivity) {
-    // Kalau user drag / scroll dengan cara lain, lupakan target wheel.
-    if (newActivity is! DrivenScrollActivity) _target = null;
+    // Kalau user drag / animateTo / fling, hentikan smoothing wheel.
+    if (!_selfScrolling && newActivity is! IdleScrollActivity) {
+      _stop();
+    }
     super.beginActivity(newActivity);
+  }
+
+  @override
+  void dispose() {
+    _ticker?.dispose();
+    _ticker = null;
+    super.dispose();
   }
 }
 
