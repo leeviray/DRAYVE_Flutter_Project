@@ -33,7 +33,7 @@ jobs:
       # 4. Melakukan build ke Flutter Web
       # PENTING: Sesuaikan nama di dalam garis miring dengan nama repositorimu!
       - name: Build Flutter Web
-        run: flutter build web --release --base-href "/DRAYVE_Flutter_Project/"
+        run: flutter build web --release --base-href "/DRAYVE/"
 
       # 5. Mengirim hasil folder build/web ke branch gh-pages secara otomatis
       - name: Deploy to GitHub Pages
