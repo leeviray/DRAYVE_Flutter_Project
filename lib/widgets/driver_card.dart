@@ -399,30 +399,6 @@ class _DriverCardState
                                     clipBehavior: Clip.antiAlias,
                                     child: Stack(
                                       children: [
-                                        // --- LAYER 0: Background Pattern (Tanpa Opacity widget agar hemat GPU) ---
-                                        Positioned(
-                                          top: 0,
-                                          right: -900,
-                                          left: -50,
-                                          bottom: -50,
-                                          child: RotatedBox(
-                                            quarterTurns: 1,
-                                            child: Image.asset(
-                                              'assets/images/pattern.webp',
-                                              fit: BoxFit.cover,
-                                              color: const Color(
-                                                0x26FFFFFF,
-                                              ),
-                                              colorBlendMode: BlendMode.modulate,
-                                              errorBuilder: (
-                                                context,
-                                                error,
-                                                stackTrace,
-                                              ) => const SizedBox(),
-                                            ),
-                                          ),
-                                        ),
-
                                         // --- LAYER 1: Gambar Mobil ---
                                         Positioned(
                                           left: -250,

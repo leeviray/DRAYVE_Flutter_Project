@@ -550,20 +550,6 @@ class _DriverDetailPageState
                             ),
                             child: Stack(
                               children: [
-                                Positioned.fill(
-                                  child: Opacity(
-                                    opacity: 0.1,
-                                    child: Image.asset(
-                                      'assets/images/pattern.webp',
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (
-                                        context,
-                                        error,
-                                        stackTrace,
-                                      ) => const SizedBox(),
-                                    ),
-                                  ),
-                                ),
                                 // Nomor Mobil Background
                                 Positioned(
                                   right: isMobile
