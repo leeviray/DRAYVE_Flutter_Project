@@ -15,6 +15,7 @@ import 'package:drayve/pages/aboutme_page.dart';
 import 'package:drayve/pages/login_signup_page.dart';
 import 'package:drayve/pages/profile_page.dart';
 import 'package:drayve/data/auth_state.dart';
+import 'package:drayve/services/f1_api_service.dart';
 
 class LandingPage
     extends
@@ -37,6 +38,8 @@ class _LandingPageState
   String _selectedTeam = 'All';
   String _searchQuery = '';
   String? _hoveredMenu;
+
+  List<Statistik> _allDrivers = listPembalap; // data lama jadi cadangan sementara API loading / gagal
 
   // STATE BARU UNTUK DROPDOWN MOBILE
   bool _isMobileMenuOpen = false;
@@ -74,10 +77,22 @@ class _LandingPageState
     'Cadillac',
   ];
 
-  @override
+    @override
   void initState() {
     super.initState();
     _scrollController = SmoothScrollController();
+    _loadDrivers(); //up up
+  }
+
+  // Fungsi baru
+  Future<void> _loadDrivers() async {
+    try {
+      final result = await F1ApiService().fetchDrivers();
+      if (!mounted) return;
+      setState(() => _allDrivers = result);
+    } catch (e) {
+      debugPrint('Gagal memuat API F1: $e');
+    }
   }
 
   @override
@@ -135,7 +150,7 @@ class _LandingPageState
     Iterable<
       Statistik
     >
-    drivers = listPembalap;
+    drivers = _allDrivers;
 
     if (_activeMenu ==
         'Favorite') {
