@@ -1,0 +1,246 @@
+import 'package:flutter/material.dart';
+
+class F1TeamDriver {
+  final String name;
+  final String number;
+  final int points;
+  const F1TeamDriver(this.name, this.number, this.points);
+}
+
+class F1Team {
+  final String name;
+  final Color color;
+  final String chassis;
+  final String engineSupplier;
+  final String description;
+  final int seasonPoints;
+  final List<F1TeamDriver> drivers;
+
+  // Statistik musim 2026
+  final int gpRaces, gpPoints, gpWins, gpPodiums, gpPoles, gpTop10s;
+  final int fastestLaps, dnfsSeason;
+
+  // Statistik sepanjang masa
+  final int grandsPrixEntered;
+  final double teamPoints;
+  final String highestRaceFinish;
+  final int podiums;
+  final String highestGridPosition;
+  final int polePositions;
+  final int worldChampionships;
+
+  const F1Team({
+    required this.name,
+    required this.color,
+    required this.chassis,
+    required this.engineSupplier,
+    required this.description,
+    required this.seasonPoints,
+    required this.drivers,
+    required this.gpRaces,
+    required this.gpPoints,
+    required this.gpWins,
+    required this.gpPodiums,
+    required this.gpPoles,
+    required this.gpTop10s,
+    required this.fastestLaps,
+    required this.dnfsSeason,
+    required this.grandsPrixEntered,
+    required this.teamPoints,
+    required this.highestRaceFinish,
+    required this.podiums,
+    required this.highestGridPosition,
+    required this.polePositions,
+    required this.worldChampionships,
+  });
+}
+
+const List<F1Team> kF1Teams = [
+  F1Team(
+    name: 'McLaren Formula 1 Team',
+    color: Color(0xFFFF8000),
+    chassis: 'MCL40',
+    engineSupplier: 'Mercedes-AMG',
+    description:
+        'MCL40 dibangun di atas filosofi aero-elastis McLaren, membuat sayap depan sedikit melentur demi efisiensi optimal di kecepatan tinggi. Dipadu mesin Mercedes-AMG, mobil ini dikenal lincah di sirkuit jalan raya yang sempit.',
+    seasonPoints: 306,
+    drivers: [
+      F1TeamDriver('Lando Norris', '4', 186),
+      F1TeamDriver('Oscar Piastri', '81', 120),
+    ],
+    gpRaces: 14, gpPoints: 306, gpWins: 2, gpPodiums: 7, gpPoles: 2, gpTop10s: 20,
+    fastestLaps: 3, dnfsSeason: 6,
+    grandsPrixEntered: 224, teamPoints: 2546, highestRaceFinish: '1 (x11)',
+    podiums: 63, highestGridPosition: '1 (x12)', polePositions: 15, worldChampionships: 0,
+  ),
+  F1Team(
+    name: 'Scuderia Ferrari',
+    color: Color(0xFFE10600),
+    chassis: 'SF-26',
+    engineSupplier: 'Ferrari',
+    description:
+        'Filosofi desain SF-26 menekankan efisiensi aerodinamika tinggi dengan downforce presisi di setiap tikungan cepat. Ferrari mengandalkan power unit V6 turbo-hybrid generasi terbaru untuk menyalurkan tenaga secara instan tanpa turbo lag.',
+    seasonPoints: 358,
+    drivers: [
+      F1TeamDriver('Charles Leclerc', '16', 167),
+      F1TeamDriver('Lewis Hamilton', '44', 191),
+    ],
+    gpRaces: 14, gpPoints: 358, gpWins: 2, gpPodiums: 9, gpPoles: 4, gpTop10s: 24,
+    fastestLaps: 3, dnfsSeason: 3,
+    grandsPrixEntered: 539, teamPoints: 6649, highestRaceFinish: '1 (x107)',
+    podiums: 256, highestGridPosition: '1 (x134)', polePositions: 134, worldChampionships: 7,
+  ),
+  F1Team(
+    name: 'Oracle Red Bull Racing',
+    color: Color(0xFF1E41FF),
+    chassis: 'RB22',
+    engineSupplier: 'Red Bull Ford Powertrains',
+    description:
+        'RB22 melanjutkan filosofi sasis ramping Red Bull yang mengutamakan efisiensi udara di sekitar sidepod. Dipadukan dengan tenaga dari Red Bull Ford Powertrains, mobil ini dirancang unggul di trek dengan kombinasi tikungan cepat dan lambat.',
+    seasonPoints: 230,
+    drivers: [
+      F1TeamDriver('Max Verstappen', '1', 145),
+      F1TeamDriver('Isack Hadjar', '6', 71),
+    ],
+    gpRaces: 14, gpPoints: 216, gpWins: 0, gpPodiums: 7, gpPoles: 1, gpTop10s: 20,
+    fastestLaps: 3, dnfsSeason: 5,
+    grandsPrixEntered: 256, teamPoints: 3281.5, highestRaceFinish: '1 (x68)',
+    podiums: 123, highestGridPosition: '1 (x46)', polePositions: 46, worldChampionships: 4,
+  ),
+  F1Team(
+    name: 'Mercedes-AMG Petronas',
+    color: Color(0xFF00D2BE),
+    chassis: 'W17',
+    engineSupplier: 'Mercedes-AMG',
+    description:
+        'W17 membawa evolusi konsep sidepod ramping Mercedes menuju kestabilan aero yang lebih baik di segala kondisi lintasan. Power unit Mercedes-AMG dikenal efisien dalam manajemen energi baterai sepanjang balapan.',
+    seasonPoints: 503,
+    drivers: [
+      F1TeamDriver('Kimi Antonelli', '12', 292),
+      F1TeamDriver('George Russell', '63', 211),
+    ],
+    gpRaces: 14, gpPoints: 503, gpWins: 10, gpPodiums: 19, gpPoles: 7, gpTop10s: 23,
+    fastestLaps: 6, dnfsSeason: 2,
+    grandsPrixEntered: 181, teamPoints: 1778, highestRaceFinish: '1 (x14)',
+    podiums: 42, highestGridPosition: '1 (x12)', polePositions: 12, worldChampionships: 0,
+  ),
+  F1Team(
+    name: 'BWT Alpine F1 Team',
+    color: Color(0xFFE4007C),
+    chassis: 'A526',
+    engineSupplier: 'Renault',
+    description:
+        'A526 mengusung livery biru-pink khas BWT dengan fokus perbaikan efisiensi aerodinamika bagian belakang. Alpine mengandalkan mesin Renault yang terus disempurnakan demi mengejar ketertinggalan dari tim papan atas.',
+    seasonPoints: 68,
+    drivers: [
+      F1TeamDriver('Pierre Gasly', '10', 41),
+      F1TeamDriver('Franco Colapinto', '43', 27),
+    ],
+    gpRaces: 14, gpPoints: 68, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 17,
+    fastestLaps: 0, dnfsSeason: 1,
+    grandsPrixEntered: 209, teamPoints: 568, highestRaceFinish: '1 (x1)',
+    podiums: 4, highestGridPosition: '2 (x1)', polePositions: 0, worldChampionships: 0,
+  ),
+  F1Team(
+    name: 'Racing Bulls F1 Team',
+    color: Color(0xFF1660AD),
+    chassis: 'VCARB 03',
+    engineSupplier: 'Red Bull Ford Powertrains',
+    description:
+        'VCARB 03 dirancang sebagai mobil pengembangan bakat muda Red Bull, mengusung filosofi sasis yang mirip dengan tim senior namun dengan anggaran yang lebih terbatas. Musim ini tim tampil dengan nama baru "Racing Bulls" setelah melepas sponsor titel sebelumnya.',
+    seasonPoints: 77,
+    drivers: [
+      F1TeamDriver('Arvid Lindblad', '35', 31),
+      F1TeamDriver('Liam Lawson', '30', 59),
+    ],
+    gpRaces: 14, gpPoints: 90, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 19,
+    fastestLaps: 0, dnfsSeason: 2,
+    grandsPrixEntered: 63, teamPoints: 142, highestRaceFinish: '5 (x1)',
+    podiums: 0, highestGridPosition: '5 (x1)', polePositions: 0, worldChampionships: 0,
+  ),
+  F1Team(
+    name: 'Audi F1 Team',
+    color: Color(0xFFBB0A30),
+    chassis: 'C26',
+    engineSupplier: 'Audi',
+    description:
+        'C26 menjadi mobil pertama Audi sebagai tim pabrikan penuh di Formula 1, dengan livery silver-orange khas identitas balap Audi. Power unit dikembangkan sendiri oleh Audi sebagai bagian dari investasi jangka panjang mereka di F1.',
+    seasonPoints: 17,
+    drivers: [
+      F1TeamDriver('Nico Hulkenberg', '27', 7),
+      F1TeamDriver('Gabriel Bortoleto', '5', 10),
+    ],
+    gpRaces: 14, gpPoints: 17, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 6,
+    fastestLaps: 0, dnfsSeason: 5,
+    grandsPrixEntered: 274, teamPoints: 695, highestRaceFinish: '4 (x1)',
+    podiums: 0, highestGridPosition: '2 (x1)', polePositions: 0, worldChampionships: 0,
+  ),
+  F1Team(
+    name: 'MoneyGram Haas F1 Team',
+    color: Color(0xFF6E7275),
+    chassis: 'VF-26',
+    engineSupplier: 'Ferrari',
+    description:
+        'VF-26 mengusung livery putih-hitam-merah klasik Haas, dengan sasis yang dirancang seramping mungkin untuk meminimalkan drag. Haas mengandalkan power unit Ferrari, sama seperti yang dipakai Scuderia Ferrari sendiri.',
+    seasonPoints: 21,
+    drivers: [
+      F1TeamDriver('Oliver Bearman', '87', 18),
+      F1TeamDriver('Esteban Ocon', '31', 3),
+    ],
+    gpRaces: 14, gpPoints: 21, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 5,
+    fastestLaps: 0, dnfsSeason: 4,
+    grandsPrixEntered: 233, teamPoints: 601, highestRaceFinish: '1 (x1)',
+    podiums: 3, highestGridPosition: '1 (x1)', polePositions: 0, worldChampionships: 0,
+  ),
+  F1Team(
+    name: 'Cadillac Formula 1 Team',
+    color: Color(0xFF8C8C8C),
+    chassis: 'C1',
+    engineSupplier: 'Ferrari',
+    description:
+        'C1 menjadi debut Cadillac di grid Formula 1, membawa filosofi sasis konservatif namun matang berkat dukungan pengalaman dari Andretti Global. Mengandalkan power unit Ferrari untuk musim-musim awalnya sebelum mengembangkan mesin sendiri.',
+    seasonPoints: 0,
+    drivers: [
+      F1TeamDriver('Sergio Perez', '11', 0),
+      F1TeamDriver('Valtteri Bottas', '77', 0),
+    ],
+    gpRaces: 14, gpPoints: 0, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 0,
+    fastestLaps: 0, dnfsSeason: 10,
+    grandsPrixEntered: 14, teamPoints: 0, highestRaceFinish: '13 (x1)',
+    podiums: 0, highestGridPosition: '14 (x1)', polePositions: 0, worldChampionships: 0,
+  ),
+  F1Team(
+    name: 'Aston Martin Aramco F1 Team',
+    color: Color(0xFF00594F),
+    chassis: 'AMR26',
+    engineSupplier: 'Honda',
+    description:
+        'AMR26 mengusung livery hijau khas Aston Martin dengan investasi besar pada fasilitas pabrik baru. Mulai musim ini, tim beralih memakai power unit Honda, menandai era baru kemitraan teknis mereka.',
+    seasonPoints: 3,
+    drivers: [
+      F1TeamDriver('Lance Stroll', '18', 0),
+      F1TeamDriver('Fernando Alonso', '14', 3),
+    ],
+    gpRaces: 14, gpPoints: 3, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 2,
+    fastestLaps: 0, dnfsSeason: 15,
+    grandsPrixEntered: 614, teamPoints: 2703, highestRaceFinish: '1 (x32)',
+    podiums: 109, highestGridPosition: '1 (x22)', polePositions: 22, worldChampionships: 2,
+  ),
+  F1Team(
+    name: 'Williams Racing',
+    color: Color(0xFF0B1F63),
+    chassis: 'FW48',
+    engineSupplier: 'Mercedes',
+    description:
+        'FW48 melanjutkan kebangkitan Williams dengan sasis yang lebih kompetitif berkat investasi baru di terowongan angin. Ditenagai mesin Mercedes, tim legendaris ini terus berusaha kembali bersaing di papan atas.',
+    seasonPoints: 11,
+    drivers: [
+      F1TeamDriver('Alexander Albon', '23', 5),
+      F1TeamDriver('Carlos Sainz', '55', 6),
+    ],
+    gpRaces: 14, gpPoints: 11, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 5,
+    fastestLaps: 0, dnfsSeason: 6,
+    grandsPrixEntered: 374, teamPoints: 1761, highestRaceFinish: '1 (x3)',
+    podiums: 28, highestGridPosition: '1 (x6)', polePositions: 6, worldChampionships: 0,
+  ),
+];

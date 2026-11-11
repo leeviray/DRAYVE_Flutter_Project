@@ -12,6 +12,7 @@ import 'package:drayve/widgets/interactive.dart';
 import 'package:drayve/widgets/drayve_page_route.dart';
 import 'package:drayve/models/statistik.dart';
 import 'package:drayve/pages/aboutme_page.dart';
+import 'package:drayve/pages/teams_page.dart';
 import 'package:drayve/pages/login_signup_page.dart';
 import 'package:drayve/pages/profile_page.dart';
 import 'package:drayve/data/auth_state.dart';
@@ -246,6 +247,13 @@ class _LandingPageState
                         switchOutCurve: Curves.easeInCubic,
                         child:
                             _activeMenu ==
+                                'Teams'
+                            ? const TeamsPage(
+                                key: ValueKey(
+                                  'teams_view',
+                                ),
+                              )
+                            : _activeMenu ==
                                 'About'
                             ? SingleChildScrollView(
                                 key: const ValueKey(
@@ -375,7 +383,7 @@ class _LandingPageState
                               ),
                               curve: Curves.easeOutCubic,
                               height: _isMobileMenuOpen
-                                  ? 210.0
+                                  ? 280.0
                                   : 0.0,
                               width: double.infinity,
                               decoration: BoxDecoration(
@@ -426,6 +434,11 @@ class _LandingPageState
                                       'About',
                                       'About',
                                       Icons.info_outline,
+                                    ),
+                                    _buildDropdownItem(
+                                      'Teams',
+                                      'Teams',
+                                      Icons.groups_outlined,
                                     ),
                                   ],
                                 ),
@@ -631,6 +644,13 @@ class _LandingPageState
                     _buildNavMenu(
                       'About',
                       'About',
+                    ),
+                    const SizedBox(
+                      width: 32,
+                    ),
+                    _buildNavMenu(
+                      'Teams',
+                      'Teams',
                     ),
                   ],
                 ),
