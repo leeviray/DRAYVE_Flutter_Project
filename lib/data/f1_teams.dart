@@ -1,14 +1,20 @@
+// Data tim F1 2026 (dibuat dari lib/data/team_data.dart & driver_data.dart).
+// File ini berdiri sendiri: hanya butuh flutter/material.dart.
 import 'package:flutter/material.dart';
 
 class F1TeamDriver {
   final String name;
   final String number;
   final int points;
-  const F1TeamDriver(this.name, this.number, this.points);
+  final String imagePath;
+  const F1TeamDriver(this.name, this.number, this.points, this.imagePath);
 }
 
 class F1Team {
   final String name;
+  final String shortName; // nama singkat untuk banner (mis. "Mercedes")
+  final String code; // kode 3 huruf untuk lingkaran logo
+  final String? carAsset; // gambar mobil (null jika belum ada)
   final Color color;
   final String chassis;
   final String engineSupplier;
@@ -31,6 +37,9 @@ class F1Team {
 
   const F1Team({
     required this.name,
+    required this.shortName,
+    required this.code,
+    this.carAsset,
     required this.color,
     required this.chassis,
     required this.engineSupplier,
@@ -58,6 +67,9 @@ class F1Team {
 const List<F1Team> kF1Teams = [
   F1Team(
     name: 'McLaren Formula 1 Team',
+    shortName: 'McLaren',
+    code: 'MCL',
+    carAsset: 'assets/images/cars/mclaren.png',
     color: Color(0xFFFF8000),
     chassis: 'MCL40',
     engineSupplier: 'Mercedes-AMG',
@@ -65,8 +77,8 @@ const List<F1Team> kF1Teams = [
         'MCL40 dibangun di atas filosofi aero-elastis McLaren, membuat sayap depan sedikit melentur demi efisiensi optimal di kecepatan tinggi. Dipadu mesin Mercedes-AMG, mobil ini dikenal lincah di sirkuit jalan raya yang sempit.',
     seasonPoints: 306,
     drivers: [
-      F1TeamDriver('Lando Norris', '4', 186),
-      F1TeamDriver('Oscar Piastri', '81', 120),
+      F1TeamDriver('Lando Norris', '4', 186, 'assets/images/drivers/lando_norris_converted.png'),
+      F1TeamDriver('Oscar Piastri', '81', 120, 'assets/images/drivers/oscar_piastri_converted.png'),
     ],
     gpRaces: 14, gpPoints: 306, gpWins: 2, gpPodiums: 7, gpPoles: 2, gpTop10s: 20,
     fastestLaps: 3, dnfsSeason: 6,
@@ -75,6 +87,9 @@ const List<F1Team> kF1Teams = [
   ),
   F1Team(
     name: 'Scuderia Ferrari',
+    shortName: 'Ferrari',
+    code: 'FER',
+    carAsset: 'assets/images/cars/ferrari.png',
     color: Color(0xFFE10600),
     chassis: 'SF-26',
     engineSupplier: 'Ferrari',
@@ -82,8 +97,8 @@ const List<F1Team> kF1Teams = [
         'Filosofi desain SF-26 menekankan efisiensi aerodinamika tinggi dengan downforce presisi di setiap tikungan cepat. Ferrari mengandalkan power unit V6 turbo-hybrid generasi terbaru untuk menyalurkan tenaga secara instan tanpa turbo lag.',
     seasonPoints: 358,
     drivers: [
-      F1TeamDriver('Charles Leclerc', '16', 167),
-      F1TeamDriver('Lewis Hamilton', '44', 191),
+      F1TeamDriver('Charles Leclerc', '16', 167, 'assets/images/drivers/charles_leclerc_converted.png'),
+      F1TeamDriver('Lewis Hamilton', '44', 191, 'assets/images/drivers/lewis_hamilton_converted.png'),
     ],
     gpRaces: 14, gpPoints: 358, gpWins: 2, gpPodiums: 9, gpPoles: 4, gpTop10s: 24,
     fastestLaps: 3, dnfsSeason: 3,
@@ -92,6 +107,9 @@ const List<F1Team> kF1Teams = [
   ),
   F1Team(
     name: 'Oracle Red Bull Racing',
+    shortName: 'Red Bull Racing',
+    code: 'RBR',
+    carAsset: 'assets/images/cars/redbull.png',
     color: Color(0xFF1E41FF),
     chassis: 'RB22',
     engineSupplier: 'Red Bull Ford Powertrains',
@@ -99,8 +117,8 @@ const List<F1Team> kF1Teams = [
         'RB22 melanjutkan filosofi sasis ramping Red Bull yang mengutamakan efisiensi udara di sekitar sidepod. Dipadukan dengan tenaga dari Red Bull Ford Powertrains, mobil ini dirancang unggul di trek dengan kombinasi tikungan cepat dan lambat.',
     seasonPoints: 230,
     drivers: [
-      F1TeamDriver('Max Verstappen', '1', 145),
-      F1TeamDriver('Isack Hadjar', '6', 71),
+      F1TeamDriver('Max Verstappen', '1', 145, 'assets/images/drivers/max_verstappen_converted.png'),
+      F1TeamDriver('Isack Hadjar', '6', 71, 'assets/images/drivers/isack_hadjar_converted.png'),
     ],
     gpRaces: 14, gpPoints: 216, gpWins: 0, gpPodiums: 7, gpPoles: 1, gpTop10s: 20,
     fastestLaps: 3, dnfsSeason: 5,
@@ -109,6 +127,9 @@ const List<F1Team> kF1Teams = [
   ),
   F1Team(
     name: 'Mercedes-AMG Petronas',
+    shortName: 'Mercedes',
+    code: 'MER',
+    carAsset: 'assets/images/cars/mercedes.png',
     color: Color(0xFF00D2BE),
     chassis: 'W17',
     engineSupplier: 'Mercedes-AMG',
@@ -116,8 +137,8 @@ const List<F1Team> kF1Teams = [
         'W17 membawa evolusi konsep sidepod ramping Mercedes menuju kestabilan aero yang lebih baik di segala kondisi lintasan. Power unit Mercedes-AMG dikenal efisien dalam manajemen energi baterai sepanjang balapan.',
     seasonPoints: 503,
     drivers: [
-      F1TeamDriver('Kimi Antonelli', '12', 292),
-      F1TeamDriver('George Russell', '63', 211),
+      F1TeamDriver('Kimi Antonelli', '12', 292, 'assets/images/drivers/kimi_antonelli_converted.png'),
+      F1TeamDriver('George Russell', '63', 211, 'assets/images/drivers/george_russel_converted.png'),
     ],
     gpRaces: 14, gpPoints: 503, gpWins: 10, gpPodiums: 19, gpPoles: 7, gpTop10s: 23,
     fastestLaps: 6, dnfsSeason: 2,
@@ -126,6 +147,9 @@ const List<F1Team> kF1Teams = [
   ),
   F1Team(
     name: 'BWT Alpine F1 Team',
+    shortName: 'Alpine',
+    code: 'ALP',
+    carAsset: 'assets/images/cars/alpine.png',
     color: Color(0xFFE4007C),
     chassis: 'A526',
     engineSupplier: 'Renault',
@@ -133,8 +157,8 @@ const List<F1Team> kF1Teams = [
         'A526 mengusung livery biru-pink khas BWT dengan fokus perbaikan efisiensi aerodinamika bagian belakang. Alpine mengandalkan mesin Renault yang terus disempurnakan demi mengejar ketertinggalan dari tim papan atas.',
     seasonPoints: 68,
     drivers: [
-      F1TeamDriver('Pierre Gasly', '10', 41),
-      F1TeamDriver('Franco Colapinto', '43', 27),
+      F1TeamDriver('Pierre Gasly', '10', 41, 'assets/images/drivers/pierre_gasly_converted.png'),
+      F1TeamDriver('Franco Colapinto', '43', 27, 'assets/images/drivers/franco_colapinto_converted.png'),
     ],
     gpRaces: 14, gpPoints: 68, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 17,
     fastestLaps: 0, dnfsSeason: 1,
@@ -143,6 +167,9 @@ const List<F1Team> kF1Teams = [
   ),
   F1Team(
     name: 'Racing Bulls F1 Team',
+    shortName: 'Racing Bulls',
+    code: 'RB',
+    carAsset: 'assets/images/cars/racingbulls.png',
     color: Color(0xFF1660AD),
     chassis: 'VCARB 03',
     engineSupplier: 'Red Bull Ford Powertrains',
@@ -150,8 +177,8 @@ const List<F1Team> kF1Teams = [
         'VCARB 03 dirancang sebagai mobil pengembangan bakat muda Red Bull, mengusung filosofi sasis yang mirip dengan tim senior namun dengan anggaran yang lebih terbatas. Musim ini tim tampil dengan nama baru "Racing Bulls" setelah melepas sponsor titel sebelumnya.',
     seasonPoints: 77,
     drivers: [
-      F1TeamDriver('Arvid Lindblad', '35', 31),
-      F1TeamDriver('Liam Lawson', '30', 59),
+      F1TeamDriver('Arvid Lindblad', '35', 31, 'assets/images/drivers/arvid_lindblad_converted.png'),
+      F1TeamDriver('Liam Lawson', '30', 59, 'assets/images/drivers/liam_lawson_converted.png'),
     ],
     gpRaces: 14, gpPoints: 90, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 19,
     fastestLaps: 0, dnfsSeason: 2,
@@ -160,6 +187,9 @@ const List<F1Team> kF1Teams = [
   ),
   F1Team(
     name: 'Audi F1 Team',
+    shortName: 'Audi',
+    code: 'AUD',
+    carAsset: 'assets/images/cars/audi.png',
     color: Color(0xFFBB0A30),
     chassis: 'C26',
     engineSupplier: 'Audi',
@@ -167,8 +197,8 @@ const List<F1Team> kF1Teams = [
         'C26 menjadi mobil pertama Audi sebagai tim pabrikan penuh di Formula 1, dengan livery silver-orange khas identitas balap Audi. Power unit dikembangkan sendiri oleh Audi sebagai bagian dari investasi jangka panjang mereka di F1.',
     seasonPoints: 17,
     drivers: [
-      F1TeamDriver('Nico Hulkenberg', '27', 7),
-      F1TeamDriver('Gabriel Bortoleto', '5', 10),
+      F1TeamDriver('Nico Hulkenberg', '27', 7, 'assets/images/drivers/nico_hulkenberg_converted.png'),
+      F1TeamDriver('Gabriel Bortoleto', '5', 10, 'assets/images/drivers/gabriel_bortoleto_converted.png'),
     ],
     gpRaces: 14, gpPoints: 17, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 6,
     fastestLaps: 0, dnfsSeason: 5,
@@ -177,6 +207,9 @@ const List<F1Team> kF1Teams = [
   ),
   F1Team(
     name: 'MoneyGram Haas F1 Team',
+    shortName: 'Haas',
+    code: 'HAA',
+    carAsset: 'assets/images/cars/haas.png',
     color: Color(0xFF6E7275),
     chassis: 'VF-26',
     engineSupplier: 'Ferrari',
@@ -184,8 +217,8 @@ const List<F1Team> kF1Teams = [
         'VF-26 mengusung livery putih-hitam-merah klasik Haas, dengan sasis yang dirancang seramping mungkin untuk meminimalkan drag. Haas mengandalkan power unit Ferrari, sama seperti yang dipakai Scuderia Ferrari sendiri.',
     seasonPoints: 21,
     drivers: [
-      F1TeamDriver('Oliver Bearman', '87', 18),
-      F1TeamDriver('Esteban Ocon', '31', 3),
+      F1TeamDriver('Oliver Bearman', '87', 18, 'assets/images/drivers/oliver_bearman_converted.png'),
+      F1TeamDriver('Esteban Ocon', '31', 3, 'assets/images/drivers/esteban_ocon_converted.png'),
     ],
     gpRaces: 14, gpPoints: 21, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 5,
     fastestLaps: 0, dnfsSeason: 4,
@@ -194,6 +227,9 @@ const List<F1Team> kF1Teams = [
   ),
   F1Team(
     name: 'Cadillac Formula 1 Team',
+    shortName: 'Cadillac',
+    code: 'CAD',
+    carAsset: 'assets/images/cars/cadillac.png',
     color: Color(0xFF8C8C8C),
     chassis: 'C1',
     engineSupplier: 'Ferrari',
@@ -201,8 +237,8 @@ const List<F1Team> kF1Teams = [
         'C1 menjadi debut Cadillac di grid Formula 1, membawa filosofi sasis konservatif namun matang berkat dukungan pengalaman dari Andretti Global. Mengandalkan power unit Ferrari untuk musim-musim awalnya sebelum mengembangkan mesin sendiri.',
     seasonPoints: 0,
     drivers: [
-      F1TeamDriver('Sergio Perez', '11', 0),
-      F1TeamDriver('Valtteri Bottas', '77', 0),
+      F1TeamDriver('Sergio Perez', '11', 0, 'assets/images/drivers/sergio_perez_converted.png'),
+      F1TeamDriver('Valtteri Bottas', '77', 0, 'assets/images/drivers/valtteri_bottas_converted.png'),
     ],
     gpRaces: 14, gpPoints: 0, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 0,
     fastestLaps: 0, dnfsSeason: 10,
@@ -211,6 +247,9 @@ const List<F1Team> kF1Teams = [
   ),
   F1Team(
     name: 'Aston Martin Aramco F1 Team',
+    shortName: 'Aston Martin',
+    code: 'AMR',
+    carAsset: 'assets/images/cars/astonmartin.png',
     color: Color(0xFF00594F),
     chassis: 'AMR26',
     engineSupplier: 'Honda',
@@ -218,8 +257,8 @@ const List<F1Team> kF1Teams = [
         'AMR26 mengusung livery hijau khas Aston Martin dengan investasi besar pada fasilitas pabrik baru. Mulai musim ini, tim beralih memakai power unit Honda, menandai era baru kemitraan teknis mereka.',
     seasonPoints: 3,
     drivers: [
-      F1TeamDriver('Lance Stroll', '18', 0),
-      F1TeamDriver('Fernando Alonso', '14', 3),
+      F1TeamDriver('Lance Stroll', '18', 0, 'assets/images/drivers/lance_stroll_converted.png'),
+      F1TeamDriver('Fernando Alonso', '14', 3, 'assets/images/drivers/fernando_alonso_converted.png'),
     ],
     gpRaces: 14, gpPoints: 3, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 2,
     fastestLaps: 0, dnfsSeason: 15,
@@ -228,6 +267,9 @@ const List<F1Team> kF1Teams = [
   ),
   F1Team(
     name: 'Williams Racing',
+    shortName: 'Williams',
+    code: 'WIL',
+    carAsset: 'assets/images/cars/williams.png',
     color: Color(0xFF0B1F63),
     chassis: 'FW48',
     engineSupplier: 'Mercedes',
@@ -235,8 +277,8 @@ const List<F1Team> kF1Teams = [
         'FW48 melanjutkan kebangkitan Williams dengan sasis yang lebih kompetitif berkat investasi baru di terowongan angin. Ditenagai mesin Mercedes, tim legendaris ini terus berusaha kembali bersaing di papan atas.',
     seasonPoints: 11,
     drivers: [
-      F1TeamDriver('Alexander Albon', '23', 5),
-      F1TeamDriver('Carlos Sainz', '55', 6),
+      F1TeamDriver('Alexander Albon', '23', 5, 'assets/images/drivers/alexander_albon_converted.png'),
+      F1TeamDriver('Carlos Sainz', '55', 6, 'assets/images/drivers/carlos_sainz_converted.png'),
     ],
     gpRaces: 14, gpPoints: 11, gpWins: 0, gpPodiums: 0, gpPoles: 0, gpTop10s: 5,
     fastestLaps: 0, dnfsSeason: 6,

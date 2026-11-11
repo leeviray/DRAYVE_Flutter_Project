@@ -34,6 +34,7 @@ flutter:
     - assets/images/
     - assets/images/gelo/
     - assets/images/flags/
+    - assets/images/cars/
     - assets/icons/
 
   fonts:
