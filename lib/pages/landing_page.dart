@@ -254,7 +254,7 @@ class _LandingPageState
                                 ),
                               )
                             : _activeMenu ==
-                                'About'
+                                  'About'
                             ? SingleChildScrollView(
                                 key: const ValueKey(
                                   'about_view',
@@ -431,14 +431,14 @@ class _LandingPageState
                                       Icons.star_border,
                                     ),
                                     _buildDropdownItem(
-                                      'About',
-                                      'About',
-                                      Icons.info_outline,
-                                    ),
-                                    _buildDropdownItem(
                                       'Teams',
                                       'Teams',
                                       Icons.groups_outlined,
+                                    ),
+                                    _buildDropdownItem(
+                                      'About',
+                                      'About',
+                                      Icons.info_outline,
                                     ),
                                   ],
                                 ),
@@ -642,15 +642,15 @@ class _LandingPageState
                       width: 32,
                     ),
                     _buildNavMenu(
-                      'About',
-                      'About',
+                      'Teams',
+                      'Teams',
                     ),
                     const SizedBox(
                       width: 32,
                     ),
                     _buildNavMenu(
-                      'Teams',
-                      'Teams',
+                      'About',
+                      'About',
                     ),
                   ],
                 ),
