@@ -13,6 +13,7 @@ import 'package:drayve/widgets/drayve_page_route.dart';
 import 'package:drayve/models/statistik.dart';
 import 'package:drayve/pages/aboutme_page.dart';
 import 'package:drayve/pages/teams_page.dart';
+import 'package:drayve/pages/schedule_page.dart';
 import 'package:drayve/pages/login_signup_page.dart';
 import 'package:drayve/pages/profile_page.dart';
 import 'package:drayve/data/auth_state.dart';
@@ -254,6 +255,13 @@ class _LandingPageState
                                 ),
                               )
                             : _activeMenu ==
+                                  'Schedule'
+                            ? const SchedulePage(
+                                key: ValueKey(
+                                  'schedule_view',
+                                ),
+                              )
+                            : _activeMenu ==
                                   'About'
                             ? SingleChildScrollView(
                                 key: const ValueKey(
@@ -434,6 +442,11 @@ class _LandingPageState
                                       'Teams',
                                       'Teams',
                                       Icons.groups_outlined,
+                                    ),
+                                    _buildDropdownItem(
+                                      'Schedule',
+                                      'Schedule',
+                                      Icons.calendar_month_outlined,
                                     ),
                                     _buildDropdownItem(
                                       'About',
@@ -644,6 +657,13 @@ class _LandingPageState
                     _buildNavMenu(
                       'Teams',
                       'Teams',
+                    ),
+                    const SizedBox(
+                      width: 32,
+                    ),
+                    _buildNavMenu(
+                      'Schedule',
+                      'Schedule',
                     ),
                     const SizedBox(
                       width: 32,
