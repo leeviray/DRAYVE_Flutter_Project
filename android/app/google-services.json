@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "296470902325",
+    "project_id": "drayve-l44p1",
+    "storage_bucket": "drayve-l44p1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296470902325:android:47d9f92e0e8e76bb73e37c",
+        "android_client_info": {
+          "package_name": "com.example.drayve"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "296470902325-vkbo7dbfhsp5ijig1cr3pdg16hfm67q9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8CSrMyj_RiZpEzVuR5bL1hhb1ARwEcyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "296470902325-vkbo7dbfhsp5ijig1cr3pdg16hfm67q9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
