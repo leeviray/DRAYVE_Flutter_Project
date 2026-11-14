@@ -402,12 +402,12 @@ class _DriverCardState
                                         // --- LAYER 1: Gambar Mobil ---
                                         Positioned(
                                           left: -250,
-                                          bottom: -210,
-                                          child: RotatedBox(
-                                            quarterTurns: 1,
+                                          bottom: 50,
+                                          child: Transform.scale(
+                                            scale: 1.7, // < 1.0 mengecilkan (mis. 0.8), > 1.0 membesarkan (mis. 1.2)
                                             child: Image.asset(
                                               driver.fotoMobil,
-                                              height: 580,
+                                              height: 100,
                                               fit: BoxFit.contain,
                                               errorBuilder: (
                                                 context,

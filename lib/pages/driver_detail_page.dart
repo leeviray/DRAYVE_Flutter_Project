@@ -161,13 +161,13 @@ class _DriverDetailPageState
               ),
             );
 
-    // 3. MOBIL MASUK PALING AKHIR
+    // 3. MOBIL MASUK PALING AKHIR (MELUNCUR DARI KIRI)
     _carSlide =
         Tween<
               Offset
             >(
               begin: const Offset(
-                -0.4,
+                -1.5,
                 0,
               ),
               end: Offset.zero,
@@ -176,7 +176,7 @@ class _DriverDetailPageState
               CurvedAnimation(
                 parent: _enterController,
                 curve: const Interval(
-                  0.5,
+                  0.35,
                   1.0,
                   curve: Curves.easeOutCubic,
                 ),
@@ -193,8 +193,8 @@ class _DriverDetailPageState
               CurvedAnimation(
                 parent: _enterController,
                 curve: const Interval(
-                  0.5,
-                  0.8,
+                  0.35,
+                  0.55,
                   curve: Curves.easeOut,
                 ),
               ),
@@ -218,7 +218,20 @@ class _DriverDetailPageState
               ),
             );
 
-    _enterController.forward();
+    WidgetsBinding.instance.addPostFrameCallback((
+      _,
+    ) {
+      Future.delayed(
+        const Duration(
+          milliseconds: 250,
+        ),
+        () {
+          if (mounted) {
+            _enterController.forward();
+          }
+        },
+      );
+    });
   }
 
   @override
@@ -1405,28 +1418,26 @@ class _DriverDetailPageState
         clipBehavior: Clip.none,
         children: [
           Positioned(
-            right: 900,
-            bottom: -400,
+            right: 600,
+            bottom: 50,
             child: SlideTransition(
               position: _carSlide,
               child: FadeTransition(
                 opacity: _carFade,
-                child: Transform.rotate(
-                  angle: 1.6,
-                  child: Image.asset(
-                    widget.driver.fotoMobil,
-                    height: 1300,
-                    fit: BoxFit.contain,
-                    errorBuilder: (
-                      context,
-                      error,
-                      stackTrace,
-                    ) => const SizedBox(),
-                  ),
+                child: Image.asset(
+                  widget.driver.fotoMobil,
+                  height: 300,
+                  fit: BoxFit.contain,
+                  errorBuilder: (
+                    context,
+                    error,
+                    stackTrace,
+                  ) => const SizedBox(),
                 ),
               ),
             ),
           ),
+
           Positioned(
             right: 710,
             bottom: -500,

@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:drayve/data/f1_teams.dart';
 import 'package:drayve/widgets/drayve_page_route.dart';
 import 'package:drayve/widgets/interactive.dart';
+import 'package:drayve/widgets/driver_avatar.dart';
 import 'package:drayve/services/api_services.dart'; // IMPORT API SERVICE
 
 const Color
@@ -477,7 +478,7 @@ class _TeamBanner
                       ),
                     ),
                   ),
-                  // logo (lingkaran kode tim)
+                  // logo (lingkaran logo / kode tim)
                   Positioned(
                     top: pad,
                     right: pad,
@@ -495,16 +496,30 @@ class _TeamBanner
                               0.85,
                             ),
                       ),
-                      child: Text(
-                        team.code,
-                        style: GoogleFonts.montserrat(
-                          fontSize:
-                              logo *
-                              0.27,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
-                        ),
+                      child: Builder(
+                        builder: (_) {
+                          final fallbackCode = Text(
+                            team.code,
+                            style: GoogleFonts.montserrat(
+                              fontSize:
+                                  logo *
+                                  0.27,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                          );
+                          final logoAsset = team.logoAsset;
+                          if (logoAsset == null) return fallbackCode;
+                          return Padding(
+                            padding: EdgeInsets.all(logo * 0.16),
+                            child: Image.asset(
+                              logoAsset,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, _, _) => fallbackCode,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -648,40 +663,14 @@ class _DriverChip
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: size,
-          height: size,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: _darken(
-              team.color,
-              0.6,
-            ),
-          ),
-          child: Image.asset(
-            driver.imagePath,
-            fit: BoxFit.cover,
-            alignment: Alignment.topCenter,
-            errorBuilder:
-                (
-                  _,
-                  __,
-                  ___,
-                ) => Center(
-                  child: Text(
-                    first.isNotEmpty
-                        ? first[0]
-                        : '?',
-                    style: GoogleFonts.montserrat(
-                      fontSize:
-                          size *
-                          0.45,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+        DriverAvatar(
+          driverName: driver.name,
+          fallbackAsset: driver.imagePath,
+          fallbackInitials: first.isNotEmpty ? first[0] : '?',
+          radius: size / 2,
+          backgroundColor: _darken(
+            team.color,
+            0.6,
           ),
         ),
         const SizedBox(
@@ -854,7 +843,7 @@ class TeamInfoPage
                           width: 8,
                         ),
                         Text(
-                          'Kembali',
+                          'BACK',
                           style: GoogleFonts.montserrat(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
@@ -1766,38 +1755,16 @@ class _DriverCards
                       decoration: _panelDecoration(),
                       child: Row(
                         children: [
-                          Container(
-                            width: 64,
-                            height: 64,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _darken(
-                                team.color,
-                                0.6,
-                              ),
-                            ),
-                            child: Image.asset(
-                              d.imagePath,
-                              fit: BoxFit.cover,
-                              alignment: Alignment.topCenter,
-                              errorBuilder:
-                                  (
-                                    _,
-                                    __,
-                                    ___,
-                                  ) => Center(
-                                    child: Text(
-                                      d.name.isNotEmpty
-                                          ? d.name[0]
-                                          : '?',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
+                          DriverAvatar(
+                            driverName: d.name,
+                            fallbackAsset: d.imagePath,
+                            fallbackInitials: d.name.isNotEmpty
+                                ? d.name[0]
+                                : '?',
+                            radius: 32,
+                            backgroundColor: _darken(
+                              team.color,
+                              0.6,
                             ),
                           ),
                           const SizedBox(
