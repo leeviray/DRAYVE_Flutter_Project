@@ -10,6 +10,7 @@ import 'package:drayve/widgets/drayve_page_route.dart';
 import 'package:drayve/widgets/interactive.dart';
 import 'package:drayve/widgets/driver_avatar.dart';
 import 'package:drayve/services/api_services.dart'; // IMPORT API SERVICE
+import 'package:shimmer/shimmer.dart';
 
 const Color
 _kRed = Color(
@@ -193,18 +194,36 @@ class _TeamsPageState
             48,
           ),
           sliver: isLoading
-              ? const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      top: 100,
-                    ),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: Color(
-                          0xFFE10600,
+              ? SliverGrid(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: isMobile
+                        ? 16
+                        : 24,
+                    mainAxisSpacing: isMobile
+                        ? 16
+                        : 24,
+                    childAspectRatio: isMobile
+                        ? 2.0
+                        : 2.7,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (
+                      context,
+                      index,
+                    ) => Shimmer.fromColors(
+                      baseColor: Colors.white10,
+                      highlightColor: Colors.white24,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white, // wajib berwarna agar kilau terlihat
+                          borderRadius: BorderRadius.circular(
+                            18,
+                          ), // sama dengan _TeamCard
                         ),
                       ),
                     ),
+                    childCount: teams.length,
                   ),
                 )
               : SliverGrid(
