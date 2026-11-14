@@ -1,6 +1,26 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    match /app_ratings/{ratingId} {
+      // Ratings may be submitted by signed-in and anonymous Firebase users.
+      // Clients can create their own rating but cannot read, update, or delete ratings.
+      allow create: if request.auth != null
+                    && request.resource.data.keys().hasAll([
+                      'rating', 'comment', 'userId', 'createdAt'
+                    ])
+                    && request.resource.data.keys().hasOnly([
+                      'rating', 'comment', 'userId', 'createdAt'
+                    ])
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.rating is int
+                    && request.resource.data.rating >= 1
+                    && request.resource.data.rating <= 5
+                    && request.resource.data.comment is string
+                    && request.resource.data.comment.size() <= 1000
+                    && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if false;
+    }
+
     match /users/{userId} {
       allow create: if request.auth != null
                     && request.auth.uid == userId

@@ -10,9 +10,18 @@ Future<
 >
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (
+    e
+  ) {
+    print(
+      "====== FIREBASE ERROR: $e ======",
+    );
+  }
+
   runApp(
     const DrayveApp(),
   );
@@ -35,9 +44,15 @@ class DrayveApp
         useMaterial3: true,
       ),
       home: const SplashScreen(),
-      builder: (context, child) => _DesktopUiScaler(
-        child: child ?? const SizedBox.shrink(),
-      ),
+      builder:
+          (
+            context,
+            child,
+          ) => _DesktopUiScaler(
+            child:
+                child ??
+                const SizedBox.shrink(),
+          ),
     );
   }
 }
@@ -48,7 +63,9 @@ class DrayveApp
 /// 125% -> lebar logis 1536px), seluruh UI diperkecil secara proporsional
 /// (maks. sampai 80%) sehingga hasilnya sama seperti zoom browser 80%.
 /// Layar tablet/mobile (< 1200px) tidak terpengaruh.
-class _DesktopUiScaler extends StatelessWidget {
+class _DesktopUiScaler
+    extends
+        StatelessWidget {
   const _DesktopUiScaler({required this.child});
 
   final Widget child;
@@ -58,25 +75,48 @@ class _DesktopUiScaler extends StatelessWidget {
   static const double _minScale = 0.8;
 
   @override
-  Widget build(BuildContext context) {
-    final MediaQueryData mq = MediaQuery.of(context);
+  Widget build(
+    BuildContext context,
+  ) {
+    final MediaQueryData mq = MediaQuery.of(
+      context,
+    );
     final double width = mq.size.width;
 
     double scale = 1.0;
-    if (width >= _desktopBreakpoint && width < _designWidth) {
-      scale = (width / _designWidth).clamp(_minScale, 1.0);
+    if (width >=
+            _desktopBreakpoint &&
+        width <
+            _designWidth) {
+      scale =
+          (width /
+                  _designWidth)
+              .clamp(
+                _minScale,
+                1.0,
+              );
     }
 
-    if (scale >= 1.0) return child;
+    if (scale >=
+        1.0)
+      return child;
 
-    final Size scaledSize = mq.size / scale;
+    final Size scaledSize =
+        mq.size /
+        scale;
 
     return MediaQuery(
       data: mq.copyWith(
         size: scaledSize,
-        padding: mq.padding / scale,
-        viewPadding: mq.viewPadding / scale,
-        viewInsets: mq.viewInsets / scale,
+        padding:
+            mq.padding /
+            scale,
+        viewPadding:
+            mq.viewPadding /
+            scale,
+        viewInsets:
+            mq.viewInsets /
+            scale,
       ),
       child: ClipRect(
         child: FittedBox(

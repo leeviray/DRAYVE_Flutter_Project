@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drayve/data/data.dart';
@@ -12,6 +14,8 @@ import 'package:drayve/widgets/interactive.dart';
 import 'package:drayve/widgets/drayve_page_route.dart';
 import 'package:drayve/models/statistik.dart';
 import 'package:drayve/pages/aboutme_page.dart';
+import 'package:drayve/pages/teams_page.dart';
+import 'package:drayve/pages/schedule_page.dart';
 import 'package:drayve/pages/login_signup_page.dart';
 import 'package:drayve/pages/profile_page.dart';
 import 'package:drayve/data/auth_state.dart';
@@ -56,6 +60,17 @@ class _LandingPageState
   late final SmoothScrollController _scrollController;
   final TextEditingController _searchController = TextEditingController();
 
+   // RATING POPUP STATE
+  int _menuNavigationCount = 0;
+  bool _ratingAlreadySubmitted = false;
+  bool _ratingDialogOpen = false;
+  bool _ratingStatusLoaded = false;
+  late final Future<void> _ratingStatusFuture;
+
+  static const String _ratingCountKey = 'drayve_rating_count';
+  static const String _ratingDoneKey = 'drayve_rating_done';
+  static const String _ratingDeferredKey = 'drayve_rating_deferred';
+
   static const List<
     String
   >
@@ -74,18 +89,254 @@ class _LandingPageState
     'Cadillac',
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = SmoothScrollController();
-  }
+  
+@override
+void initState() {
+  super.initState();
+  _scrollController = SmoothScrollController();
+  _ratingStatusFuture = _loadRatingStatus();
+}
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    _searchController.dispose();
-    super.dispose();
+Future<void> _loadRatingStatus() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    _menuNavigationCount = prefs.getInt(_ratingCountKey) ?? 0;
+    _ratingAlreadySubmitted = prefs.getBool(_ratingDoneKey) ?? false;
+  } catch (_) {
+    // Keep the screen usable if local preferences are temporarily unavailable.
+    _menuNavigationCount = 0;
+    _ratingAlreadySubmitted = false;
+  } finally {
+    _ratingStatusLoaded = true;
   }
+}
+
+Future<void> _recordMenuNavigation() async {
+  // Wait for persisted state so a fast first navigation cannot overwrite it.
+  await _ratingStatusFuture;
+  if (!_ratingStatusLoaded || _ratingAlreadySubmitted || !mounted) return;
+
+  final prefs = await SharedPreferences.getInstance();
+  if (_ratingAlreadySubmitted || !mounted) return;
+
+  _menuNavigationCount++;
+  await prefs.setInt(_ratingCountKey, _menuNavigationCount);
+
+  if (_menuNavigationCount < 10) return;
+
+  final deferredUntil = prefs.getInt(_ratingDeferredKey) ?? 0;
+  final now = DateTime.now().millisecondsSinceEpoch;
+  if (now >= deferredUntil && mounted && !_ratingDialogOpen) {
+    await _showRatingDialog();
+  }
+}
+
+@override
+void dispose() {
+  _scrollController.dispose();
+  _searchController.dispose();
+  super.dispose();
+}
+
+Future<void> _showRatingDialog() async {
+  if (_ratingDialogOpen || !mounted) return;
+
+  _ratingDialogOpen = true;
+
+  final commentController = TextEditingController();
+  int selectedRating = 0;
+  bool isSubmitting = false;
+  String? errorMessage;
+
+  try {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFF15151E),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Colors.white12),
+              ),
+              titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+              contentPadding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+              actionsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              title: const Center(
+                child: Text(
+                  'Enjoying DRAYVE?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              content: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 420),
+                child: SingleChildScrollView(
+                  child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Give us your rating!',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(5, (index) {
+                        return IconButton(
+                          onPressed: isSubmitting
+                              ? null
+                              : () {
+                                  setDialogState(() {
+                                    selectedRating = index + 1;
+                                  });
+                                },
+                          icon: Icon(
+                            index < selectedRating
+                                ? Icons.star
+                                : Icons.star_border,
+                            color: Colors.amber,
+                            size: 32,
+                          ),
+                        );
+                      }),
+                    ),
+
+                    TextField(
+                      controller: commentController,
+                      maxLines: 3,
+                      maxLength: 1000,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        hintText: 'Your feedback (optional)',
+                        hintStyle: TextStyle(color: Colors.white54),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white24),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                        ),
+                      ),
+                    ),
+
+                    if (errorMessage != null) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        errorMessage!,
+                        style: const TextStyle(color: Colors.redAccent),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isSubmitting
+                      ? null
+                      : () async {
+                          final prefs =
+                              await SharedPreferences.getInstance();
+
+                          final deferredUntil = DateTime.now()
+                              .add(const Duration(days: 7))
+                              .millisecondsSinceEpoch;
+
+                          await prefs.setInt(
+                            _ratingDeferredKey,
+                            deferredUntil,
+                          );
+
+                          if (dialogContext.mounted) {
+                            Navigator.pop(dialogContext);
+                          }
+                        },
+                  child: const Text('Maybe Later'),
+                ),
+
+                ElevatedButton(
+                  onPressed: isSubmitting || selectedRating == 0
+                      ? null
+                      : () async {
+                          setDialogState(() {
+                            isSubmitting = true;
+                            errorMessage = null;
+                          });
+
+                          try {
+                            final auth = FirebaseAuth.instance;
+                            User? user = auth.currentUser;
+                            if (user == null) {
+                              final credential = await auth.signInAnonymously();
+                              user = credential.user;
+                            }
+                            if (user == null) {
+                              throw StateError(
+                                'Firebase Authentication did not return a user ID.',
+                              );
+                            }
+
+                            await FirebaseFirestore.instance
+                                .collection('app_ratings')
+                                .add({
+                              'rating': selectedRating,
+                              'comment': commentController.text.trim(),
+                              'userId': user.uid,
+                              'createdAt': FieldValue.serverTimestamp(),
+                            });
+
+                            final prefs =
+                                await SharedPreferences.getInstance();
+
+                            await prefs.setBool(_ratingDoneKey, true);
+
+                            _ratingAlreadySubmitted = true;
+
+                            if (dialogContext.mounted) {
+                              Navigator.pop(dialogContext);
+                            }
+                            if (mounted) {
+                              ScaffoldMessenger.of(this.context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Thank you! Your rating was saved.'),
+                                  backgroundColor: Color(0xFF218838),
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            setDialogState(() {
+                              isSubmitting = false;
+                              errorMessage = e is FirebaseException
+                                  ? 'Firebase error (${e.code}): ${e.message ?? 'Please try again.'}'
+                                  : 'Could not submit rating: $e';
+                            });
+                          }
+                        },
+                  child: isSubmitting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Submit'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  } finally {
+    commentController.dispose();
+    _ratingDialogOpen = false;
+  }
+}
+
 
   void _reloadPage() {
     setState(() {
@@ -246,7 +497,21 @@ class _LandingPageState
                         switchOutCurve: Curves.easeInCubic,
                         child:
                             _activeMenu ==
-                                'About'
+                                'Teams'
+                            ? const TeamsPage(
+                                key: ValueKey(
+                                  'teams_view',
+                                ),
+                              )
+                            : _activeMenu ==
+                                  'Schedule'
+                            ? const SchedulePage(
+                                key: ValueKey(
+                                  'schedule_view',
+                                ),
+                              )
+                            : _activeMenu ==
+                                  'About'
                             ? SingleChildScrollView(
                                 key: const ValueKey(
                                   'about_view',
@@ -375,7 +640,7 @@ class _LandingPageState
                               ),
                               curve: Curves.easeOutCubic,
                               height: _isMobileMenuOpen
-                                  ? 210.0
+                                  ? 280.0
                                   : 0.0,
                               width: double.infinity,
                               decoration: BoxDecoration(
@@ -421,6 +686,16 @@ class _LandingPageState
                                       'Favorite',
                                       'Favorite',
                                       Icons.star_border,
+                                    ),
+                                    _buildDropdownItem(
+                                      'Teams',
+                                      'Teams',
+                                      Icons.groups_outlined,
+                                    ),
+                                    _buildDropdownItem(
+                                      'Schedule',
+                                      'Schedule',
+                                      Icons.calendar_month_outlined,
                                     ),
                                     _buildDropdownItem(
                                       'About',
@@ -629,6 +904,20 @@ class _LandingPageState
                       width: 32,
                     ),
                     _buildNavMenu(
+                      'Teams',
+                      'Teams',
+                    ),
+                    const SizedBox(
+                      width: 32,
+                    ),
+                    _buildNavMenu(
+                      'Schedule',
+                      'Schedule',
+                    ),
+                    const SizedBox(
+                      width: 32,
+                    ),
+                    _buildNavMenu(
                       'About',
                       'About',
                     ),
@@ -660,26 +949,28 @@ class _LandingPageState
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          setState(() {
-            _isMobileMenuOpen = false;
-          });
-          if (menuKey ==
-                  'Favorite' &&
-              !globalIsLoggedIn) {
-            _requireLogin();
-            return;
-          }
-          Future.delayed(
-            const Duration(
-              milliseconds: 150,
-            ),
-            () {
-              setState(() {
-                _activeMenu = menuKey;
-              });
-            },
-          );
-        },
+  setState(() {
+    _isMobileMenuOpen = false;
+  });
+
+  if (menuKey == 'Favorite' && !globalIsLoggedIn) {
+    _requireLogin();
+    return;
+  }
+
+  Future.delayed(
+    const Duration(milliseconds: 150),
+    () {
+      if (_activeMenu != menuKey) {
+        setState(() {
+          _activeMenu = menuKey;
+        });
+
+        _recordMenuNavigation();
+      }
+    },
+  );
+},
         child: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: 24,
@@ -1109,9 +1400,14 @@ class _LandingPageState
             _requireLogin();
             return;
           }
-          setState(() {
-            _activeMenu = menuKey;
-          });
+          
+          if (_activeMenu != menuKey) {
+            setState(() {
+              _activeMenu = menuKey;
+            });
+
+            _recordMenuNavigation();
+          }
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1164,9 +1460,39 @@ class _LandingPageState
     );
   }
 
-  Widget _buildHeaderAction(
-    bool isMobile,
-  ) {
+  Widget _buildHeaderAction(bool isMobile) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        HoverScale(
+          onTap: _showRatingDialog,
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFFE10600), width: 1.8),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 12 : 20,
+              vertical: isMobile ? 6 : 10,
+            ),
+            child: Text(
+              'RATING',
+              style: GoogleFonts.montserrat(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: isMobile ? 11 : 14,
+                letterSpacing: isMobile ? 0.8 : 1.3,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: isMobile ? 8 : 14),
+        _buildAccountAction(isMobile),
+      ],
+    );
+  }
+
+  Widget _buildAccountAction(bool isMobile) {
     if (globalIsLoggedIn) {
       final user = FirebaseAuth.instance.currentUser;
       return StreamBuilder<
